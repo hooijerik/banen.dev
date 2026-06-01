@@ -6,14 +6,6 @@ export type CategorySlug =
   | "customer-success"
   | "partnerships"
   | "revops"
-  | "gtm-engineering"
-  | "sales-ops"
-  | "marketing-ops"
-  | "cs-ops"
-  | "enablement"
-  | "deal-desk"
-  | "gtm-strategy"
-  | "crm-admin"
   | "overig";
 
 export type SenioritySlug =

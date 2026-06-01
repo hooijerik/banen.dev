@@ -9,11 +9,10 @@ import { categoryUrl, companyUrl, locationUrl, remoteUrl } from "@/lib/urls";
 
 export const dynamic = "force-dynamic";
 
-const GROUPS = ["Commercieel", "Operations", "Strategie & Enablement"] as const;
+const GROUPS = ["Commercieel", "Operations"] as const;
 const groupDot: Record<string, string> = {
   Commercieel: "bg-brand-500",
   Operations: "bg-emerald-500",
-  "Strategie & Enablement": "bg-amber-500",
 };
 
 export default async function HomePage() {
@@ -92,7 +91,9 @@ export default async function HomePage() {
                 </h3>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {CATEGORIES.filter((c) => c.group === group).map((c) => (
+                {CATEGORIES.filter((c) => c.group === group)
+                  .sort((a, b) => (catCount.get(b.slug) ?? 0) - (catCount.get(a.slug) ?? 0))
+                  .map((c) => (
                   <Link
                     key={c.slug}
                     href={categoryUrl(c.slug)}

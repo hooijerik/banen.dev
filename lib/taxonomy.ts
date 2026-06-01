@@ -16,10 +16,10 @@ export interface CategoryDef {
 export const CATEGORIES: CategoryDef[] = [
   {
     slug: "revops",
-    label: "RevOps",
+    label: "RevOps & Operations",
     group: "Operations",
     description:
-      "Revenue Operations: het verbinden van sales, marketing en customer success met data, processen en systemen die voorspelbare omzet mogelijk maken.",
+      "Revenue Operations en het hele GTM-operations spectrum: RevOps, Sales/Marketing/CS Ops, GTM Engineering, CRM-beheer, Deal Desk, Enablement en commerciële strategie — de data, systemen en processen achter voorspelbare omzet.",
     keywords: [
       "revenue operations",
       "revops",
@@ -28,31 +28,12 @@ export const CATEGORIES: CategoryDef[] = [
       "head of revenue operations",
       "director revenue operations",
       "revenue operations analyst",
-    ],
-  },
-  {
-    slug: "gtm-engineering",
-    label: "GTM Engineering",
-    group: "Operations",
-    description:
-      "GTM Engineers bouwen de geautomatiseerde, AI-gedreven infrastructuur achter moderne go-to-market: enrichment, signalen en outbound op schaal.",
-    keywords: [
       "gtm engineer",
       "gtm engineering",
       "go-to-market engineer",
       "growth engineer",
       "marketing engineer",
       "outbound engineer",
-      "automation specialist gtm",
-    ],
-  },
-  {
-    slug: "sales-ops",
-    label: "Sales Ops",
-    group: "Operations",
-    description:
-      "Sales Operations: territory planning, forecasting, compensatie en de processen en tooling waarmee salesteams beter presteren.",
-    keywords: [
       "sales operations",
       "sales ops",
       "sales operations manager",
@@ -60,15 +41,6 @@ export const CATEGORIES: CategoryDef[] = [
       "commercial operations",
       "commerciële operations",
       "commerciele operations",
-    ],
-  },
-  {
-    slug: "marketing-ops",
-    label: "Marketing Ops",
-    group: "Operations",
-    description:
-      "Marketing Operations: campagne-operatie, lead management, attributie en de martech-stack die marketing schaalbaar maakt.",
-    keywords: [
       "marketing operations",
       "marketing ops",
       "mops",
@@ -77,29 +49,11 @@ export const CATEGORIES: CategoryDef[] = [
       "marketing automation specialist",
       "marketing technologist",
       "martech",
-    ],
-  },
-  {
-    slug: "cs-ops",
-    label: "CS Ops",
-    group: "Operations",
-    description:
-      "Customer Success Operations: health scoring, renewal-processen en de systemen die customer success teams aansturen.",
-    keywords: [
       "customer success operations",
       "cs operations",
       "cs ops",
       "customer operations",
       "success operations",
-    ],
-  },
-  {
-    slug: "crm-admin",
-    label: "CRM Beheer",
-    group: "Operations",
-    description:
-      "CRM-beheer en -administratie: het inrichten, customizen en beheren van Salesforce, HubSpot en andere CRM-platformen.",
-    keywords: [
       "salesforce administrator",
       "salesforce admin",
       "salesforce consultant",
@@ -113,15 +67,6 @@ export const CATEGORIES: CategoryDef[] = [
       "crm manager",
       "crm specialist",
       "crm beheerder",
-    ],
-  },
-  {
-    slug: "enablement",
-    label: "Enablement",
-    group: "Strategie & Enablement",
-    description:
-      "Sales & Revenue Enablement: training, content en methodiek waarmee commerciële teams sneller en beter verkopen.",
-    keywords: [
       "sales enablement",
       "revenue enablement",
       "gtm enablement",
@@ -129,15 +74,6 @@ export const CATEGORIES: CategoryDef[] = [
       "enablement manager",
       "enablement specialist",
       "enablement",
-    ],
-  },
-  {
-    slug: "deal-desk",
-    label: "Deal Desk",
-    group: "Strategie & Enablement",
-    description:
-      "Deal Desk & Pricing: prijsstelling, contractstructuur, CPQ en quote-to-cash voor complexe deals.",
-    keywords: [
       "deal desk",
       "dealdesk",
       "deal operations",
@@ -148,15 +84,6 @@ export const CATEGORIES: CategoryDef[] = [
       "quote-to-cash",
       "quote to cash",
       "monetization",
-    ],
-  },
-  {
-    slug: "gtm-strategy",
-    label: "GTM Strategie",
-    group: "Strategie & Enablement",
-    description:
-      "Go-to-market strategie: strategische planning, marktanalyse en commerciële groei-initiatieven.",
-    keywords: [
       "gtm strategy",
       "go-to-market strategy",
       "revenue strategy",
