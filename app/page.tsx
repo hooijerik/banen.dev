@@ -1,0 +1,198 @@
+import Link from "next/link";
+import { Container, Chip, Stat, SectionHeading, Card } from "@/components/ui";
+import { JobCard } from "@/components/JobCard";
+import { CompanyLogo } from "@/components/CompanyLogo";
+import { getStats, getFacets, listJobs, listCompanies } from "@/lib/queries";
+import { CATEGORIES } from "@/lib/taxonomy";
+import { pluralNL } from "@/lib/format";
+import { categoryUrl, companyUrl, locationUrl, remoteUrl } from "@/lib/urls";
+
+export const dynamic = "force-dynamic";
+
+const GROUPS = ["Commercieel", "Operations", "Strategie & Enablement"] as const;
+const groupDot: Record<string, string> = {
+  Commercieel: "bg-brand-500",
+  Operations: "bg-emerald-500",
+  "Strategie & Enablement": "bg-amber-500",
+};
+
+export default async function HomePage() {
+  const stats = getStats();
+  const facets = getFacets();
+  const latest = listJobs({}, { sort: "newest", perPage: 8 });
+  const companies = listCompanies(14);
+  const catCount = new Map(facets.categories.map((f) => [f.key, f.count]));
+  const nf = new Intl.NumberFormat("nl-NL");
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="border-b border-slate-200 bg-gradient-to-b from-brand-50/70 to-slate-50">
+        <Container className="py-14 sm:py-20">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-medium text-brand-700 ring-1 ring-brand-100">
+              🚀 {pluralNL(stats.newThisWeek, "nieuwe vacature", "nieuwe vacatures")} deze week
+            </span>
+            <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+              Vind jouw volgende baan in <span className="text-brand-600">go-to-market</span>
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+              Sales, Marketing, Customer Success, RevOps en alle andere GTM-rollen bij de beste
+              bedrijven van Nederland. Dagelijks ververst.
+            </p>
+
+            <form action="/vacatures" method="get" className="mx-auto mt-7 flex max-w-xl gap-2">
+              <input
+                type="text"
+                name="q"
+                placeholder="Zoek op functie, bedrijf of tool…"
+                className="h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-slate-900 shadow-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+              />
+              <button
+                type="submit"
+                className="h-12 rounded-xl bg-brand-600 px-6 font-semibold text-white shadow-sm transition hover:bg-brand-700"
+              >
+                Zoeken
+              </button>
+            </form>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+              <span className="text-slate-400">Populair:</span>
+              <Chip href={categoryUrl("sales")}>Sales</Chip>
+              <Chip href={categoryUrl("marketing")}>Marketing</Chip>
+              <Chip href={categoryUrl("customer-success")}>Customer Success</Chip>
+              <Chip href={categoryUrl("revops")}>RevOps</Chip>
+              <Chip href={remoteUrl()}>Remote</Chip>
+            </div>
+          </div>
+
+          <div className="mx-auto mt-12 grid max-w-2xl grid-cols-3 gap-4 text-center">
+            <Stat value={nf.format(stats.activeJobs)} label="Actieve vacatures" />
+            <Stat value={nf.format(stats.newThisWeek)} label="Nieuw deze week" />
+            <Stat value={nf.format(stats.companies)} label="Bedrijven" />
+          </div>
+        </Container>
+      </section>
+
+      {/* Categories */}
+      <Container className="py-14">
+        <SectionHeading
+          title="Verken per categorie"
+          subtitle="Het volledige go-to-market spectrum, van commercieel tot operations."
+          href="/vacatures"
+          linkLabel="Alle vacatures"
+        />
+        <div className="space-y-8">
+          {GROUPS.map((group) => (
+            <div key={group}>
+              <div className="mb-3 flex items-center gap-2">
+                <span className={`h-2 w-2 rounded-full ${groupDot[group]}`} />
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  {group}
+                </h3>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {CATEGORIES.filter((c) => c.group === group).map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={categoryUrl(c.slug)}
+                    className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 transition hover:border-brand-300 hover:shadow-sm"
+                  >
+                    <span className="font-medium text-slate-800 group-hover:text-brand-700">
+                      {c.label}
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
+                      {catCount.get(c.slug) ?? 0}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
+
+      {/* Latest jobs + sidebar */}
+      <Container className="py-4">
+        <div className="grid gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <SectionHeading title="Nieuwste vacatures" href="/vacatures" linkLabel="Bekijk alle" />
+            <div className="space-y-3">
+              {latest.map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </div>
+          </div>
+
+          <aside className="space-y-8">
+            <div>
+              <SectionHeading title="Populaire locaties" href="/locaties" linkLabel="Alle" />
+              <div className="flex flex-wrap gap-2">
+                {facets.cities.slice(0, 10).map((c) => (
+                  <Chip key={c.key} href={locationUrl(c.key)}>
+                    {c.label} <span className="text-slate-400">{c.count}</span>
+                  </Chip>
+                ))}
+                <Chip href={remoteUrl()} tone="brand">
+                  Remote{" "}
+                  <span className="text-brand-400">
+                    {facets.workMode.find((w) => w.key === "remote")?.count ?? 0}
+                  </span>
+                </Chip>
+              </div>
+            </div>
+
+            <Card className="bg-brand-600 p-6 text-white">
+              <h3 className="text-lg font-bold">Mis nooit een vacature</h3>
+              <p className="mt-1 text-sm text-brand-100">
+                Ontvang nieuwe GTM-vacatures die bij jou passen rechtstreeks in je inbox.
+              </p>
+              <Link
+                href="/vacature-alert"
+                className="mt-4 inline-block rounded-lg bg-white px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-50"
+              >
+                Vacature-alert instellen
+              </Link>
+            </Card>
+
+            <Card className="p-6">
+              <h3 className="text-lg font-bold text-slate-900">Salarisrapport 2026</h3>
+              <p className="mt-1 text-sm text-slate-600">
+                Ontdek wat GTM-professionals in Nederland verdienen, uitgesplitst naar functie,
+                niveau en regio.
+              </p>
+              <Link
+                href="/inzichten/salarissen"
+                className="mt-4 inline-block text-sm font-semibold text-brand-700 hover:text-brand-800"
+              >
+                Bekijk salarissen →
+              </Link>
+            </Card>
+          </aside>
+        </div>
+      </Container>
+
+      {/* Companies */}
+      <Container className="py-14">
+        <SectionHeading title="Bedrijven die nu aannemen" href="/bedrijven" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {companies.map((c) => (
+            <Link
+              key={c.id}
+              href={companyUrl(c.slug)}
+              className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition hover:border-brand-300 hover:shadow-sm"
+            >
+              <CompanyLogo src={c.logo_url} name={c.name} size={36} />
+              <div className="min-w-0">
+                <div className="truncate font-medium text-slate-800">{c.name}</div>
+                <div className="text-xs text-slate-500">
+                  {pluralNL(c.open_count, "vacature", "vacatures")}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </Container>
+    </>
+  );
+}

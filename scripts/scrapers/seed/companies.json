@@ -1,0 +1,23 @@
+[
+  { "name": "GitLab", "atsType": "greenhouse", "atsSlug": "gitlab", "website": "gitlab.com" },
+  { "name": "DEPT", "atsType": "greenhouse", "atsSlug": "dept", "website": "deptagency.com" },
+  { "name": "Amplitude", "atsType": "greenhouse", "atsSlug": "amplitude", "website": "amplitude.com" },
+  { "name": "Workwize", "atsType": "greenhouse", "atsSlug": "workwize", "website": "goworkwize.com" },
+  { "name": "Butternut Box", "atsType": "greenhouse", "atsSlug": "butternutbox", "website": "butternutbox.com" },
+  { "name": "Appier", "atsType": "greenhouse", "atsSlug": "appier", "website": "appier.com" },
+  { "name": "Wellhub", "atsType": "greenhouse", "atsSlug": "gympass", "website": "wellhub.com" },
+  { "name": "MongoDB", "atsType": "greenhouse", "atsSlug": "mongodb", "website": "mongodb.com" },
+  { "name": "Datadog", "atsType": "greenhouse", "atsSlug": "datadog", "website": "datadoghq.com" },
+  { "name": "Algolia", "atsType": "greenhouse", "atsSlug": "algolia", "website": "algolia.com" },
+  { "name": "Contentful", "atsType": "greenhouse", "atsSlug": "contentful", "website": "contentful.com" },
+  { "name": "Jobgether", "atsType": "lever", "atsSlug": "jobgether", "website": "jobgether.com" },
+  { "name": "Kpler", "atsType": "lever", "atsSlug": "kpler", "website": "kpler.com" },
+  { "name": "Coda", "atsType": "lever", "atsSlug": "Coda", "website": "coda.io" },
+  { "name": "OLX Group", "atsType": "lever", "atsSlug": "olx", "website": "olxgroup.com" },
+  { "name": "GoCardless", "atsType": "lever", "atsSlug": "gocardless", "website": "gocardless.com" },
+  { "name": "Crypto.com", "atsType": "lever", "atsSlug": "crypto", "website": "crypto.com" },
+  { "name": "Linear", "atsType": "ashby", "atsSlug": "linear", "website": "linear.app" },
+  { "name": "PostHog", "atsType": "ashby", "atsSlug": "posthog", "website": "posthog.com" },
+  { "name": "Recruitee", "atsType": "recruitee", "atsSlug": "recruitee", "website": "recruitee.com" },
+  { "name": "CostPerform", "atsType": "recruitee", "atsSlug": "costperform", "website": "costperform.com" }
+]

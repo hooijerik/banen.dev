@@ -1,0 +1,400 @@
+// Classification pipeline: turn a RawJob into a structured Classification.
+// Heuristic, NL + EN aware. Tuned for GTM roles. Covered by tests/classify.test.ts.
+
+import {
+  CATEGORIES,
+  CITY_PROVINCE,
+  GTM_SIGNAL_KEYWORDS,
+  HARD_EXCLUDE_KEYWORDS,
+  SENIORITY,
+  TOOLS,
+  WORK_MODES,
+} from "./taxonomy";
+import { titleCase } from "./format";
+import type {
+  CategorySlug,
+  Classification,
+  ParsedLocation,
+  ParsedSalary,
+  RawJob,
+  SalaryInterval,
+  SenioritySlug,
+  WorkMode,
+} from "./types";
+
+function norm(s: string | undefined | null): string {
+  return (s || "").toLowerCase();
+}
+
+// --- word-boundary keyword matching (cached) ---
+const reCache = new Map<string, RegExp>();
+function boundary(keyword: string): RegExp {
+  const key = keyword.trim();
+  let re = reCache.get(key);
+  if (!re) {
+    const esc = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    re = new RegExp(`(?<![a-z0-9])${esc}(?![a-z0-9])`, "i");
+    reCache.set(key, re);
+  }
+  return re;
+}
+function hasKeyword(text: string, keywords: string[]): boolean {
+  return keywords.some((k) => boundary(k).test(text));
+}
+
+// --- category ---
+export function detectCategory(title: string): CategorySlug | null {
+  const t = norm(title);
+  for (const c of CATEGORIES) {
+    if (hasKeyword(t, c.keywords)) return c.slug;
+  }
+  return null;
+}
+
+// --- seniority ---
+export function detectSeniority(title: string): SenioritySlug | null {
+  const t = norm(title);
+  for (const s of SENIORITY) {
+    if (hasKeyword(t, s.keywords)) return s.slug;
+  }
+  return null;
+}
+
+// --- work mode ---
+export function detectWorkMode(locationRaw: string | undefined, text: string): WorkMode | null {
+  const loc = norm(locationRaw);
+  const hybrid = WORK_MODES[1].keywords;
+  const remote = WORK_MODES[0].keywords;
+  const onsite = WORK_MODES[2].keywords;
+  if (loc) {
+    if (hasKeyword(loc, hybrid)) return "hybrid";
+    if (hasKeyword(loc, remote)) return "remote";
+    if (hasKeyword(loc, onsite)) return "onsite";
+    return "onsite"; // a concrete location with no mode word => on-site
+  }
+  if (hasKeyword(text, hybrid)) return "hybrid";
+  if (hasKeyword(text, remote)) return "remote";
+  return null;
+}
+
+// --- location ---
+const COUNTRY_PATTERNS: { code: string; kws: string[] }[] = [
+  { code: "NL", kws: ["netherlands", "nederland", "the netherlands", "holland", "benelux"] },
+  { code: "BE", kws: ["belgium", "belgië", "belgie", "belgium"] },
+  { code: "DE", kws: ["germany", "deutschland", "duitsland"] },
+  { code: "GB", kws: ["united kingdom", "england", "london", "uk"] },
+  { code: "FR", kws: ["france", "frankrijk", "paris"] },
+  { code: "ES", kws: ["spain", "spanje", "madrid", "barcelona"] },
+  { code: "US", kws: ["united states", "usa", "new york", "san francisco"] },
+];
+const EU_BROAD = /\b(netherlands|nederland|benelux|emea|eea|european union|europe|european|eu)\b/i;
+
+// Clearly non-European territories that, when named in a job TITLE, indicate the role
+// is region-locked (covers that market) even if the location field just says "Remote".
+const NON_EU_TERRITORY =
+  /\b(israel|south africa|middle east|mena|apac|latam|americas|north america|south america|australia|new zealand|india|japan|korea|singapore|saudi|uae|dubai|qatar|brazil|mexico|argentina|colombia|nigeria|kenya|egypt|turkey|vietnam|indonesia|thailand|philippines|malaysia|hong kong|taiwan|china|united states|canada)\b/i;
+
+/** Decide eligibility from the (short, reliable) location field alone. */
+function eligibilityFromLocation(loc: string): "nl" | "blocked" | "unknown" {
+  const cleaned = loc
+    .toLowerCase()
+    .replace(/\b(remote|hybrid|fully|first|on-?site|work from home|wfh|op afstand|thuiswerken|thuis|flexible|based)\b/g, " ")
+    .replace(/[(),.\-–—/|:]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return "unknown";
+  if (/\b(worldwide|anywhere|global|globally|international|distributed|home)\b/.test(cleaned)) return "unknown";
+  if (EU_BROAD.test(cleaned)) return "nl";
+  return "blocked"; // names a specific place that isn't NL / EU-wide
+}
+
+/**
+ * Whether a REMOTE role is realistically doable from the Netherlands.
+ *  "nl"      = NL, or EU/EMEA/Europe-wide, or explicit NL/EU eligibility
+ *  "blocked" = tied to a specific non-NL country/region (US, India, Italy, North America, …)
+ *  "unknown" = global / "anywhere" / unspecified ("Remote")
+ * The LOCATION field is authoritative; the description is consulted only when the
+ * location is generic — and even then a bare "Europe" mention does not override a
+ * concrete location. The US abbreviation is matched as uppercase `US` to avoid the
+ * pronoun "us" ("join us", "about us") that appears in nearly every posting.
+ */
+export function remoteEligibility(locationRaw: string, text: string): "nl" | "blocked" | "unknown" {
+  const loc = locationRaw || "";
+  if (loc.trim()) {
+    const fromLoc = eligibilityFromLocation(loc);
+    if (fromLoc !== "unknown") return fromLoc;
+  }
+
+  // Location is generic/empty — consult the description for EXPLICIT signals only.
+  const blob = text || "";
+  if (
+    /\b(based|located|eligible to work|authoriz\w+ to work|reside|residing|open to candidates)\b[^.\n]{0,30}\b(netherlands|nederland|europe|european union|emea|the eu|eu)\b/i.test(
+      blob,
+    )
+  ) {
+    return "nl";
+  }
+
+  // A clearly non-European territory in the job TITLE means it's region-locked.
+  const titleLine = blob.split("\n")[0] || "";
+  if (NON_EU_TERRITORY.test(titleLine) || /\bUS\b|\bUSA\b/.test(titleLine)) return "blocked";
+
+  const usCI =
+    /\b(based|located|reside|residing|authoriz\w+ to work|eligible to work|work authorization|must (be|reside))\b[^.\n]{0,28}\b(united states|u\.s\.a?\.?|usa)\b/i;
+  const usOnly = /\b(united states|usa)\b[^.\n]{0,15}\b(only|based|residents?)\b/i;
+  const usAbbr =
+    /\bUS[\s-]?(based|only|remote)\b|\b(based|located|reside|residing) in (the )?US\b|\bauthoriz\w+ to work in (the )?US\b/;
+  const otherCI =
+    /\b(based|located|reside|residing|authoriz\w+ to work|eligible to work)\b[^.\n]{0,28}\b(canada|india|australia|united kingdom|singapore|brazil|japan|latam|apac)\b/i;
+  if (usCI.test(blob) || usOnly.test(blob) || usAbbr.test(blob) || otherCI.test(blob)) return "blocked";
+
+  return "unknown";
+}
+
+export function detectLocation(locationRaw: string | undefined, text: string): ParsedLocation {
+  const loc = norm(locationRaw);
+  const scan = loc || norm(text).slice(0, 400);
+
+  // city + province
+  let city: string | null = null;
+  let province: string | null = null;
+  for (const key of Object.keys(CITY_PROVINCE)) {
+    if (boundary(key).test(scan)) {
+      city = titleCase(key);
+      province = CITY_PROVINCE[key];
+      break;
+    }
+  }
+
+  // country
+  let country: string | null = null;
+  for (const { code, kws } of COUNTRY_PATTERNS) {
+    if (hasKeyword(scan, kws)) {
+      country = code;
+      break;
+    }
+  }
+  if (!country && province) country = "NL"; // a known NL city implies NL
+
+  const isRemote = hasKeyword(scan, WORK_MODES[0].keywords);
+
+  // For remote roles, verify they can actually be performed from the Netherlands.
+  let nlRelevant: boolean;
+  if (province != null || country === "NL") {
+    nlRelevant = true; // a concrete NL location
+  } else if (isRemote) {
+    const elig = remoteEligibility(locationRaw ?? "", text);
+    nlRelevant = elig === "nl" ? true : elig === "blocked" ? false : country == null;
+  } else {
+    nlRelevant = false; // on-site/hybrid outside NL
+  }
+
+  return { city, province, country, nlRelevant };
+}
+
+// --- salary parsing ---
+function parseAmount(raw: string): number | null {
+  let s = raw.trim().toLowerCase();
+  const hasK = /k$/.test(s);
+  s = s.replace(/[€$£]/g, "").replace(/\s/g, "").replace(/k$/, "");
+  if (!s) return null;
+
+  const hasDot = s.includes(".");
+  const hasComma = s.includes(",");
+  if (hasDot && hasComma) {
+    // last separator is the decimal
+    if (s.lastIndexOf(",") > s.lastIndexOf(".")) {
+      s = s.replace(/\./g, "").replace(",", ".");
+    } else {
+      s = s.replace(/,/g, "");
+    }
+  } else if (hasComma) {
+    // comma = thousands if followed by 3 digits, else decimal
+    s = /,\d{3}(\D|$)/.test(s) ? s.replace(/,/g, "") : s.replace(",", ".");
+  } else if (hasDot) {
+    s = /\.\d{3}(\D|$)/.test(s) ? s.replace(/\./g, "") : s;
+  }
+
+  let n = Number(s);
+  if (Number.isNaN(n)) return null;
+  if (hasK) n *= 1000;
+  return n;
+}
+
+const SAL_RANGES: Record<SalaryInterval, [number, number]> = {
+  year: [15000, 700000],
+  month: [1200, 45000],
+  hour: [8, 250],
+};
+
+export function parseSalary(text: string): ParsedSalary {
+  const t = text.toLowerCase();
+
+  // currency
+  let currency = "EUR";
+  if (/[€]|eur\b/.test(t)) currency = "EUR";
+  else if (/[$]|usd\b/.test(t)) currency = "USD";
+  else if (/[£]|gbp\b/.test(t)) currency = "GBP";
+
+  // interval
+  let interval: SalaryInterval = "year";
+  if (/per maand|p\/m\b|\/maand|per month|monthly|maandsalaris|bruto per maand/.test(t)) {
+    interval = "month";
+  } else if (/per uur|\/uur|per hour|hourly|\/hr\b|p\/uur/.test(t)) {
+    interval = "hour";
+  }
+
+  // gather candidate amounts that look monetary (currency-adjacent or k-suffixed)
+  const candidates: number[] = [];
+  const tokenRe =
+    /(?:€|eur|\$|usd|£|gbp)\s?(\d[\d.,]*\s?k?)|(\d{1,3}(?:[.,]\d{3})+)|(\d{2,3}\s?k)\b/gi;
+  let m: RegExpExecArray | null;
+  while ((m = tokenRe.exec(text)) !== null) {
+    const tok = (m[1] || m[2] || m[3] || "").replace(/\s/g, "");
+    const val = parseAmount(tok);
+    if (val != null) candidates.push(val);
+    if (candidates.length > 40) break;
+  }
+
+  const [lo, hi] = SAL_RANGES[interval];
+  const plausible = candidates.filter((v) => v >= lo && v <= hi);
+  if (plausible.length === 0) {
+    return { min: null, max: null, currency, interval, disclosed: false };
+  }
+  plausible.sort((a, b) => a - b);
+  const min = plausible[0];
+  const max = plausible[plausible.length - 1];
+  return { min, max: max === min ? null : max, currency, interval, disclosed: true };
+}
+
+// --- tools ---
+export function detectTools(text: string): string[] {
+  const t = norm(text);
+  const found = new Set<string>();
+  for (const tool of TOOLS) {
+    // Match only on explicit aliases — never the bare display label, which for
+    // generic-word tools like "Make" would capture ordinary text ("make sure …").
+    if (tool.aliases.some((mm) => boundary(mm).test(t))) found.add(tool.slug);
+  }
+  return [...found];
+}
+
+// --- AI flag ---
+// "Requires AI" rather than "mentions AI": true if the title signals AI, or the
+// description uses at least two distinct strong AI signals (avoids boilerplate).
+const AI_STRONG =
+  /\bai[- ](powered|driven|native|first|agent|agents|tools|automation)|generative ai|gen ?ai|prompt engineering|\bllm(s)?\b|large language model|machine learning|artificial intelligence/gi;
+
+export function detectAI(title: string, text: string): boolean {
+  if (
+    /(?<![a-z0-9])(ai|ml|llm|gpt|genai)(?![a-z0-9])/i.test(title) ||
+    /generative ai|machine learning|artificial intelligence/i.test(title)
+  ) {
+    return true;
+  }
+  const m = text.match(AI_STRONG);
+  return m ? new Set(m.map((s) => s.toLowerCase())).size >= 2 : false;
+}
+
+// --- reports-to ---
+export function detectReportsTo(text: string): string | null {
+  const m =
+    /reports?\s+(?:in)?to\s+(?:the\s+)?([a-z][a-z &/]{1,38})/i.exec(text) ||
+    /rapporteert\s+aan\s+(?:de\s+|het\s+)?([a-z][a-z &/]{1,38})/i.exec(text);
+  if (!m) return null;
+  let v = m[1].trim().replace(/\s+/g, " ");
+  v = v.replace(/\b(and|en)\b.*$/i, "").trim();
+  if (v.length < 2) return null;
+  // Uppercase common acronyms
+  return v.replace(/\b(ceo|cro|cmo|cco|cfo|coo|vp|svp)\b/gi, (s) => s.toUpperCase());
+}
+
+// --- comp structure + equity ---
+function detectComp(text: string, salaryDisclosed: boolean): string | null {
+  const t = norm(text);
+  if (/\bote\b|on-target earnings|on target earnings/.test(t)) return "ote";
+  if (/commission|commissie/.test(t)) return "base+commission";
+  if (/\bbonus\b/.test(t)) return "base+bonus";
+  return salaryDisclosed ? "base" : null;
+}
+function detectEquity(text: string): string | null {
+  const t = norm(text);
+  if (/\brsu(s)?\b/.test(t)) return "rsu";
+  if (/stock option|aandelenopties|opties/.test(t)) return "options";
+  if (/\bequity\b|aandelen/.test(t)) return "equity";
+  return null;
+}
+
+/** Full classification of a raw job. */
+export function classify(raw: RawJob): Classification {
+  const title = raw.title || "";
+  const descText = raw.descriptionText || stripHtml(raw.descriptionHtml || "");
+  const text = `${title}\n${descText}`;
+  const tLower = norm(title);
+
+  const cat = detectCategory(title);
+  const excluded = hasKeyword(tLower, HARD_EXCLUDE_KEYWORDS);
+
+  let category: CategorySlug;
+  let gtmRelevant: boolean;
+  if (cat) {
+    category = cat;
+    gtmRelevant = true;
+  } else if (!excluded && hasKeyword(tLower, GTM_SIGNAL_KEYWORDS)) {
+    // Gate on the TITLE (not the description): real GTM roles signal it in the
+    // title. Scanning descriptions lets engineering/PM/design roles leak in.
+    category = "overig";
+    gtmRelevant = true;
+  } else {
+    category = "overig";
+    gtmRelevant = false;
+  }
+
+  // salary: prefer structured comp from source (Ashby), else parse text
+  let salary: ParsedSalary;
+  const c = raw.compensation;
+  if (c && (c.min != null || c.max != null)) {
+    salary = {
+      min: c.min ?? null,
+      max: c.max ?? (c.min ? null : null),
+      currency: (c.currency || "EUR").toUpperCase(),
+      interval: c.interval || "year",
+      disclosed: true,
+    };
+  } else {
+    salary = parseSalary(text);
+  }
+
+  return {
+    category,
+    gtmRelevant,
+    seniority: detectSeniority(title),
+    workMode: detectWorkMode(raw.locationRaw, text),
+    location: detectLocation(raw.locationRaw, text),
+    salary,
+    tools: detectTools(text),
+    aiRequired: detectAI(title, text),
+    reportsTo: detectReportsTo(descText),
+    compStructure: detectComp(text, salary.disclosed),
+    equityType: detectEquity(text),
+  };
+}
+
+/** Minimal HTML -> text (no deps; good enough for classification + previews). */
+export function stripHtml(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<\/(p|div|li|h[1-6]|br)>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&#39;|&rsquo;|&lsquo;/gi, "'")
+    .replace(/&quot;|&ldquo;|&rdquo;/gi, '"')
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
