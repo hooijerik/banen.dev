@@ -64,3 +64,55 @@ export const GUIDES: Guide[] = [
 ];
 
 export const GUIDE_BY_SLUG = new Map(GUIDES.map((g) => [g.slug, g]));
+
+export const GTMAI_BLOG_URL = "https://gtmai.nl/blog";
+
+export interface ExternalPost {
+  title: string;
+  href: string;
+  dek: string;
+}
+
+/** Curated, role/discipline-focused articles from the GTM AI blog (gtmai.nl). */
+export const GTMAI_POSTS: ExternalPost[] = [
+  {
+    title: "Wat is GTM Engineering?",
+    href: "https://gtmai.nl/blog/wat-is-gtm-engineering",
+    dek: "De rol die B2B-groei opnieuw definieert.",
+  },
+  {
+    title: "De stand van GTM Engineering in de Benelux (2026)",
+    href: "https://gtmai.nl/blog/stand-van-gtm-engineering-benelux",
+    dek: "Hoe ver is de Nederlandse en Belgische markt?",
+  },
+  {
+    title: "Je eerste GTM Engineer aannemen",
+    href: "https://gtmai.nl/blog/eerste-gtm-engineer-aannemen",
+    dek: "Waar let je op bij de eerste hire.",
+  },
+  {
+    title: "GTM Engineering en RevOps: samen meer dan apart",
+    href: "https://gtmai.nl/blog/gtm-engineering-en-revops-samen",
+    dek: "Hoe de twee disciplines elkaar versterken.",
+  },
+  {
+    title: "RevOps: marketing, sales en service als één team",
+    href: "https://gtmai.nl/blog/revops-marketing-sales-service",
+    dek: "Waarom RevOps het verschil maakt in groei.",
+  },
+  {
+    title: "KPI's voor je GTM Engineering team",
+    href: "https://gtmai.nl/blog/kpis-gtm-engineering-team",
+    dek: "Waarop stuur je een GTM-team echt?",
+  },
+  {
+    title: "De moderne GTM-stack ontleed",
+    href: "https://gtmai.nl/blog/moderne-gtm-stack-ontleed",
+    dek: "De tools achter moderne go-to-market.",
+  },
+  {
+    title: "GTM Engineering voor scale-ups in Nederland",
+    href: "https://gtmai.nl/blog/gtm-engineering-scaleups-nederland",
+    dek: "Wat werkt voor Nederlandse scale-ups.",
+  },
+];

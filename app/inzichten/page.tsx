@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Card } from "@/components/ui";
-import { GUIDES } from "@/lib/guides";
+import { GUIDES, GTMAI_POSTS, GTMAI_BLOG_URL } from "@/lib/guides";
 
 export const metadata: Metadata = {
   title: "Inzichten & gidsen voor GTM-professionals",
@@ -42,6 +42,42 @@ export default function InsightsPage() {
           </Card>
         ))}
       </div>
+
+      <section className="mt-14">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-slate-900">Van het GTM AI-blog</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Diepgang over GTM-rollen, RevOps en de Nederlandse markt.
+            </p>
+          </div>
+          <a
+            href={GTMAI_BLOG_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 text-sm font-medium text-brand-700 hover:text-brand-800"
+          >
+            Alle artikelen ↗
+          </a>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {GTMAI_POSTS.map((p) => (
+            <a
+              key={p.href}
+              href={p.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-brand-300 hover:shadow-sm"
+            >
+              <h3 className="font-semibold text-slate-900 group-hover:text-brand-700">{p.title}</h3>
+              <p className="mt-1 text-sm text-slate-600">{p.dek}</p>
+              <span className="mt-3 inline-block text-sm font-semibold text-brand-700">
+                Lees op gtmai.nl ↗
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
     </Container>
   );
 }
