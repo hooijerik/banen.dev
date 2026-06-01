@@ -3,6 +3,7 @@ import { Container } from "@/components/ui";
 import { SITE } from "@/lib/site";
 import { CATEGORIES } from "@/lib/taxonomy";
 import { categoryUrl, locationUrl, remoteUrl } from "@/lib/urls";
+import { Logo } from "@/components/site/Logo";
 
 const CITIES = [
   ["Amsterdam", "amsterdam"],
@@ -67,11 +68,10 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-sm text-slate-500 sm:flex-row sm:items-center">
-          <p className="flex items-center gap-1.5">
-            <span className="rounded bg-brand-600 px-1 py-0.5 text-xs font-bold text-white">GTM</span>
-            <span className="font-medium text-slate-700">{SITE.name}</span>
+          <div className="flex flex-wrap items-center gap-2 text-slate-500">
+            <Logo />
             <span>— {SITE.tagline}.</span>
-          </p>
+          </div>
           <p className="flex flex-wrap items-center gap-1.5">
             <span>
               Een initiatief van{" "}

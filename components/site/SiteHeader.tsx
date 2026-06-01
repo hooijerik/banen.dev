@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { Container } from "@/components/ui";
+import { Logo } from "@/components/site/Logo";
 import { NAV } from "@/lib/site";
 
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-1.5 text-lg font-bold tracking-tight">
-          <span className="rounded-md bg-brand-600 px-1.5 py-0.5 text-white">GTM</span>
-          <span>Banen</span>
-        </Link>
+        <Logo className="text-lg" />
 
         <nav className="hidden items-center gap-6 md:flex">
           {NAV.map((item) => (
