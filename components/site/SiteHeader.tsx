@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { Logo } from "@/components/site/Logo";
+import { MobileNav } from "@/components/site/MobileNav";
 import { NAV } from "@/lib/site";
 
 export function SiteHeader() {
@@ -34,6 +35,7 @@ export function SiteHeader() {
           >
             Plaats vacature
           </Link>
+          <MobileNav />
         </div>
       </Container>
     </header>
