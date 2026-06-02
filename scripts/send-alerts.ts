@@ -5,6 +5,7 @@ import { listJobs } from "../lib/queries";
 import { SITE } from "../lib/site";
 import { formatSalaryRange } from "../lib/format";
 import { categoryLabel } from "../lib/taxonomy";
+import { sendEmail } from "../lib/email";
 import type { JobRow } from "../lib/types";
 
 interface Sub {
@@ -13,29 +14,6 @@ interface Sub {
   filters_json: string | null;
   frequency: string;
   last_sent_at: string | null;
-}
-
-async function sendEmail(to: string, subject: string, html: string): Promise<"sent" | "dry" | "error"> {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) {
-    console.log(`\n[DRY-RUN] → ${to}\n  ${subject}`);
-    return "dry";
-  }
-  try {
-    const r = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: process.env.ALERTS_FROM_EMAIL || "vacatures@gtmbanen.nl",
-        to,
-        subject,
-        html,
-      }),
-    });
-    return r.ok ? "sent" : "error";
-  } catch {
-    return "error";
-  }
 }
 
 function renderDigest(jobs: JobRow[]): string {
@@ -78,11 +56,11 @@ async function main() {
       console.log(`${s.email}: geen nieuwe vacatures`);
       continue;
     }
-    const res = await sendEmail(
-      s.email,
-      `${fresh.length} nieuwe GTM-vacatures op ${SITE.name}`,
-      renderDigest(fresh),
-    );
+    const res = await sendEmail({
+      to: s.email,
+      subject: `${fresh.length} nieuwe GTM-vacatures op ${SITE.name}`,
+      html: renderDigest(fresh),
+    });
     db.prepare("UPDATE subscribers SET last_sent_at = datetime('now') WHERE id = ?").run(s.id);
     console.log(`${s.email}: ${fresh.length} vacatures (${res})`);
   }
