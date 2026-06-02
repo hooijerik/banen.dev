@@ -3,9 +3,13 @@
 // development never needs a key. Never throws - returns a status the caller can ignore.
 const RESEND_URL = "https://api.resend.com/emails";
 
-/** Verified sending identity. The domain MUST be verified in your Resend account. */
+/** Verified sending identity. The domain MUST be verified in your Resend account.
+ *  Accepts a bare address in ALERTS_FROM_EMAIL (no spaces -> cron/systemd-friendly) and
+ *  adds the "GTM Banen" display name; or a full "Name <addr>" value is used as-is. */
 export function defaultFrom(): string {
-  return process.env.ALERTS_FROM_EMAIL || "GTM Banen <info@gtmai.nl>";
+  const v = process.env.ALERTS_FROM_EMAIL?.trim();
+  if (!v) return "GTM Banen <vacatures@gtmbanen.nl>";
+  return v.includes("<") ? v : `GTM Banen <${v}>`;
 }
 
 export async function sendEmail(opts: {
