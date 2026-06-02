@@ -82,6 +82,19 @@ export function listJobs(
   return stmt.all(...params, perPage, offset) as unknown as JobRow[];
 }
 
+/** Recent jobs in randomized order, so the homepage doesn't always show the same ones first. */
+export function listRecentShuffled(limit = 8, pool = 50): JobRow[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT * FROM (
+         SELECT ${JOB_COLS} ${JOB_FROM} WHERE j.status='active'
+         ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC LIMIT ?
+       ) ORDER BY RANDOM() LIMIT ?`,
+    )
+    .all(pool, limit) as unknown as JobRow[];
+}
+
 export function countJobs(f: JobFilters): number {
   const db = getDb();
   const { sql, params } = buildWhere(f);

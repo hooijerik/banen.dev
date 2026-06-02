@@ -2,25 +2,23 @@ import Link from "next/link";
 import { Container, Chip, Stat, SectionHeading, Card } from "@/components/ui";
 import { JobCard } from "@/components/JobCard";
 import { CompanyLogo } from "@/components/CompanyLogo";
-import { getStats, getFacets, listJobs, listCompanies } from "@/lib/queries";
+import { getStats, getFacets, listRecentShuffled, listCompanies } from "@/lib/queries";
 import { CATEGORIES } from "@/lib/taxonomy";
 import { pluralNL } from "@/lib/format";
 import { categoryUrl, companyUrl, locationUrl, remoteUrl } from "@/lib/urls";
 
 export const dynamic = "force-dynamic";
 
-const GROUPS = ["Commercieel", "Operations"] as const;
-const groupDot: Record<string, string> = {
-  Commercieel: "bg-brand-500",
-  Operations: "bg-emerald-500",
-};
-
 export default async function HomePage() {
   const stats = getStats();
   const facets = getFacets();
-  const latest = listJobs({}, { sort: "newest", perPage: 8 });
+  const latest = listRecentShuffled(8, 50);
   const companies = listCompanies(14);
   const catCount = new Map(facets.categories.map((f) => [f.key, f.count]));
+  const sortedCats = [...CATEGORIES].sort(
+    (a, b) => (catCount.get(b.slug) ?? 0) - (catCount.get(a.slug) ?? 0),
+  );
+  const remoteCount = facets.workMode.find((w) => w.key === "remote")?.count ?? 0;
   const nf = new Intl.NumberFormat("nl-NL");
 
   return (
@@ -55,63 +53,36 @@ export default async function HomePage() {
               </button>
             </form>
 
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-              <span className="text-slate-400">Populair:</span>
-              <Chip href={categoryUrl("sales")}>Sales</Chip>
-              <Chip href={categoryUrl("marketing")}>Marketing</Chip>
-              <Chip href={categoryUrl("customer-success")}>Customer Success</Chip>
-              <Chip href={categoryUrl("revops")}>RevOps</Chip>
-              <Chip href={remoteUrl()}>Remote</Chip>
-            </div>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-2xl grid-cols-3 gap-4 text-center">
+          {/* Alle categorieën op 1 regel, boven de vouw */}
+          <div className="mt-7 flex items-center justify-start gap-2 overflow-x-auto pb-1 lg:justify-center">
+            {sortedCats.map((c) => (
+              <Link
+                key={c.slug}
+                href={categoryUrl(c.slug)}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-brand-300 hover:text-brand-700"
+              >
+                {c.label}
+                <span className="text-slate-400">{catCount.get(c.slug) ?? 0}</span>
+              </Link>
+            ))}
+            <Link
+              href={remoteUrl()}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-brand-300 hover:text-brand-700"
+            >
+              Remote
+              <span className="text-slate-400">{remoteCount}</span>
+            </Link>
+          </div>
+
+          <div className="mx-auto mt-10 grid max-w-2xl grid-cols-3 gap-4 text-center">
             <Stat value={nf.format(stats.activeJobs)} label="Actieve vacatures" />
             <Stat value={nf.format(stats.newThisWeek)} label="Nieuw deze week" />
             <Stat value={nf.format(stats.companies)} label="Bedrijven" />
           </div>
         </Container>
       </section>
-
-      {/* Categories */}
-      <Container className="py-14">
-        <SectionHeading
-          title="Verken per categorie"
-          subtitle="Het volledige go-to-market spectrum, van commercieel tot operations."
-          href="/vacatures"
-          linkLabel="Alle vacatures"
-        />
-        <div className="space-y-8">
-          {GROUPS.map((group) => (
-            <div key={group}>
-              <div className="mb-3 flex items-center gap-2">
-                <span className={`h-2 w-2 rounded-full ${groupDot[group]}`} />
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                  {group}
-                </h3>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {CATEGORIES.filter((c) => c.group === group)
-                  .sort((a, b) => (catCount.get(b.slug) ?? 0) - (catCount.get(a.slug) ?? 0))
-                  .map((c) => (
-                  <Link
-                    key={c.slug}
-                    href={categoryUrl(c.slug)}
-                    className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 transition hover:border-brand-300 hover:shadow-sm"
-                  >
-                    <span className="font-medium text-slate-800 group-hover:text-brand-700">
-                      {c.label}
-                    </span>
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
-                      {catCount.get(c.slug) ?? 0}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Container>
 
       {/* Latest jobs + sidebar */}
       <Container className="py-4">
