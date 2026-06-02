@@ -4,6 +4,7 @@
 import {
   CATEGORIES,
   CITY_PROVINCE,
+  BE_CITY_PROVINCE,
   GTM_SIGNAL_KEYWORDS,
   HARD_EXCLUDE_KEYWORDS,
   SENIORITY,
@@ -80,14 +81,14 @@ export function detectWorkMode(locationRaw: string | undefined, text: string): W
 // --- location ---
 const COUNTRY_PATTERNS: { code: string; kws: string[] }[] = [
   { code: "NL", kws: ["netherlands", "nederland", "the netherlands", "holland", "benelux"] },
-  { code: "BE", kws: ["belgium", "belgië", "belgie", "belgium"] },
+  { code: "BE", kws: ["belgium", "belgië", "belgie", "vlaanderen", "flanders"] },
   { code: "DE", kws: ["germany", "deutschland", "duitsland"] },
   { code: "GB", kws: ["united kingdom", "england", "london", "uk"] },
   { code: "FR", kws: ["france", "frankrijk", "paris"] },
   { code: "ES", kws: ["spain", "spanje", "madrid", "barcelona"] },
   { code: "US", kws: ["united states", "usa", "new york", "san francisco"] },
 ];
-const EU_BROAD = /\b(netherlands|nederland|benelux|emea|eea|european union|europe|european|eu)\b/i;
+const EU_BROAD = /\b(netherlands|nederland|benelux|belgium|belgië|belgie|vlaanderen|flanders|brussels|brussel|emea|eea|european union|europe|european|eu)\b/i;
 
 // Clearly non-European territories that, when named in a job TITLE, indicate the role
 // is region-locked (covers that market) even if the location field just says "Remote".
@@ -155,14 +156,26 @@ export function detectLocation(locationRaw: string | undefined, text: string): P
   const loc = norm(locationRaw);
   const scan = loc || norm(text).slice(0, 400);
 
-  // city + province
+  // city + province (NL first, then Dutch-speaking Belgium)
   let city: string | null = null;
   let province: string | null = null;
+  let cityCountry: string | null = null;
   for (const key of Object.keys(CITY_PROVINCE)) {
     if (boundary(key).test(scan)) {
       city = titleCase(key);
       province = CITY_PROVINCE[key];
+      cityCountry = "NL";
       break;
+    }
+  }
+  if (!city) {
+    for (const key of Object.keys(BE_CITY_PROVINCE)) {
+      if (boundary(key).test(scan)) {
+        city = titleCase(key);
+        province = BE_CITY_PROVINCE[key];
+        cityCountry = "BE";
+        break;
+      }
     }
   }
 
@@ -174,19 +187,20 @@ export function detectLocation(locationRaw: string | undefined, text: string): P
       break;
     }
   }
-  if (!country && province) country = "NL"; // a known NL city implies NL
+  if (!country) country = cityCountry; // a known city implies its country
 
   const isRemote = hasKeyword(scan, WORK_MODES[0].keywords);
 
-  // For remote roles, verify they can actually be performed from the Netherlands.
+  // Keep NL + Dutch-speaking Belgium. For remote roles, verify they can realistically
+  // be performed from the Benelux.
   let nlRelevant: boolean;
-  if (province != null || country === "NL") {
-    nlRelevant = true; // a concrete NL location
+  if (province != null || country === "NL" || country === "BE") {
+    nlRelevant = true; // a concrete NL/Flemish location
   } else if (isRemote) {
     const elig = remoteEligibility(locationRaw ?? "", text);
     nlRelevant = elig === "nl" ? true : elig === "blocked" ? false : country == null;
   } else {
-    nlRelevant = false; // on-site/hybrid outside NL
+    nlRelevant = false; // on-site/hybrid outside NL/BE
   }
 
   return { city, province, country, nlRelevant };

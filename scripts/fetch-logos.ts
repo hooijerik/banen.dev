@@ -57,8 +57,21 @@ async function determineGlobe(): Promise<string | null> {
   return best;
 }
 
-function isReal(f: Fav | null, globe: string | null): boolean {
+/** Social/aggregator favicons that brand-name guessing sometimes lands on (e.g. a parked
+ *  impress.com that serves LinkedIn's icon). Fingerprinted once, then rejected. */
+async function determineDecoys(): Promise<Set<string>> {
+  const domains = ["linkedin.com", "facebook.com", "instagram.com", "x.com", "twitter.com", "indeed.com", "youtube.com"];
+  const set = new Set<string>();
+  for (const d of domains) {
+    const f = await fav(d);
+    if (f) set.add(f.hash);
+  }
+  return set;
+}
+
+function isReal(f: Fav | null, globe: string | null, decoys: Set<string>): boolean {
   if (!f) return false;
+  if (decoys.has(f.hash)) return false; // a parked/redirected domain serving a social-network icon
   if (globe) return f.hash !== globe;
   return f.size < 700 || f.size > 760; // fallback: ~726B is the globe
 }
@@ -72,7 +85,9 @@ interface CompanyRow {
 async function main() {
   const db = getDb();
   const globe = await determineGlobe();
+  const decoys = await determineDecoys();
   console.log(globe ? `Globe-signature: ${globe.slice(0, 10)}…` : "Globe onbekend - val terug op grootte-heuristiek.");
+  console.log(`Decoy-signatures (LinkedIn e.d.): ${decoys.size}`);
 
   const companies = db.prepare("SELECT id, name, website FROM companies").all() as unknown as CompanyRow[];
   const update = db.prepare("UPDATE companies SET logo_url = ? WHERE id = ?");
@@ -95,7 +110,7 @@ async function main() {
       }
       let found: string | null = null;
       for (const d of domains) {
-        if (isReal(await fav(d), globe)) {
+        if (isReal(await fav(d), globe, decoys)) {
           found = faviconUrl(d);
           break;
         }

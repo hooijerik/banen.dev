@@ -110,6 +110,18 @@ check(
   classify(job("Account Executive - Benelux", { locationRaw: "Remote" })).location.nlRelevant === true,
 );
 
+// ---- Dutch-speaking Belgium (Flanders) ----
+const gent = detectLocation("Gent, Belgium", "");
+eq("gent city", gent.city, "Gent");
+eq("gent province", gent.province, "Oost-Vlaanderen");
+eq("gent country", gent.country, "BE");
+check("gent nlRelevant", gent.nlRelevant === true);
+check("Antwerpen kept", detectLocation("Antwerpen", "").nlRelevant === true);
+check("Brussels kept", detectLocation("Brussels", "").nlRelevant === true);
+check("Leuven province", detectLocation("Leuven", "").province === "Vlaams-Brabant");
+check("Remote Belgium kept", detectLocation("Remote, Belgium", "").nlRelevant === true);
+check("Vlaanderen remote kept", detectLocation("Remote - Vlaanderen", "").nlRelevant === true);
+
 // ---- salary ----
 const s1 = parseSalary("Salaris € 4.000 - € 5.500 per maand");
 eq("month min", s1.min, 4000);

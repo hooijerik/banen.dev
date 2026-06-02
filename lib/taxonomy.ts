@@ -406,7 +406,7 @@ export const WORK_MODES: WorkModeDef[] = [
   },
 ];
 
-// 12 Dutch provinces.
+// 12 Dutch provinces + the 5 Flemish provinces and Brussels (Dutch-speaking Belgium).
 export const PROVINCES = [
   "Drenthe",
   "Flevoland",
@@ -420,6 +420,12 @@ export const PROVINCES = [
   "Utrecht",
   "Zeeland",
   "Zuid-Holland",
+  "Antwerpen",
+  "Oost-Vlaanderen",
+  "West-Vlaanderen",
+  "Vlaams-Brabant",
+  "Limburg (België)",
+  "Brussel",
 ] as const;
 
 // Major NL cities -> province. Keys are lowercase.
@@ -469,6 +475,33 @@ export const CITY_PROVINCE: Record<string, string> = {
   heerlen: "Limburg",
   sittard: "Limburg",
   middelburg: "Zeeland",
+};
+
+// Flemish + Brussels cities -> region (Dutch-speaking Belgium). Keys lowercase, NL + EN spellings.
+export const BE_CITY_PROVINCE: Record<string, string> = {
+  antwerpen: "Antwerpen",
+  antwerp: "Antwerpen",
+  mechelen: "Antwerpen",
+  turnhout: "Antwerpen",
+  gent: "Oost-Vlaanderen",
+  ghent: "Oost-Vlaanderen",
+  aalst: "Oost-Vlaanderen",
+  "sint-niklaas": "Oost-Vlaanderen",
+  brugge: "West-Vlaanderen",
+  bruges: "West-Vlaanderen",
+  kortrijk: "West-Vlaanderen",
+  roeselare: "West-Vlaanderen",
+  oostende: "West-Vlaanderen",
+  ostend: "West-Vlaanderen",
+  leuven: "Vlaams-Brabant",
+  louvain: "Vlaams-Brabant",
+  vilvoorde: "Vlaams-Brabant",
+  zaventem: "Vlaams-Brabant",
+  hasselt: "Limburg (België)",
+  genk: "Limburg (België)",
+  brussel: "Brussel",
+  brussels: "Brussel",
+  bruxelles: "Brussel",
 };
 
 export interface ToolDef {
