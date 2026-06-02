@@ -48,9 +48,13 @@ function buildWhere(f: JobFilters): { sql: string; params: (string | number)[] }
     params.push(f.salaryMin);
   }
   if (f.q && f.q.trim()) {
-    cond.push("(j.title_norm LIKE ? OR lower(c.name) LIKE ?)");
+    // Search title, company, description and detected tools (so e.g. "HubSpot" matches
+    // jobs tagged with that tool even when it isn't in the title).
+    cond.push(
+      "(j.title_norm LIKE ? OR lower(c.name) LIKE ? OR lower(j.description_text) LIKE ? OR lower(j.tools_json) LIKE ?)",
+    );
     const like = `%${f.q.trim().toLowerCase()}%`;
-    params.push(like, like);
+    params.push(like, like, like, like);
   }
   return { sql: cond.join(" AND "), params };
 }
