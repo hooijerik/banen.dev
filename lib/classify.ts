@@ -258,26 +258,50 @@ export function parseSalary(text: string): ParsedSalary {
     interval = "hour";
   }
 
-  // gather candidate amounts that look monetary (currency-adjacent or k-suffixed)
-  const candidates: number[] = [];
+  // Gather monetary amounts (currency-adjacent or k-suffixed) and tag each by the word
+  // beside it, so a bonus/OTE figure ("42k basis + 15k bonus") isn't mistaken for the
+  // bottom of the base range.
+  const OTE_RE = /^(ote|ontarget)/;
+  const VAR_RE = /^(bonus|commissie|commission|variabel|variable|provisie|incentive)/;
+  const BASE_RE = /^(basis|base|vast|fixed|bruto|salaris|salary|grondslag)/;
+  const [lo, hi] = SAL_RANGES[interval];
+  const base: number[] = [];
+  const bonus: number[] = [];
+  const ote: number[] = [];
   const tokenRe =
     /(?:€|eur|\$|usd|£|gbp)\s?(\d[\d.,]*\s?k?)|(\d{1,3}(?:[.,]\d{3})+)|(\d{2,3}\s?k)\b/gi;
   let m: RegExpExecArray | null;
+  let count = 0;
   while ((m = tokenRe.exec(text)) !== null) {
     const tok = (m[1] || m[2] || m[3] || "").replace(/\s/g, "");
     const val = parseAmount(tok);
-    if (val != null) candidates.push(val);
-    if (candidates.length > 40) break;
+    if (val == null || val < lo || val > hi) continue;
+    const nextWord = (text.slice(m.index + m[0].length, m.index + m[0].length + 14).toLowerCase().match(/[a-z]{2,}/) || [""])[0];
+    const prevWord = (text.slice(Math.max(0, m.index - 14), m.index).toLowerCase().match(/[a-z]{2,}(?=[^a-z]*$)/) || [""])[0];
+    const tagOf = (w: string) => (OTE_RE.test(w) ? ote : VAR_RE.test(w) ? bonus : BASE_RE.test(w) ? base : null);
+    (tagOf(nextWord) ?? tagOf(prevWord) ?? base).push(val);
+    if (++count > 40) break;
   }
 
-  const [lo, hi] = SAL_RANGES[interval];
-  const plausible = candidates.filter((v) => v >= lo && v <= hi);
-  if (plausible.length === 0) {
+  if (!base.length && !bonus.length && !ote.length) {
     return { min: null, max: null, currency, interval, disclosed: false };
   }
-  plausible.sort((a, b) => a - b);
-  const min = plausible[0];
-  const max = plausible[plausible.length - 1];
+
+  let min: number;
+  let max: number;
+  if (base.length) {
+    base.sort((a, b) => a - b);
+    min = base[0];
+    max = base[base.length - 1];
+    if (ote.length) max = Math.max(max, ...ote); // an explicit OTE figure caps the top
+    else if (bonus.length) max = max + Math.max(...bonus); // base + bonus ≈ OTE
+  } else if (ote.length) {
+    min = Math.min(...ote);
+    max = Math.max(...ote);
+  } else {
+    // only a bonus/commission figure and no base -> not a reliable salary
+    return { min: null, max: null, currency, interval, disclosed: false };
+  }
   return { min, max: max === min ? null : max, currency, interval, disclosed: true };
 }
 

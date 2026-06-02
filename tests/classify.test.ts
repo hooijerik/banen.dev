@@ -136,6 +136,10 @@ eq("usd currency", s3.currency, "USD");
 eq("usd min", s3.min, 120000);
 eq("usd max", s3.max, 160000);
 check("no salary undisclosed", parseSalary("Competitive salary").disclosed === false);
+const s4 = parseSalary("Sales Development | 42k basis + 15k bonus");
+eq("base+bonus min is base", s4.min, 42000);
+eq("base+bonus max is OTE", s4.max, 57000);
+check("lone bonus undisclosed", parseSalary("Inclusief 15k bonus").disclosed === false);
 
 // ---- tools / AI ----
 const tools = detectTools("Ervaring met Salesforce, HubSpot en Clay is een pre.");
