@@ -1,4 +1,4 @@
-// Homerun (Dutch ATS) — best-effort public JSON. Returns [] if unavailable.
+// Homerun (Dutch ATS) - best-effort public JSON. Returns [] if unavailable.
 import { fetchJson, toIso } from "../http";
 import type { RawJob, SeedCompany } from "../../../lib/types";
 

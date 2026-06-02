@@ -18,7 +18,7 @@ export const GUIDES: Guide[] = [
     updated: "juni 2026",
     sections: [
       {
-        p: "Een GTM Engineer (Go-to-Market Engineer) bouwt de geautomatiseerde, data-gedreven infrastructuur achter moderne sales- en marketingteams. Waar een SDR handmatig prospects benadert, bouwt een GTM Engineer systemen die dat op schaal doen — met enrichment, signalen en AI.",
+        p: "Een GTM Engineer (Go-to-Market Engineer) bouwt de geautomatiseerde, data-gedreven infrastructuur achter moderne sales- en marketingteams. Waar een SDR handmatig prospects benadert, bouwt een GTM Engineer systemen die dat op schaal doen - met enrichment, signalen en AI.",
       },
       {
         h: "Wat doet een GTM Engineer?",
@@ -41,7 +41,7 @@ export const GUIDES: Guide[] = [
     updated: "juni 2026",
     sections: [
       {
-        p: "Revenue Operations (RevOps) verbindt sales, marketing en customer success met data, processen en systemen. Het is een van de meest strategische — en best betaalde — carrièrepaden binnen go-to-market.",
+        p: "Revenue Operations (RevOps) verbindt sales, marketing en customer success met data, processen en systemen. Het is een van de meest strategische - en best betaalde - carrièrepaden binnen go-to-market.",
       },
       {
         h: "Junior → Medior: Analyst & Specialist",
@@ -57,7 +57,7 @@ export const GUIDES: Guide[] = [
       },
       {
         h: "Wat verdien je per stap?",
-        p: "Het GTM Salarisrapport toont mediane salarisranges per niveau in Nederland — handig om je volgende stap te benchmarken.",
+        p: "Het GTM Salarisrapport toont mediane salarisranges per niveau in Nederland - handig om je volgende stap te benchmarken.",
       },
     ],
   },

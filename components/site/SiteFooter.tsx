@@ -70,7 +70,7 @@ export function SiteFooter() {
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-sm text-slate-500 sm:flex-row sm:items-center">
           <div className="flex flex-wrap items-center gap-2 text-slate-500">
             <Logo />
-            <span>— {SITE.tagline}.</span>
+            <span>- {SITE.tagline}.</span>
           </div>
           <p className="flex flex-wrap items-center gap-1.5">
             <span>

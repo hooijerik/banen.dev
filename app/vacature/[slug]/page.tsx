@@ -43,7 +43,7 @@ function locationLine(job: JobRow): string {
   const base = job.city || job.province || (job.country === "NL" ? "Nederland" : null) || job.location_raw;
   if (job.work_mode === "remote") return base ? `Remote · ${base}` : "Remote";
   if (job.work_mode === "hybrid") return base ? `Hybride · ${base}` : "Hybride";
-  return base || "—";
+  return base || "-";
 }
 
 export async function generateMetadata({
@@ -57,7 +57,7 @@ export async function generateMetadata({
   const loc = job.city || (job.country === "NL" ? "Nederland" : "Remote");
   const desc = (job.description_text || "").replace(/\s+/g, " ").slice(0, 155);
   return {
-    title: `${job.title} bij ${job.company_name} — ${loc}`,
+    title: `${job.title} bij ${job.company_name} - ${loc}`,
     description: desc || `${job.title} bij ${job.company_name}. Bekijk deze GTM-vacature op ${SITE.name}.`,
     alternates: { canonical: `/vacature/${job.slug}` },
   };

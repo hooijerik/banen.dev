@@ -46,7 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     for (const j of getAllActiveJobSlugs())
       items.push({ url: u(`/vacature/${j.slug}`), lastModified: j.last_seen_at });
   } catch {
-    /* DB may be empty at build time — static paths still emitted */
+    /* DB may be empty at build time - static paths still emitted */
   }
 
   return items;

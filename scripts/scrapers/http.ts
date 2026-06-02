@@ -18,7 +18,7 @@ function maybeDecompress(buf: Buffer, encoding: string | null): Buffer {
       }
     }
   } catch {
-    /* fall through — return raw buffer */
+    /* fall through - return raw buffer */
   }
   // Gzip magic bytes even when the header is missing
   if (buf[0] === 0x1f && buf[1] === 0x8b) {
@@ -28,7 +28,7 @@ function maybeDecompress(buf: Buffer, encoding: string | null): Buffer {
       /* ignore */
     }
   }
-  // Last resort: body doesn't look like text/JSON — try brotli (no magic bytes), then deflate.
+  // Last resort: body doesn't look like text/JSON - try brotli (no magic bytes), then deflate.
   const first = buf[0];
   const looksText =
     first === 0x7b || first === 0x5b || first === 0x20 || first === 0x0a || first === 0x09 || first === 0xef;
@@ -64,7 +64,7 @@ export async function fetchText(url: string, opts: FetchOpts = {}): Promise<stri
       signal: ctrl.signal,
       redirect: "follow",
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText} — ${url}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText} - ${url}`);
     const buf = Buffer.from(await res.arrayBuffer());
     return maybeDecompress(buf, res.headers.get("content-encoding")).toString("utf8");
   } finally {

@@ -33,7 +33,7 @@ async function fav(domain: string, retries = 1): Promise<Fav | null> {
       if (b.byteLength < 100) return null;
       return { hash: crypto.createHash("md5").update(b).digest("hex"), size: b.byteLength };
     } catch {
-      // transient — retry
+      // transient - retry
     }
   }
   return null;
@@ -72,7 +72,7 @@ interface CompanyRow {
 async function main() {
   const db = getDb();
   const globe = await determineGlobe();
-  console.log(globe ? `Globe-signature: ${globe.slice(0, 10)}…` : "Globe onbekend — val terug op grootte-heuristiek.");
+  console.log(globe ? `Globe-signature: ${globe.slice(0, 10)}…` : "Globe onbekend - val terug op grootte-heuristiek.");
 
   const companies = db.prepare("SELECT id, name, website FROM companies").all() as unknown as CompanyRow[];
   const update = db.prepare("UPDATE companies SET logo_url = ? WHERE id = ?");
@@ -89,7 +89,7 @@ async function main() {
       if (w) {
         domains.push(w);
       } else {
-        const brand = String(c.name).split(/[-–—|,(/:]/)[0].trim();
+        const brand = String(c.name).split(/[-\u2013\u2014|,(/:]/)[0].trim();
         const base = slugify(brand).replace(/-/g, "");
         if (base.length >= 2) for (const tld of ["com", "io", "nl"]) domains.push(`${base}.${tld}`);
       }

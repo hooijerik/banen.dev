@@ -31,7 +31,7 @@ export async function fetchJobs(query: string): Promise<RawJob[]> {
         `?keywords=${encodeURIComponent(query)}&location=Netherlands&f_TPR=r604800&start=${page * 25}`;
       html = await fetchText(url, { headers: BROWSER_HEADERS, timeout: 20000 });
     } catch {
-      break; // blocked / rate-limited — keep what we have
+      break; // blocked / rate-limited - keep what we have
     }
 
     const $ = cheerio.load(html);

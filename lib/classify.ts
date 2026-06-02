@@ -99,7 +99,7 @@ function eligibilityFromLocation(loc: string): "nl" | "blocked" | "unknown" {
   const cleaned = loc
     .toLowerCase()
     .replace(/\b(remote|hybrid|fully|first|on-?site|work from home|wfh|op afstand|thuiswerken|thuis|flexible|based)\b/g, " ")
-    .replace(/[(),.\-–—/|:]/g, " ")
+    .replace(/[(),.\-\u2013\u2014/|:]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
   if (!cleaned) return "unknown";
@@ -114,7 +114,7 @@ function eligibilityFromLocation(loc: string): "nl" | "blocked" | "unknown" {
  *  "blocked" = tied to a specific non-NL country/region (US, India, Italy, North America, …)
  *  "unknown" = global / "anywhere" / unspecified ("Remote")
  * The LOCATION field is authoritative; the description is consulted only when the
- * location is generic — and even then a bare "Europe" mention does not override a
+ * location is generic - and even then a bare "Europe" mention does not override a
  * concrete location. The US abbreviation is matched as uppercase `US` to avoid the
  * pronoun "us" ("join us", "about us") that appears in nearly every posting.
  */
@@ -125,7 +125,7 @@ export function remoteEligibility(locationRaw: string, text: string): "nl" | "bl
     if (fromLoc !== "unknown") return fromLoc;
   }
 
-  // Location is generic/empty — consult the description for EXPLICIT signals only.
+  // Location is generic/empty - consult the description for EXPLICIT signals only.
   const blob = text || "";
   if (
     /\b(based|located|eligible to work|authoriz\w+ to work|reside|residing|open to candidates)\b[^.\n]{0,30}\b(netherlands|nederland|europe|european union|emea|the eu|eu)\b/i.test(
@@ -272,7 +272,7 @@ export function detectTools(text: string): string[] {
   const t = norm(text);
   const found = new Set<string>();
   for (const tool of TOOLS) {
-    // Match only on explicit aliases — never the bare display label, which for
+    // Match only on explicit aliases - never the bare display label, which for
     // generic-word tools like "Make" would capture ordinary text ("make sure …").
     if (tool.aliases.some((mm) => boundary(mm).test(t))) found.add(tool.slug);
   }

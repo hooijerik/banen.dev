@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-/** The GTM Banen wordmark — used in both the header and footer so they stay in sync. */
+/** The GTM Banen wordmark - used in both the header and footer so they stay in sync. */
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <Link

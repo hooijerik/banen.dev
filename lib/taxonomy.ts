@@ -1,7 +1,7 @@
 // Taxonomy + keyword dictionaries that drive classification and the UI.
 // Keywords are lowercase. The classifier matches them with word boundaries.
 // CATEGORIES are listed in CLASSIFICATION PRIORITY order (specific roles first,
-// broad commercial roles last) — the first category whose keywords match wins.
+// broad commercial roles last) - the first category whose keywords match wins.
 
 import type { CategorySlug, SenioritySlug, WorkMode } from "./types";
 
@@ -19,7 +19,7 @@ export const CATEGORIES: CategoryDef[] = [
     label: "RevOps & Operations",
     group: "Operations",
     description:
-      "Revenue Operations en het hele GTM-operations spectrum: RevOps, Sales/Marketing/CS Ops, GTM Engineering, CRM-beheer, Deal Desk, Enablement en commerciële strategie — de data, systemen en processen achter voorspelbare omzet.",
+      "Revenue Operations en het hele GTM-operations spectrum: RevOps, Sales/Marketing/CS Ops, GTM Engineering, CRM-beheer, Deal Desk, Enablement en commerciële strategie - de data, systemen en processen achter voorspelbare omzet.",
     keywords: [
       "revenue operations",
       "revops",
@@ -120,7 +120,7 @@ export const CATEGORIES: CategoryDef[] = [
     label: "Customer Success",
     group: "Commercieel",
     description:
-      "Customer Success: onboarding, adoptie, retentie en renewals — het laten slagen en groeien van klanten.",
+      "Customer Success: onboarding, adoptie, retentie en renewals - het laten slagen en groeien van klanten.",
     keywords: [
       "customer success",
       "customer success manager",
@@ -146,7 +146,7 @@ export const CATEGORIES: CategoryDef[] = [
     label: "Marketing",
     group: "Commercieel",
     description:
-      "Marketing: demand generation, growth, content, product marketing en brand — de motor achter pipeline en bekendheid.",
+      "Marketing: demand generation, growth, content, product marketing en brand - de motor achter pipeline en bekendheid.",
     keywords: [
       "marketing",
       "marketing manager",
@@ -190,7 +190,7 @@ export const CATEGORIES: CategoryDef[] = [
     label: "Sales",
     group: "Commercieel",
     description:
-      "Sales: van SDR/BDR tot Account Executive en Sales Engineer — alle rollen die nieuwe en bestaande omzet binnenhalen.",
+      "Sales: van SDR/BDR tot Account Executive en Sales Engineer - alle rollen die nieuwe en bestaande omzet binnenhalen.",
     keywords: [
       "sales",
       "account executive",
@@ -287,7 +287,7 @@ export const HARD_EXCLUDE_KEYWORDS = [
   "docent",
 ];
 
-/** Broad GTM relevance signals — used to decide whether an unclassified role still belongs. */
+/** Broad GTM relevance signals - used to decide whether an unclassified role still belongs. */
 export const GTM_SIGNAL_KEYWORDS = [
   "revenue",
   "go-to-market",
@@ -536,12 +536,12 @@ export function categoryLabel(slug: string): string {
   return CATEGORY_BY_SLUG.get(slug as CategorySlug)?.label ?? "Overig GTM";
 }
 export function seniorityLabel(slug: string | null): string {
-  if (!slug) return "—";
-  return SENIORITY_BY_SLUG.get(slug as SenioritySlug)?.label ?? "—";
+  if (!slug) return "-";
+  return SENIORITY_BY_SLUG.get(slug as SenioritySlug)?.label ?? "-";
 }
 export function workModeLabel(slug: string | null): string {
-  if (!slug) return "—";
-  return WORKMODE_BY_SLUG.get(slug as WorkMode)?.label ?? "—";
+  if (!slug) return "-";
+  return WORKMODE_BY_SLUG.get(slug as WorkMode)?.label ?? "-";
 }
 export function toolLabel(slug: string): string {
   return TOOL_BY_SLUG.get(slug)?.label ?? slug;

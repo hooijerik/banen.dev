@@ -56,7 +56,7 @@ export function SalaryEstimator({
           Geschat jaarsalaris (EUR)
         </div>
         <div className="mt-1 text-2xl font-bold text-brand-800">
-          {est ? `${formatEURShort(est.min)} – ${formatEURShort(est.max)}` : "—"}
+          {est ? `${formatEURShort(est.min)} – ${formatEURShort(est.max)}` : "-"}
         </div>
       </div>
       <p className="mt-2 text-center text-xs text-slate-400">

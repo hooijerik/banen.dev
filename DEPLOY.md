@@ -1,11 +1,11 @@
 # GTM Banen live zetten op gtmbanen.nl (Strato VPS)
 
 Deze app is een **Node.js-server** (Next.js die live uit een SQLite-bestand rendert) + een
-**scraper die op een schema draait**. Dat vraagt om een server waar Node draait — je **Strato VPS**,
+**scraper die op een schema draait**. Dat vraagt om een server waar Node draait - je **Strato VPS**,
 niet de gewone (PHP-)webhosting van Strato.
 
 > Heb je géén VPS? Dan kun je ook een Node-host gebruiken (Render, Railway, Fly.io) en bij Strato
-> alleen de DNS naar die host wijzen. Let op: SQLite heeft een **persistente schijf** nodig — op
+> alleen de DNS naar die host wijzen. Let op: SQLite heeft een **persistente schijf** nodig - op
 > hosts met een "ephemeral" filesystem ben je de database na elke deploy kwijt. Op een VPS speelt
 > dat niet. Onderstaande gids gaat uit van de VPS.
 
@@ -19,7 +19,7 @@ Internet ──► Nginx (443/80, SSL) ──► Next.js  (127.0.0.1:3000, syste
 ```
 
 Omdat de pagina's `force-dynamic` zijn, ziet de site **direct** nieuwe vacatures zodra de scraper
-de database bijwerkt — een rebuild/herstart is alleen nodig bij **code**-wijzigingen.
+de database bijwerkt - een rebuild/herstart is alleen nodig bij **code**-wijzigingen.
 
 ---
 
@@ -39,7 +39,7 @@ DNS-propagatie duurt soms tot een uur. Check met `ping gtmbanen.nl`.
 SSH naar de VPS (Ubuntu/Debian aangenomen) en installeer Node 24+, Nginx en Git:
 
 ```bash
-# Node 24 LTS (node:sqlite werkt vanaf Node 24 zonder flag — wij ontwikkelden op 26)
+# Node 24 LTS (node:sqlite werkt vanaf Node 24 zonder flag - wij ontwikkelden op 26)
 curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
 sudo apt-get install -y nodejs git nginx
 node -v   # moet >= 24 zijn
@@ -144,11 +144,11 @@ sudo systemctl restart gtmbanen
 ## Aandachtspunten
 
 - **Node-versie:** gebruik Node 24+ (dan werkt `node:sqlite` zonder flag). Op Node 22.x zou je
-  `--experimental-sqlite` nodig hebben — upgrade liever.
+  `--experimental-sqlite` nodig hebben - upgrade liever.
 - **Database = één bestand** (`data/gtmbanen.db`). Maak hier een back-up van (bijv. dagelijkse
   `cp`/cron of `sqlite3 .backup`). Het staat in `.gitignore`, dus het wordt niet meegedeployed.
 - **LinkedIn/Indeed vanaf een VPS:** datacenter-IP's worden vaker geblokkeerd dan thuis-IP's. De
-  ATS-feeds (Greenhouse, Lever, Ashby, Recruitee, …) — de betrouwbare kern — werken altijd.
+  ATS-feeds (Greenhouse, Lever, Ashby, Recruitee, …) - de betrouwbare kern - werken altijd.
 - **Firewall:** zorg dat poorten 80 en 443 open staan (`sudo ufw allow 'Nginx Full'`).
 - **E-mailalerts:** zet `RESEND_API_KEY` (resend.com) in `.env` om echte mails te sturen; zonder
   key doet `alerts:send` een dry-run.

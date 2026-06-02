@@ -102,7 +102,7 @@ async function main() {
   const only = args.filter((a) => !a.startsWith("--"));
   const runStart = runStartStamp();
 
-  console.log(`\n🔎 gtmbanen scraper — start ${runStart} UTC\n`);
+  console.log(`\n🔎 gtmbanen scraper - start ${runStart} UTC\n`);
 
   // ---- ATS sources ----
   let seed = loadSeed();
@@ -134,7 +134,7 @@ async function main() {
       if (jobs.length === 0) emptyCompanies.push(`${c.name} (${c.atsType}/${c.atsSlug})`);
     } catch (e) {
       console.log(`  ${c.name.padEnd(16)} [${c.atsType}]  ✗ ${(e as Error).message}`);
-      emptyCompanies.push(`${c.name} (${c.atsType}/${c.atsSlug}) — error`);
+      emptyCompanies.push(`${c.name} (${c.atsType}/${c.atsSlug}) - error`);
     }
   });
 
@@ -144,7 +144,7 @@ async function main() {
 
   // ---- Aggregators (best-effort) ----
   if (!atsOnly && (only.length === 0 || only.includes("aggregators"))) {
-    console.log(`\n  Aggregators (best-effort — see ToS caveats in each adapter):`);
+    console.log(`\n  Aggregators (best-effort - see ToS caveats in each adapter):`);
     for (const [name, adapter] of Object.entries(AGGREGATORS)) {
       const t = zero();
       const errs: string[] = [];

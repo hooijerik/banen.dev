@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Container, Card } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "Voor werkgevers — bereik GTM-talent in Nederland",
+  title: "Voor werkgevers - bereik GTM-talent in Nederland",
   description:
     "Plaats je go-to-market vacature op GTM Banen en bereik gerichte sales-, marketing-, customer success- en RevOps-professionals in Nederland.",
   alternates: { canonical: "/werkgevers" },
@@ -23,7 +23,7 @@ export default function EmployersPage() {
           Bereik de beste <span className="text-brand-600">GTM-professionals</span> van Nederland
         </h1>
         <p className="mt-3 text-lg text-slate-600">
-          GTM Banen is dé niche-vacaturebank voor go-to-market rollen. Geen ruis — alleen
+          GTM Banen is dé niche-vacaturebank voor go-to-market rollen. Geen ruis - alleen
           gemotiveerde sales-, marketing-, CS- en RevOps-talenten.
         </p>
         <Link

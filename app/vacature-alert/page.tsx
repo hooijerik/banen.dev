@@ -3,7 +3,7 @@ import { Container, Card } from "@/components/ui";
 import { AlertForm } from "@/components/AlertForm";
 
 export const metadata: Metadata = {
-  title: "Vacature-alert — nieuwe GTM-vacatures in je inbox",
+  title: "Vacature-alert - nieuwe GTM-vacatures in je inbox",
   description:
     "Stel een gratis vacature-alert in en ontvang nieuwe go-to-market vacatures in Nederland automatisch per e-mail.",
   alternates: { canonical: "/vacature-alert" },

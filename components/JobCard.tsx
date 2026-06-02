@@ -11,7 +11,7 @@ function locationText(job: JobRow): string {
     job.city || job.province || (job.country === "NL" ? "Nederland" : null) || job.location_raw || null;
   if (job.work_mode === "remote") return base ? `Remote · ${base}` : "Remote";
   if (job.work_mode === "hybrid") return base ? `Hybride · ${base}` : "Hybride";
-  return base || "—";
+  return base || "-";
 }
 
 export function JobCard({ job }: { job: JobRow }) {

@@ -1,4 +1,4 @@
-# GTM Banen — Dutch GTM Job Board
+# GTM Banen - Dutch GTM Job Board
 
 A Dutch-language job board for **go-to-market** roles (Sales, Marketing, Customer Success,
 Partnerships, RevOps, GTM Engineering, Sales/Marketing/CS Ops, Enablement, Deal Desk, GTM Strategy,
@@ -8,7 +8,7 @@ ATS feeds and Dutch aggregators, classified automatically, and served through a 
 ## Stack
 
 - **Next.js 16** (App Router, Turbopack) + **React 19** + **Tailwind CSS v4** + TypeScript
-- **`node:sqlite`** (built into Node) — single file `data/gtmbanen.db`, no DB server needed
+- **`node:sqlite`** (built into Node) - single file `data/gtmbanen.db`, no DB server needed
 - Scrapers in TypeScript via **tsx**; HTML parsing with **cheerio**
 
 ## Quick start
@@ -32,10 +32,10 @@ npm run dev           # http://localhost:3000
 
 ## How it works
 
-1. **Scrapers** (`scripts/scrapers/`) pull jobs from ATS APIs — Greenhouse, Lever, Ashby,
-   Recruitee, Homerun, Personio, Workable, SmartRecruiters — for the companies in
+1. **Scrapers** (`scripts/scrapers/`) pull jobs from ATS APIs - Greenhouse, Lever, Ashby,
+   Recruitee, Homerun, Personio, Workable, SmartRecruiters - for the companies in
    `scripts/scrapers/seed/companies.json`, plus best-effort Dutch aggregators (Indeed,
-   Nationale Vacaturebank, Magnet.me — see ToS caveats in each adapter).
+   Nationale Vacaturebank, Magnet.me - see ToS caveats in each adapter).
 2. **Classifier** (`lib/classify.ts`, config in `lib/taxonomy.ts`) assigns each role a GTM
    category, seniority, work mode, location (NL city → province), salary (annualized EUR), tools,
    AI flag and reports-to line. Non-GTM and non-NL roles are dropped.
@@ -44,18 +44,18 @@ npm run dev           # http://localhost:3000
 
 ## Add more companies
 
-Edit `scripts/scrapers/seed/companies.json` — add `{ "name", "atsType", "atsSlug", "website" }`.
+Edit `scripts/scrapers/seed/companies.json` - add `{ "name", "atsType", "atsSlug", "website" }`.
 Find the `atsSlug` from a company's careers URL (e.g. `boards.greenhouse.io/<slug>`,
 `jobs.lever.co/<slug>`, `<slug>.recruitee.com`). Then `npm run scrape`.
 
 ## Deployment
 
 Run the scraper on a schedule (cron / GitHub Action), then serve with `npm run build && npm start`
-(Node server — required because pages render from the local SQLite DB). For email alerts set
+(Node server - required because pages render from the local SQLite DB). For email alerts set
 `RESEND_API_KEY` + `ALERTS_FROM_EMAIL` (see `.env.example`).
 
 ## Notes
 
 - This project lives inside a OneDrive folder; if `node_modules` sync causes build flakiness,
   consider excluding it from OneDrive or moving the repo to a non-synced path.
-- Aggregator scraping is fragile and ToS-sensitive — the ATS feeds are the reliable core.
+- Aggregator scraping is fragile and ToS-sensitive - the ATS feeds are the reliable core.

@@ -1,5 +1,5 @@
 // Shared helper: extract schema.org JobPosting entries from a page's JSON-LD.
-// Most Dutch job boards embed JobPosting structured data for SEO — this is the
+// Most Dutch job boards embed JobPosting structured data for SEO - this is the
 // cleanest, most stable thing to parse (vs. brittle DOM scraping).
 import crypto from "node:crypto";
 import type { AggregatorType, RawJob } from "../../../lib/types";

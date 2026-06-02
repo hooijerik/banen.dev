@@ -137,7 +137,7 @@ export async function generateMetadata({
   const r = resolvePath(path, { categories: [], seniority: [], workMode: [], country: [], cities: [], tools: [] });
   return {
     title: r.heading,
-    description: r.intro || `${r.heading} — vind en vergelijk go-to-market vacatures op GTM Banen.`,
+    description: r.intro || `${r.heading} - vind en vergelijk go-to-market vacatures op GTM Banen.`,
     alternates: { canonical: r.canonical },
   };
 }

@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "GTM-tools & tech stack",
   description:
-    "Welke tools vragen werkgevers van GTM-professionals? Van Salesforce en HubSpot tot Clay, Outreach en dbt — bekijk vacatures per tool.",
+    "Welke tools vragen werkgevers van GTM-professionals? Van Salesforce en HubSpot tot Clay, Outreach en dbt - bekijk vacatures per tool.",
   alternates: { canonical: "/tools" },
 };
 

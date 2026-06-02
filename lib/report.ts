@@ -1,4 +1,4 @@
-// Salary report aggregation — computed from disclosed, EUR-annualized salaries.
+// Salary report aggregation - computed from disclosed, EUR-annualized salaries.
 
 import { getDb } from "./db";
 import { categoryLabel, seniorityLabel, workModeLabel, SENIORITY } from "./taxonomy";

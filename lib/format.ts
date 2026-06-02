@@ -1,4 +1,4 @@
-// Pure formatting/slug helpers — safe in both server and client components.
+// Pure formatting/slug helpers - safe in both server and client components.
 
 import type { SalaryInterval } from "./types";
 
@@ -56,7 +56,7 @@ export function toAnnualEUR(
 
 /** Short EUR label like "€ 72k". */
 export function formatEURShort(value: number | null): string {
-  if (value == null) return "—";
+  if (value == null) return "-";
   if (value >= 1000) return `€ ${Math.round(value / 1000)}k`;
   return `€ ${Math.round(value)}`;
 }

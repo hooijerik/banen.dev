@@ -1,4 +1,4 @@
-// Recruitee public offers API (Dutch ATS — common with NL employers).
+// Recruitee public offers API (Dutch ATS - common with NL employers).
 // https://{slug}.recruitee.com/api/offers/
 import { fetchJson, toIso } from "../http";
 import type { RawJob, SeedCompany } from "../../../lib/types";

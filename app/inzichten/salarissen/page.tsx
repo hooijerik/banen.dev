@@ -9,7 +9,7 @@ import { formatEURShort } from "@/lib/format";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "GTM Salarisrapport 2026 — wat verdienen go-to-market professionals?",
+  title: "GTM Salarisrapport 2026 - wat verdienen go-to-market professionals?",
   description:
     "Salarisdata voor go-to-market rollen in Nederland, uitgesplitst naar functie, niveau, werkvorm en regio. Gebaseerd op echte vacatures.",
   alternates: { canonical: "/inzichten/salarissen" },
@@ -53,7 +53,7 @@ export default async function SalaryReportPage() {
         <Card className="p-5">
           <div className="text-sm text-slate-500">Mediaan totale range</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">
-            {r.overall ? `${formatEURShort(r.overall.min)} – ${formatEURShort(r.overall.max)}` : "—"}
+            {r.overall ? `${formatEURShort(r.overall.min)} – ${formatEURShort(r.overall.max)}` : "-"}
           </div>
         </Card>
         <Card className="p-5">
@@ -64,7 +64,7 @@ export default async function SalaryReportPage() {
         <Card className="p-5">
           <div className="text-sm text-slate-500">AI-premie</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">
-            {r.aiPremium.pct != null ? `${r.aiPremium.pct > 0 ? "+" : ""}${r.aiPremium.pct}%` : "—"}
+            {r.aiPremium.pct != null ? `${r.aiPremium.pct > 0 ? "+" : ""}${r.aiPremium.pct}%` : "-"}
           </div>
           <div className="text-xs text-slate-400">rollen die AI-skills vragen</div>
         </Card>
@@ -127,7 +127,7 @@ export default async function SalaryReportPage() {
           Cijfers zijn gebaseerd op {r.disclosed} actieve GTM-vacatures in Nederland die een
           salarisindicatie vermelden ({r.disclosureRate}% van het totaal). Maandsalarissen worden
           omgerekend naar jaarbasis; niet-EUR bedragen tegen de actuele wisselkoers. Alleen
-          uitsplitsingen met voldoende steekproef worden getoond — let op de aantallen tussen haakjes.
+          uitsplitsingen met voldoende steekproef worden getoond - let op de aantallen tussen haakjes.
           Salarisvermelding is in Nederland lager dan in de VS, dus kleinere segmenten zijn indicatief.
         </p>
       </div>

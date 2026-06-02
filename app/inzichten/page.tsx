@@ -26,7 +26,7 @@ export default function InsightsPage() {
         <h2 className="mt-1 text-2xl font-bold">GTM Salarisrapport 2026</h2>
         <p className="mt-1 max-w-xl text-brand-100">
           Wat verdienen GTM-professionals in Nederland? Uitgesplitst naar functie, niveau, werkvorm
-          en regio — gebaseerd op echte vacatures.
+          en regio - gebaseerd op echte vacatures.
         </p>
         <span className="mt-4 inline-block font-semibold">Bekijk het rapport →</span>
       </Link>
