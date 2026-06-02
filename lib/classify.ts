@@ -318,20 +318,14 @@ export function detectTools(text: string): string[] {
 }
 
 // --- AI flag ---
-// "Requires AI" rather than "mentions AI": true if the title signals AI, or the
-// description uses at least two distinct strong AI signals (avoids boilerplate).
-const AI_STRONG =
-  /\bai[- ](powered|driven|native|first|agent|agents|tools|automation)|generative ai|gen ?ai|prompt engineering|\bllm(s)?\b|large language model|machine learning|artificial intelligence/gi;
-
-export function detectAI(title: string, text: string): boolean {
-  if (
-    /(?<![a-z0-9])(ai|ml|llm|gpt|genai)(?![a-z0-9])/i.test(title) ||
-    /generative ai|machine learning|artificial intelligence/i.test(title)
-  ) {
-    return true;
-  }
-  const m = text.match(AI_STRONG);
-  return m ? new Set(m.map((s) => s.toLowerCase())).size >= 2 : false;
+// An "AI role" is signalled by the JOB TITLE. The description is deliberately ignored:
+// at AI companies the boilerplate ("AI-powered platform", "generative AI", "LLMs") appears
+// in every posting, which would tag plain Sales/CS/BD roles as AI and pollute the filter.
+export function detectAI(title: string, _text?: string): boolean {
+  return (
+    /(?<![a-z0-9])(ai|ml|llm|gpt|genai|gen-ai)(?![a-z0-9])/i.test(title) ||
+    /generative ai|machine learning|artificial intelligence|prompt eng/i.test(title)
+  );
 }
 
 // --- reports-to ---

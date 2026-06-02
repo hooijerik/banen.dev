@@ -148,10 +148,11 @@ check("tool hubspot", tools.includes("hubspot"));
 check("tool clay", tools.includes("clay"));
 check("ai in title", detectAI("AI Solutions Engineer", "") === true);
 check(
-  "ai via 2 strong signals",
+  "company AI boilerplate does not flag a non-AI title",
   detectAI("Sales Manager", "We are an AI-powered company that uses generative AI and LLMs daily") ===
-    true,
+    false,
 );
+check("ml in title flags", detectAI("Machine Learning Sales Engineer", "") === true);
 check("no ai on single incidental mention", detectAI("Sales Manager", "we sometimes use AI tools") === false);
 check("no false ai in email", detectAI("Email Marketing Manager", "Manage the email program") === false);
 
