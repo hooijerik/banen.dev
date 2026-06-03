@@ -270,6 +270,9 @@ export function parseSalary(text: string): ParsedSalary {
     /salar|compensa|vergoeding|\bloon\b|\bwage\b|\bpay\b|package|\bote\b|on[ -]?target|\bbasis\b|\bbase\b|bruto|netto|per\s?(?:jaar|maand|year|month|annum|week|uur|hour)|p\/m\b|\/(?:jaar|maand|year|month|yr|mo)\b|verdien|\bearn|\bbonus|commiss|\bbieden\b|\boffer|\btot\b|vanaf|indicat/i;
   const NON_SALARY =
     /^[\s+>~–—-]*(employees?|medewerkers?|fte|users?|gebruikers?|customers?|klanten|clients?|companies|bedrijven|businesses|devices?|apparaten|specialists?|people|persons?|seats?|leads?|accounts?|members?|stores?|shops?|locations?|countries|landen|languages|talen|integrations?|partners?|projects?|downloads?|reviews?|stars?|revenue|omzet|arr|mrr|targets?|quota|funding|valuation|budget|pipeline|deals?)\b/i;
+  // Business-metric words just BEFORE a number -> it's a deal/quota/revenue figure, not pay.
+  const DEAL_CTX =
+    /\b(deals?|values?|valued|acv|tcv|contracts?|quotas?|revenue|omzet|arr|mrr|funding|raised|valuation|pipeline|portfolio|turnover|savings?|discount)\b/i;
   const [lo, hi] = SAL_RANGES[interval];
   const titleEnd = text.indexOf("\n") >= 0 ? text.indexOf("\n") : text.length;
   const base: number[] = [];
@@ -288,6 +291,7 @@ export function parseSalary(text: string): ParsedSalary {
     const end = m.index + m[0].length;
     const after = text.slice(end, end + 18).split("\n")[0]; // same line only
     if (NON_SALARY.test(after)) continue; // "30,000 users", "120k quota", "2m ARR", ...
+    if (DEAL_CTX.test(text.slice(Math.max(0, m.index - 24), m.index))) continue; // "deal value of €150k"
     if (!isCurrency) {
       // a bare number is salary only in the title (titles advertise pay) or near a salary cue
       const inTitle = m.index < titleEnd;

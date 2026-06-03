@@ -10,6 +10,7 @@
     "scrape": "tsx scripts/scrapers/run.ts",
     "reclassify": "tsx scripts/reclassify.ts",
     "fetch-logos": "tsx scripts/fetch-logos.ts",
+    "salary-audit": "tsx scripts/salary-audit.ts",
     "test": "tsx tests/classify.test.ts",
     "alerts:send": "tsx scripts/send-alerts.ts"
   },

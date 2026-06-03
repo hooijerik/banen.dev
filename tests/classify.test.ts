@@ -146,6 +146,8 @@ eq("range max skips 401k/headcount", s7.max, 145000);
 check("company count is not salary", parseSalary("More than 500,000 companies use our product.").disclosed === false);
 check("user/device counts are not salary", parseSalary("Supporting 30,000 users and 100,000 devices globally.").disclosed === false);
 check("quota figure is not salary", parseSalary("You will own a €120k quota.").disclosed === false);
+check("deal value is not salary", parseSalary("Average deal value of €150K, closing deals of €100K+.").disclosed === false);
+check("deal size is not salary", parseSalary("You handle an average deal size of $100k.").disclosed === false);
 
 // ---- tools / AI ----
 const tools = detectTools("Ervaring met Salesforce, HubSpot en Clay is een pre.");
