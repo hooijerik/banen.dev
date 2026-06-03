@@ -54,8 +54,3 @@ Run the scraper on a schedule (cron / GitHub Action), then serve with `npm run b
 (Node server - required because pages render from the local SQLite DB). For email alerts set
 `RESEND_API_KEY` + `ALERTS_FROM_EMAIL` (see `.env.example`).
 
-## Notes
-
-- This project lives inside a OneDrive folder; if `node_modules` sync causes build flakiness,
-  consider excluding it from OneDrive or moving the repo to a non-synced path.
-- Aggregator scraping is fragile and ToS-sensitive - the ATS feeds are the reliable core.
