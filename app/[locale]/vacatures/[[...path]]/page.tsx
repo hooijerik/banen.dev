@@ -164,6 +164,9 @@ export default async function BrowsePage({
   const dict = await getDictionary(locale);
   const facets = getFacets();
   const r = resolvePath(path, facets, locale, dict);
+  // Sidebar counts must match the results: on the English site, scope facet counts to
+  // English-text jobs. Keep the full set above for path/label resolution.
+  const facetsForSidebar = locale === "en" ? getFacets("en") : facets;
 
   const filters: JobFilters = { ...r.filter, ...filtersFromQuery(sp) };
   if (locale === "en") filters.lang = "en"; // English mode shows only English-text jobs
@@ -213,11 +216,11 @@ export default async function BrowsePage({
           <details className="rounded-xl border border-slate-200 bg-white p-4 lg:hidden">
             <summary className="cursor-pointer font-semibold text-slate-900">{dict.filters.title}</summary>
             <div className="mt-4">
-              <FilterSidebar facets={facets} active={active} locale={locale} dict={dict} />
+              <FilterSidebar facets={facetsForSidebar} active={active} locale={locale} dict={dict} />
             </div>
           </details>
           <aside className="sticky top-20 hidden rounded-xl border border-slate-200 bg-white p-4 lg:block">
-            <FilterSidebar facets={facets} active={active} locale={locale} dict={dict} />
+            <FilterSidebar facets={facetsForSidebar} active={active} locale={locale} dict={dict} />
           </aside>
         </div>
 

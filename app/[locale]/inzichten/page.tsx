@@ -54,7 +54,7 @@ export default async function InsightsPage({ params }: { params: Promise<{ local
             <p className="mt-1 text-sm text-slate-500">{t.fromBlogSub}</p>
           </div>
           <a
-            href={GTMAI_BLOG_URL}
+            href={GTMAI_BLOG_URL[locale]}
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 text-sm font-medium text-brand-700 hover:text-brand-800"

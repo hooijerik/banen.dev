@@ -129,7 +129,10 @@ export function guideSlugs(): string[] {
   return GUIDES.nl.map((g) => g.slug);
 }
 
-export const GTMAI_BLOG_URL = "https://gtmai.nl/blog";
+export const GTMAI_BLOG_URL: Record<Locale, string> = {
+  nl: "https://gtmai.nl/blog",
+  en: "https://gtmai.nl/en/blog",
+};
 
 export interface ExternalPost {
   title: string;
@@ -150,13 +153,13 @@ export const GTMAI_POSTS: Record<Locale, ExternalPost[]> = {
     { title: "GTM Engineering voor scale-ups in Nederland", href: "https://gtmai.nl/blog/gtm-engineering-scaleups-nederland", dek: "Wat werkt voor Nederlandse scale-ups." },
   ],
   en: [
-    { title: "What is GTM Engineering?", href: "https://gtmai.nl/blog/wat-is-gtm-engineering", dek: "The role redefining B2B growth." },
-    { title: "The state of GTM Engineering in the Benelux (2026)", href: "https://gtmai.nl/blog/stand-van-gtm-engineering-benelux", dek: "How far along are the Dutch and Belgian markets?" },
-    { title: "Hiring your first GTM Engineer", href: "https://gtmai.nl/blog/eerste-gtm-engineer-aannemen", dek: "What to look for in the first hire." },
-    { title: "GTM Engineering and RevOps: better together", href: "https://gtmai.nl/blog/gtm-engineering-en-revops-samen", dek: "How the two disciplines reinforce each other." },
-    { title: "RevOps: marketing, sales and service as one team", href: "https://gtmai.nl/blog/revops-marketing-sales-service", dek: "Why RevOps makes the difference in growth." },
-    { title: "KPIs for your GTM Engineering team", href: "https://gtmai.nl/blog/kpis-gtm-engineering-team", dek: "What should you really steer a GTM team on?" },
-    { title: "The modern GTM stack, dissected", href: "https://gtmai.nl/blog/moderne-gtm-stack-ontleed", dek: "The tools behind modern go-to-market." },
-    { title: "GTM Engineering for scale-ups", href: "https://gtmai.nl/blog/gtm-engineering-scaleups-nederland", dek: "What works for fast-growing companies." },
+    { title: "What is GTM Engineering?", href: "https://gtmai.nl/en/blog/what-is-gtm-engineering", dek: "The role redefining B2B growth." },
+    { title: "The state of GTM Engineering in the Benelux (2026)", href: "https://gtmai.nl/en/blog/state-of-gtm-engineering-benelux", dek: "How far along are the Dutch and Belgian markets?" },
+    { title: "Hiring your first GTM Engineer", href: "https://gtmai.nl/en/blog/hiring-your-first-gtm-engineer", dek: "What to look for in the first hire." },
+    { title: "GTM Engineering and RevOps: better together", href: "https://gtmai.nl/en/blog/gtm-engineering-and-revops-together", dek: "How the two disciplines reinforce each other." },
+    { title: "RevOps: marketing, sales and service as one team", href: "https://gtmai.nl/en/blog/revenue-operations-gtm-alignment", dek: "Why RevOps makes the difference in growth." },
+    { title: "KPIs for your GTM Engineering team", href: "https://gtmai.nl/en/blog/kpis-for-gtm-engineering-team", dek: "What should you really steer a GTM team on?" },
+    { title: "The modern GTM stack, dissected", href: "https://gtmai.nl/en/blog/modern-gtm-stack-explained", dek: "The tools behind modern go-to-market." },
+    { title: "GTM Engineering for scale-ups", href: "https://gtmai.nl/en/blog/gtm-engineering-scaleups-netherlands", dek: "What works for fast-growing companies." },
   ],
 };
