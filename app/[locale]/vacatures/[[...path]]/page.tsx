@@ -209,7 +209,7 @@ export default async function BrowsePage({
 
       <div className="mt-6 grid gap-8 lg:grid-cols-4">
         {/* Filters */}
-        <div className="lg:col-span-1">
+        <div className="min-w-0 lg:col-span-1">
           <details className="rounded-xl border border-slate-200 bg-white p-4 lg:hidden">
             <summary className="cursor-pointer font-semibold text-slate-900">{dict.filters.title}</summary>
             <div className="mt-4">
@@ -222,7 +222,7 @@ export default async function BrowsePage({
         </div>
 
         {/* Results */}
-        <div className="lg:col-span-3">
+        <div className="min-w-0 lg:col-span-3">
           <div className="mb-4 flex items-center justify-between gap-3">
             <span className="text-sm text-slate-500">{dict.browse.results(total)}</span>
             <div className="flex items-center gap-1 text-sm">

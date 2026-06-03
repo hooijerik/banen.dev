@@ -46,3 +46,9 @@ body {
 .prose-job a { color: var(--color-brand-700); text-decoration: underline; }
 .prose-job strong { font-weight: 600; }
 .prose-job br { content: ""; }
+/* Scraped HTML is unpredictable: keep long URLs, wide media and tables inside the column
+   so they never push the page wider than the mobile viewport. */
+.prose-job { overflow-wrap: anywhere; word-break: break-word; }
+.prose-job :where(img, video, iframe) { max-width: 100%; height: auto; }
+.prose-job :where(pre, code) { white-space: pre-wrap; overflow-wrap: anywhere; }
+.prose-job :where(table) { display: block; max-width: 100%; overflow-x: auto; }

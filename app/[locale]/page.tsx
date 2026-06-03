@@ -89,7 +89,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       {/* Latest jobs + sidebar */}
       <Container className="py-4">
         <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+          <div className="min-w-0 lg:col-span-2">
             <SectionHeading title={t.latest} href={L("/vacatures")} linkLabel={t.viewAll} />
             <div className="space-y-3">
               {latest.map((job) => (
@@ -98,7 +98,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
             </div>
           </div>
 
-          <aside className="space-y-8">
+          <aside className="min-w-0 space-y-8">
             <div>
               <SectionHeading title={t.popularLocations} href={L("/locaties")} linkLabel={dict.common.all} />
               <div className="flex flex-wrap gap-2">

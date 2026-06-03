@@ -49,7 +49,7 @@ export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="text-base font-semibold leading-snug text-slate-900">
+              <h3 className="text-base font-semibold leading-snug text-slate-900 break-words">
                 <Link href={L(jobUrl(job.slug))} className="hover:text-brand-700">
                   {job.title}
                 </Link>

@@ -153,12 +153,12 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
       />
 
       <div className="mt-4 grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <Card className="p-6">
             <div className="flex gap-4">
               <CompanyLogo src={job.company_logo} name={job.company_name} size={56} />
               <div className="min-w-0">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900">{job.title}</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 break-words">{job.title}</h1>
                 <div className="mt-1 text-slate-600">
                   <Link href={L(companyUrl(job.company_slug))} className="font-medium hover:text-brand-700">
                     {job.company_name}
@@ -198,11 +198,11 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
             <h2 className="text-lg font-bold text-slate-900">{dict.job.description}</h2>
             {descHtml ? (
               <div
-                className="prose-job mt-3 text-[15px] text-slate-700"
+                className="prose-job mt-3 break-words text-[15px] text-slate-700"
                 dangerouslySetInnerHTML={{ __html: descHtml }}
               />
             ) : job.description_text ? (
-              <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed text-slate-700">
+              <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-slate-700">
                 {job.description_text}
               </p>
             ) : (
@@ -229,7 +229,7 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
         </div>
 
         {/* Sidebar */}
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-6">
           <Card className="p-5">
             <h2 className="text-sm font-semibold text-slate-900">{dict.job.aboutRole}</h2>
             <dl className="mt-3 space-y-2.5 text-sm">
