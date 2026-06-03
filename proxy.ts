@@ -1,32 +1,27 @@
-// Locale routing (Next 16 `proxy` convention). Redirects non-prefixed paths to
-// /{locale}/… based on the NEXT_LOCALE cookie, then Accept-Language, else Dutch.
+// Locale routing (Next 16 `proxy` convention). Dutch lives at the ROOT (no prefix);
+// English lives under /en. Internally everything maps to the app/[locale] tree.
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { LOCALES, DEFAULT_LOCALE, LOCALE_COOKIE } from "@/lib/i18n/config";
-
-function pickLocale(req: NextRequest): string {
-  const cookie = req.cookies.get(LOCALE_COOKIE)?.value;
-  if (cookie === "nl" || cookie === "en") return cookie;
-  const first = (req.headers.get("accept-language") || "").toLowerCase().split(",")[0] || "";
-  if (first.startsWith("en")) return "en";
-  return DEFAULT_LOCALE;
-}
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const current = LOCALES.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`));
-  if (current) {
-    const res = NextResponse.next();
-    if (req.cookies.get(LOCALE_COOKIE)?.value !== current) {
-      res.cookies.set(LOCALE_COOKIE, current, { path: "/", maxAge: 31536000, sameSite: "lax" });
-    }
-    return res;
+
+  // English: served from the /en prefix as-is (params.locale = "en").
+  if (pathname === "/en" || pathname.startsWith("/en/")) {
+    return NextResponse.next();
   }
-  const locale = pickLocale(req);
-  req.nextUrl.pathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
-  const res = NextResponse.redirect(req.nextUrl);
-  res.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: 31536000, sameSite: "lax" });
-  return res;
+
+  // The Dutch site is canonical at the root, so an explicit /nl/* redirects to the bare path.
+  if (pathname === "/nl" || pathname.startsWith("/nl/")) {
+    const url = req.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/nl(?=\/|$)/, "") || "/";
+    return NextResponse.redirect(url, 308);
+  }
+
+  // Everything else is Dutch at the root -> rewrite to the internal /nl segment (URL stays bare).
+  const url = req.nextUrl.clone();
+  url.pathname = pathname === "/" ? "/nl" : `/nl${pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {

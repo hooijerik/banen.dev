@@ -1,9 +1,12 @@
 // URL helpers shared across the app. Dutch query-param names.
 import type { Locale } from "./i18n/config";
 
-/** Prefix an app path with the locale segment. "/" -> "/nl". */
-export const withLocale = (locale: Locale, path: string) =>
-  path === "/" || path === "" ? `/${locale}` : `/${locale}${path}`;
+/** Localize an app path: Dutch stays at the root (no prefix), English gets the /en prefix. */
+export const withLocale = (locale: Locale, path: string) => {
+  const p = path === "" ? "/" : path;
+  if (locale === "en") return p === "/" ? "/en" : `/en${p}`;
+  return p;
+};
 
 export const PARAMS = {
   category: "categorie",

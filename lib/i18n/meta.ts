@@ -1,9 +1,11 @@
 import { SITE } from "../site";
 import { type Locale } from "./config";
 
-/** Prefix an app path with the locale segment. "/" -> "/nl". */
+/** Localize an app path: Dutch at the root (no prefix), English under /en. */
 export function localePath(locale: Locale, path: string): string {
-  return path === "/" || path === "" ? `/${locale}` : `/${locale}${path}`;
+  const p = path === "" ? "/" : path;
+  if (locale === "en") return p === "/" ? "/en" : `/en${p}`;
+  return p;
 }
 
 /**

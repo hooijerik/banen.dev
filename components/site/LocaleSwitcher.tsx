@@ -5,13 +5,13 @@ import { Suspense } from "react";
 import type { Locale } from "@/lib/i18n/config";
 
 function Switcher({ locale, label }: { locale: Locale; label: string }) {
-  const pathname = usePathname() || `/${locale}`;
+  const pathname = usePathname() || "/";
   const sp = useSearchParams();
   const other: Locale = locale === "nl" ? "en" : "nl";
-  const parts = pathname.split("/");
-  parts[1] = other; // parts[0] is "" (leading slash)
+  const bare = pathname.replace(/^\/en(?=\/|$)/, "") || "/"; // strip /en if present
+  const path = other === "en" ? (bare === "/" ? "/en" : `/en${bare}`) : bare;
   const qs = sp.toString();
-  const href = (parts.join("/") || `/${other}`) + (qs ? `?${qs}` : "");
+  const href = path + (qs ? `?${qs}` : "");
   return (
     <Link
       href={href}
