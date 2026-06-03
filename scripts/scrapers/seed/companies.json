@@ -322,5 +322,65 @@
     "atsType": "recruitee",
     "atsSlug": "donna",
     "website": "askdonna.com"
+  },
+  {
+    "name": "Intigriti",
+    "atsType": "recruitee",
+    "atsSlug": "intigriti",
+    "website": "intigriti.com"
+  },
+  {
+    "name": "Lansweeper",
+    "atsType": "recruitee",
+    "atsSlug": "lansweeper",
+    "website": "lansweeper.com"
+  },
+  {
+    "name": "CM.com",
+    "atsType": "recruitee",
+    "atsSlug": "cmcom",
+    "website": "cm.com"
+  },
+  {
+    "name": "DataCamp",
+    "atsType": "greenhouse",
+    "atsSlug": "datacamp",
+    "website": "datacamp.com"
+  },
+  {
+    "name": "Incentro",
+    "atsType": "recruitee",
+    "atsSlug": "incentro",
+    "website": "incentro.com"
+  },
+  {
+    "name": "GoSpooky",
+    "atsType": "recruitee",
+    "atsSlug": "gospooky",
+    "website": "gospooky.com"
+  },
+  {
+    "name": "GoodHabitz",
+    "atsType": "workable",
+    "atsSlug": "goodhabitz",
+    "website": "goodhabitz.com"
+  },
+  {
+    "name": "Teamleader",
+    "atsType": "recruitee",
+    "atsSlug": "teamleader1",
+    "website": "teamleader.eu"
+  },
+  {
+    "name": "Thinkwise",
+    "atsType": "recruitee",
+    "atsSlug": "thinkwise",
+    "website": "thinkwisesoftware.com"
+  },
+  {
+    "name": "Aikido Security",
+    "atsType": "recruitee",
+    "atsSlug": "aikidosecurity",
+    "website": "aikido.dev"
   }
 ]

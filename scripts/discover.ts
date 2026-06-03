@@ -91,14 +91,14 @@ const CANDIDATES: Candidate[] = [
   { name: "Recharge", slug: "rechargehq", website: "rechargehq.com" },
   // ---- Dutch-speaking Belgium (Flanders) ----
   { name: "Showpad", website: "showpad.com" },
-  { name: "Teamleader", website: "teamleader.eu" },
+  { name: "Teamleader", slug: "teamleader1", website: "teamleader.eu" },
   { name: "Collibra", website: "collibra.com" },
   { name: "Deliverect", website: "deliverect.com" },
   { name: "Intigriti", website: "intigriti.com" },
   { name: "Silverfin", website: "silverfin.com" },
   { name: "Lansweeper", website: "lansweeper.com" },
   { name: "Odoo", website: "odoo.com" },
-  { name: "Aikido Security", slug: "aikido", website: "aikido.dev" },
+  { name: "Aikido Security", slug: "aikidosecurity", website: "aikido.dev" },
   { name: "Henchman", website: "henchman.io" },
   { name: "Rydoo", website: "rydoo.com" },
   { name: "In The Pocket", slug: "inthepocket", website: "inthepocket.com" },
@@ -115,6 +115,54 @@ const CANDIDATES: Candidate[] = [
   { name: "Guardsquare", website: "guardsquare.com" },
   { name: "THEO Technologies", slug: "theoplayer", website: "theoplayer.com" },
   { name: "Lighthouse", slug: "mylighthouse", website: "mylighthouse.com" },
+
+  // ---- Regional gap-fill: NL outside the Randstad ----
+  // Brabant (Eindhoven / Tilburg / Breda / Den Bosch / Helmond)
+  { name: "GoodHabitz", website: "goodhabitz.com" }, // Eindhoven
+  { name: "CM.com", slug: "cmcom", website: "cm.com" }, // Breda
+  { name: "Cloudsuite", website: "cloudsuite.com" }, // Eindhoven
+  { name: "Lightyear", website: "lightyear.one" }, // Helmond
+  { name: "MyParcel", slug: "myparcel", website: "myparcel.nl" }, // Eindhoven
+  { name: "Owlin", website: "owlin.com" },
+  { name: "Bagelman" , slug: "bagelman", website: "bagels.nl" },
+  // North (Groningen / Friesland / Drenthe)
+  { name: "Klippa", website: "klippa.com" }, // Groningen
+  { name: "Voys", website: "voys.nl" }, // Groningen
+  { name: "Paddel", slug: "paddel", website: "paddel.nl" },
+  { name: "Founda Health", slug: "foundahealth", website: "founda.com" },
+  // East (Twente / Overijssel / Gelderland)
+  { name: "Nedap", website: "nedap.com" }, // Groenlo
+  { name: "Topicus", website: "topicus.nl" }, // Deventer
+  { name: "Incentro", website: "incentro.com" }, // Arnhem
+  { name: "Demcon", website: "demcon.com" }, // Enschede
+  { name: "Bizzdesign", website: "bizzdesign.com" }, // Enschede
+  { name: "GoSpooky", website: "gospooky.com" }, // Arnhem
+  { name: "Roseman Labs", slug: "rosemanlabs", website: "rosemanlabs.com" },
+  { name: "Thuisbezorgd", slug: "justeattakeaway", website: "thuisbezorgd.nl" }, // Enschede HQ
+  // Limburg / South
+  { name: "Boels Rental", slug: "boels", website: "boels.com" }, // Sittard
+  { name: "Mediaan", website: "mediaan.com" }, // Heerlen
+
+  // ---- Regional gap-fill: Dutch-speaking Belgium beyond Ghent ----
+  // Leuven / Vlaams-Brabant
+  { name: "DataCamp", website: "datacamp.com" }, // Leuven
+  { name: "icometrix", website: "icometrix.com" }, // Leuven
+  { name: "Bingli", website: "bingli.com" },
+  // Antwerp
+  { name: "Sentiance", website: "sentiance.com" },
+  { name: "Panenco", website: "panenco.com" },
+  { name: "Nallian", website: "nallian.com" },
+  { name: "Spectre", slug: "spectre", website: "spectre.be" },
+  { name: "Bothive", website: "bothive.be" },
+  // Hasselt / Limburg (BE)
+  { name: "Cegeka", website: "cegeka.com" },
+  { name: "The Glue", slug: "theglue", website: "theglue.com" },
+  // Ghent / West-Vlaanderen
+  { name: "Hello Customer", slug: "hellocustomer", website: "hellocustomer.com" },
+  { name: "Bricsys", website: "bricsys.com" },
+  { name: "Tinkerlist", website: "tinkerlist.tv" },
+  { name: "Tengu", website: "tengu.io" },
+  { name: "Cloudar", website: "cloudar.be" },
 ];
 
 async function mapLimit<T>(items: T[], limit: number, fn: (item: T) => Promise<void>): Promise<void> {
