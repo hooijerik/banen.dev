@@ -35,7 +35,7 @@ export default async function HomePage() {
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
               Sales, Marketing, Customer Success, RevOps en alle andere GTM-rollen bij de beste
-              bedrijven in Nederland en Vlaanderen. Dagelijks ververst.
+              bedrijven. Dagelijks ververst.
             </p>
 
             <form action="/vacatures" method="get" className="mx-auto mt-7 flex max-w-xl gap-2">
