@@ -151,6 +151,9 @@ export const nl = {
       "Wat verdienen GTM-professionals? Uitgesplitst naar functie, niveau, werkvorm en regio - gebaseerd op echte vacatures.",
     viewReport: "Bekijk het rapport →",
     fromBlog: "Van het GTM AI-blog",
+    fromBlogSub: "Diepgang over GTM-rollen, RevOps en de markt.",
+    allArticles: "Alle artikelen ↗",
+    readMore: "Lees verder →",
     readOn: "Lees op gtmai.nl ↗",
     updated: (d: string) => `Bijgewerkt ${d}`,
     guideNotFound: "Gids niet gevonden",
@@ -162,9 +165,12 @@ export const nl = {
     title: "GTM Salarisrapport 2026",
     intro: (n: number) =>
       `Wat verdienen go-to-market professionals? Gebaseerd op ${n} vacatures met een openbaar salaris.`,
+    updated: "Bijgewerkt juni 2026",
     medianRange: "Mediaan totale range",
     disclosePct: "Vermeldt salaris",
+    discloseOf: (d: number, t: number) => `${d} van ${t} vacatures`,
     aiPremium: "AI-premie",
+    aiPremiumSub: "rollen die AI-skills vragen",
     byCategory: "Per functie",
     byCategorySub: "Mediane jaarsalarissen per GTM-functie.",
     byLevel: "Per niveau",
@@ -181,8 +187,8 @@ export const nl = {
     withAi: "Met AI",
     withoutAi: "Zonder AI",
     methodology: "Methodologie",
-    methodologyBody:
-      "Cijfers zijn gebaseerd op vacatures met een openbaar vermeld salaris, omgerekend naar jaarbasis in euro's. Kleine steekproeven worden niet getoond.",
+    methodologyBody: (disclosed: number, rate: number) =>
+      `Cijfers zijn gebaseerd op ${disclosed} actieve GTM-vacatures die een salarisindicatie vermelden (${rate}% van het totaal), omgerekend naar jaarbasis in euro's. Maandsalarissen worden naar jaarbasis omgerekend; niet-EUR bedragen tegen de actuele wisselkoers. Alleen uitsplitsingen met voldoende steekproef worden getoond - let op de aantallen tussen haakjes. Salarisvermelding ligt in Nederland lager dan in de VS, dus kleinere segmenten zijn indicatief.`,
     tooLittleData: "Nog te weinig data.",
   },
   estimator: {

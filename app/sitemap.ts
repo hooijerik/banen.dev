@@ -7,7 +7,8 @@ import {
   getFacets,
   getProvinceFacets,
 } from "@/lib/queries";
-import { GUIDES } from "@/lib/guides";
+import { guideSlugs } from "@/lib/guides";
+import { withLocale } from "@/lib/urls";
 import { slugify } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = SITE.url;
   const u = (p: string) => `${base}${p}`;
   const items: MetadataRoute.Sitemap = [];
+
+  // Emit each path once per locale, cross-linked via hreflang alternates.
+  const add = (path: string, extra?: Partial<MetadataRoute.Sitemap[number]>) => {
+    const nl = u(withLocale("nl", path));
+    const en = u(withLocale("en", path));
+    const languages = { "nl-NL": nl, "en-US": en, "x-default": nl };
+    items.push({ url: nl, alternates: { languages }, ...extra });
+    items.push({ url: en, alternates: { languages }, ...extra });
+  };
 
   const staticPaths = [
     "/",
@@ -30,21 +40,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/plaats-vacature",
     "/vacature-alert",
   ];
-  for (const p of staticPaths) items.push({ url: u(p), changeFrequency: "daily" });
+  for (const p of staticPaths) add(p, { changeFrequency: "daily" });
 
-  for (const c of CATEGORIES) items.push({ url: u(`/vacatures/categorie/${c.slug}`) });
-  for (const s of SENIORITY) items.push({ url: u(`/vacatures/niveau/${s.slug}`) });
-  for (const g of GUIDES) items.push({ url: u(`/inzichten/${g.slug}`) });
+  for (const c of CATEGORIES) add(`/vacatures/categorie/${c.slug}`);
+  for (const s of SENIORITY) add(`/vacatures/niveau/${s.slug}`);
+  for (const slug of guideSlugs()) add(`/inzichten/${slug}`);
 
   try {
     const facets = getFacets();
-    for (const city of facets.cities) items.push({ url: u(`/vacatures/locatie/${city.key}`) });
-    for (const p of getProvinceFacets())
-      items.push({ url: u(`/vacatures/locatie/${slugify(p.province)}`) });
-    for (const t of facets.tools) items.push({ url: u(`/tools/${t.key}`) });
-    for (const c of getActiveCompanySlugs()) items.push({ url: u(`/bedrijven/${c}`) });
+    for (const city of facets.cities) add(`/vacatures/locatie/${city.key}`);
+    for (const p of getProvinceFacets()) add(`/vacatures/locatie/${slugify(p.province)}`);
+    for (const t of facets.tools) add(`/tools/${t.key}`);
+    for (const c of getActiveCompanySlugs()) add(`/bedrijven/${c}`);
     for (const j of getAllActiveJobSlugs())
-      items.push({ url: u(`/vacature/${j.slug}`), lastModified: j.last_seen_at });
+      add(`/vacature/${j.slug}`, { lastModified: j.last_seen_at });
   } catch {
     /* DB may be empty at build time - static paths still emitted */
   }

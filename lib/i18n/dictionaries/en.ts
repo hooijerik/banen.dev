@@ -151,6 +151,9 @@ export const en: Dict = {
       "What do GTM professionals earn? Broken down by role, level, work mode and region - based on real jobs.",
     viewReport: "View the report →",
     fromBlog: "From the GTM AI blog",
+    fromBlogSub: "In-depth on GTM roles, RevOps and the market.",
+    allArticles: "All articles ↗",
+    readMore: "Read more →",
     readOn: "Read on gtmai.nl ↗",
     updated: (d: string) => `Updated ${d}`,
     guideNotFound: "Guide not found",
@@ -162,9 +165,12 @@ export const en: Dict = {
     title: "GTM Salary Report 2026",
     intro: (n: number) =>
       `What do go-to-market professionals earn? Based on ${n} jobs that disclose pay.`,
+    updated: "Updated June 2026",
     medianRange: "Median total range",
     disclosePct: "Disclose pay",
+    discloseOf: (d: number, t: number) => `${d} of ${t} jobs`,
     aiPremium: "AI premium",
+    aiPremiumSub: "roles requiring AI skills",
     byCategory: "By role",
     byCategorySub: "Median annual salaries per GTM role.",
     byLevel: "By level",
@@ -181,8 +187,8 @@ export const en: Dict = {
     withAi: "With AI",
     withoutAi: "Without AI",
     methodology: "Methodology",
-    methodologyBody:
-      "Figures are based on jobs with a publicly disclosed salary, converted to an annual amount in euros. Small samples are not shown.",
+    methodologyBody: (disclosed: number, rate: number) =>
+      `Figures are based on ${disclosed} active GTM jobs that disclose a salary (${rate}% of the total), converted to an annual amount in euros. Monthly salaries are annualised; non-EUR amounts at the current exchange rate. Only breakdowns with a sufficient sample are shown - mind the counts in brackets. Pay disclosure is lower in the Netherlands than in the US, so smaller segments are indicative.`,
     tooLittleData: "Not enough data yet.",
   },
   estimator: {

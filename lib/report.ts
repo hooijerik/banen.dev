@@ -2,6 +2,7 @@
 
 import { getDb } from "./db";
 import { categoryLabel, seniorityLabel, workModeLabel, SENIORITY } from "./taxonomy";
+import { DEFAULT_LOCALE, type Locale } from "./i18n/config";
 
 interface SalRow {
   min: number;
@@ -86,19 +87,26 @@ function slices(rows: { label: string; count: number }[]): Slice[] {
     .sort((a, b) => b.count - a.count);
 }
 
-const COMP_LABELS: Record<string, string> = {
-  base: "Basis",
-  "base+bonus": "Basis + bonus",
-  "base+commission": "Basis + commissie",
-  ote: "OTE",
+const COMP_LABELS: Record<Locale, Record<string, string>> = {
+  nl: {
+    base: "Basis",
+    "base+bonus": "Basis + bonus",
+    "base+commission": "Basis + commissie",
+    ote: "OTE",
+  },
+  en: {
+    base: "Base",
+    "base+bonus": "Base + bonus",
+    "base+commission": "Base + commission",
+    ote: "OTE",
+  },
 };
-const EQUITY_LABELS: Record<string, string> = {
-  options: "Aandelenopties",
-  rsu: "RSU's",
-  equity: "Equity",
+const EQUITY_LABELS: Record<Locale, Record<string, string>> = {
+  nl: { options: "Aandelenopties", rsu: "RSU's", equity: "Equity" },
+  en: { options: "Stock options", rsu: "RSUs", equity: "Equity" },
 };
 
-export function buildSalaryReport(): SalaryReport {
+export function buildSalaryReport(locale: Locale = DEFAULT_LOCALE): SalaryReport {
   const db = getDb();
   const rows = db
     .prepare(
@@ -112,11 +120,13 @@ export function buildSalaryReport(): SalaryReport {
 
   const seniorityOrder = new Map<string, number>(SENIORITY.map((s, i) => [s.slug, i]));
 
-  const byCategory = rangeBy(rows, (r) => r.category, categoryLabel).sort((a, b) => b.max - a.max);
-  const bySeniority = rangeBy(rows, (r) => r.seniority, (k) => seniorityLabel(k)).sort(
+  const byCategory = rangeBy(rows, (r) => r.category, (k) => categoryLabel(k, locale)).sort(
+    (a, b) => b.max - a.max,
+  );
+  const bySeniority = rangeBy(rows, (r) => r.seniority, (k) => seniorityLabel(k, locale)).sort(
     (a, b) => (seniorityOrder.get(a.key) ?? 0) - (seniorityOrder.get(b.key) ?? 0),
   );
-  const byWorkMode = rangeBy(rows, (r) => r.work_mode, (k) => workModeLabel(k)).sort(
+  const byWorkMode = rangeBy(rows, (r) => r.work_mode, (k) => workModeLabel(k, locale)).sort(
     (a, b) => b.max - a.max,
   );
   const byProvince = rangeBy(rows, (r) => r.province, (k) => k).sort((a, b) => b.max - a.max);
@@ -163,7 +173,11 @@ export function buildSalaryReport(): SalaryReport {
     byProvince,
     scaleMax,
     aiPremium: { withAI, withoutAI, pct },
-    compStructure: slices(compRows.map((r) => ({ label: COMP_LABELS[r.k] || r.k, count: r.count }))),
-    equity: slices(equityRows.map((r) => ({ label: EQUITY_LABELS[r.k] || r.k, count: r.count }))),
+    compStructure: slices(
+      compRows.map((r) => ({ label: COMP_LABELS[locale][r.k] || r.k, count: r.count })),
+    ),
+    equity: slices(
+      equityRows.map((r) => ({ label: EQUITY_LABELS[locale][r.k] || r.k, count: r.count })),
+    ),
   };
 }

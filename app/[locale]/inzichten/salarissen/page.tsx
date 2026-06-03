@@ -5,15 +5,25 @@ import { RangeChart, Donut } from "@/components/charts";
 import { SalaryEstimator } from "@/components/SalaryEstimator";
 import { buildSalaryReport } from "@/lib/report";
 import { formatEURShort } from "@/lib/format";
+import { withLocale } from "@/lib/urls";
+import { getDictionary, type Locale } from "@/lib/i18n";
+import { alternates } from "@/lib/i18n/meta";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "GTM Salarisrapport 2026 - wat verdienen go-to-market professionals?",
-  description:
-    "Salarisdata voor go-to-market rollen in Nederland, uitgesplitst naar functie, niveau, werkvorm en regio. Gebaseerd op echte vacatures.",
-  alternates: { canonical: "/inzichten/salarissen" },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const dict = await getDictionary(locale);
+  return {
+    title: dict.salary.title,
+    description: dict.home.salaryBody,
+    alternates: alternates(locale, "/inzichten/salarissen"),
+  };
+}
 
 function Panel({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
@@ -25,111 +35,107 @@ function Panel({ title, subtitle, children }: { title: string; subtitle?: string
   );
 }
 
-export default async function SalaryReportPage() {
-  const r = buildSalaryReport();
+export default async function SalaryReportPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const dict = await getDictionary(locale);
+  const t = dict.salary;
+  const L = (p: string) => withLocale(locale, p);
+  const r = buildSalaryReport(locale);
 
   return (
     <Container className="py-8">
       <Breadcrumbs
+        ariaLabel={dict.breadcrumbs.aria}
         items={[
-          { label: "Home", href: "/" },
-          { label: "Inzichten", href: "/inzichten" },
-          { label: "Salarissen" },
+          { label: dict.breadcrumbs.home, href: L("/") },
+          { label: dict.nav.insights, href: L("/inzichten") },
+          { label: dict.nav.salaries },
         ]}
       />
 
       <div className="mt-4 max-w-3xl">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          GTM Salarisrapport 2026
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{t.title}</h1>
         <p className="mt-2 text-lg text-slate-600">
-          Wat verdienen go-to-market professionals in Nederland? Gebaseerd op {r.disclosed} vacatures
-          met openlijke salarisinformatie. Bijgewerkt juni 2026.
+          {t.intro(r.disclosed)} {t.updated}
         </p>
       </div>
 
       {/* KPI cards */}
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Card className="p-5">
-          <div className="text-sm text-slate-500">Mediaan totale range</div>
+          <div className="text-sm text-slate-500">{t.medianRange}</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">
             {r.overall ? `${formatEURShort(r.overall.min)} – ${formatEURShort(r.overall.max)}` : "-"}
           </div>
         </Card>
         <Card className="p-5">
-          <div className="text-sm text-slate-500">Vermeldt salaris</div>
+          <div className="text-sm text-slate-500">{t.disclosePct}</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">{r.disclosureRate}%</div>
-          <div className="text-xs text-slate-400">{r.disclosed} van {r.totalActive} vacatures</div>
+          <div className="text-xs text-slate-400">{t.discloseOf(r.disclosed, r.totalActive)}</div>
         </Card>
         <Card className="p-5">
-          <div className="text-sm text-slate-500">AI-premie</div>
+          <div className="text-sm text-slate-500">{t.aiPremium}</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">
             {r.aiPremium.pct != null ? `${r.aiPremium.pct > 0 ? "+" : ""}${r.aiPremium.pct}%` : "-"}
           </div>
-          <div className="text-xs text-slate-400">rollen die AI-skills vragen</div>
+          <div className="text-xs text-slate-400">{t.aiPremiumSub}</div>
         </Card>
       </div>
 
       {/* Estimator */}
       {r.byCategory.length > 0 && r.bySeniority.length > 0 && (
         <div className="mt-6">
-          <SalaryEstimator categories={r.byCategory} seniorities={r.bySeniority} />
+          <SalaryEstimator categories={r.byCategory} seniorities={r.bySeniority} t={dict.estimator} />
         </div>
       )}
 
       {/* Breakdowns */}
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <Panel title="Per functie" subtitle="Mediaan salarisrange per GTM-categorie (jaarbasis, EUR).">
+        <Panel title={t.byCategory} subtitle={t.byCategorySub}>
           <RangeChart data={r.byCategory} scaleMax={r.scaleMax} />
         </Panel>
-        <Panel title="Per niveau" subtitle="Van junior tot C-level.">
+        <Panel title={t.byLevel} subtitle={t.byLevelSub}>
           <RangeChart data={r.bySeniority} scaleMax={r.scaleMax} />
         </Panel>
-        <Panel title="Per werkvorm" subtitle="Remote, hybride of op kantoor.">
+        <Panel title={t.byWorkMode} subtitle={t.byWorkModeSub}>
           <RangeChart data={r.byWorkMode} scaleMax={r.scaleMax} />
         </Panel>
-        <Panel title="Per provincie" subtitle="Waar de data toereikend is.">
+        <Panel title={t.byRegion} subtitle={t.byRegionSub}>
           <RangeChart data={r.byProvince} scaleMax={r.scaleMax} />
         </Panel>
       </div>
 
       {/* AI premium + comp + equity */}
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <Panel title="AI-premie" subtitle="Rollen mét vs. zonder AI-vereiste.">
+        <Panel title={t.aiPremium} subtitle={t.aiCompare}>
           {r.aiPremium.withAI && r.aiPremium.withoutAI ? (
             <RangeChart
               data={[
-                { ...r.aiPremium.withAI, label: "Met AI" },
-                { ...r.aiPremium.withoutAI, label: "Zonder AI" },
+                { ...r.aiPremium.withAI, label: t.withAi },
+                { ...r.aiPremium.withoutAI, label: t.withoutAi },
               ]}
               scaleMax={r.scaleMax}
             />
           ) : (
-            <p className="text-sm text-slate-400">Nog te weinig data.</p>
+            <p className="text-sm text-slate-400">{t.tooLittleData}</p>
           )}
         </Panel>
-        <Panel title="Beloningsstructuur">
+        <Panel title={t.compStructure} subtitle={t.compStructureSub}>
           <Donut data={r.compStructure} />
         </Panel>
-        <Panel title="Equity">
+        <Panel title={t.equity} subtitle={t.equitySub}>
           {r.equity.length ? (
             <Donut data={r.equity} />
           ) : (
-            <p className="text-sm text-slate-400">Weinig vacatures vermelden equity.</p>
+            <p className="text-sm text-slate-400">{t.tooLittleData}</p>
           )}
         </Panel>
       </div>
 
       {/* Methodology */}
       <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-500">
-        <h2 className="font-semibold text-slate-700">Methodologie</h2>
-        <p className="mt-2">
-          Cijfers zijn gebaseerd op {r.disclosed} actieve GTM-vacatures in Nederland die een
-          salarisindicatie vermelden ({r.disclosureRate}% van het totaal). Maandsalarissen worden
-          omgerekend naar jaarbasis; niet-EUR bedragen tegen de actuele wisselkoers. Alleen
-          uitsplitsingen met voldoende steekproef worden getoond - let op de aantallen tussen haakjes.
-          Salarisvermelding is in Nederland lager dan in de VS, dus kleinere segmenten zijn indicatief.
-        </p>
+        <h2 className="font-semibold text-slate-700">{t.methodology}</h2>
+        <p className="mt-2">{t.methodologyBody(r.disclosed, r.disclosureRate)}</p>
       </div>
     </Container>
   );

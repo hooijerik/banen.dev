@@ -8,6 +8,7 @@ import {
   detectTools,
   detectAI,
   parseSalary,
+  detectTextLanguage,
 } from "../lib/classify";
 import type { RawJob } from "../lib/types";
 
@@ -163,6 +164,27 @@ check(
 check("ml in title flags", detectAI("Machine Learning Sales Engineer", "") === true);
 check("no ai on single incidental mention", detectAI("Sales Manager", "we sometimes use AI tools") === false);
 check("no false ai in email", detectAI("Email Marketing Manager", "Manage the email program") === false);
+
+// ---- text language ----
+eq(
+  "lang: dutch posting",
+  detectTextLanguage("Wij zoeken een ervaren Account Executive voor ons team. Je werkt met onze klanten."),
+  "nl",
+);
+eq(
+  "lang: english posting",
+  detectTextLanguage(
+    "We are looking for an experienced Account Executive to join our team. You will work with our customers in a full-time role.",
+  ),
+  "en",
+);
+eq("lang: empty defaults to nl", detectTextLanguage(""), "nl");
+eq("lang: tie defaults to nl", detectTextLanguage("de the"), "nl");
+eq(
+  "lang: english word inside dutch (no false split) stays nl",
+  detectTextLanguage("Een functie met veel verantwoordelijkheid en ervaring in sales."),
+  "nl",
+);
 
 // ---- summary ----
 console.log(`\n${pass} passed, ${fails.length} failed`);

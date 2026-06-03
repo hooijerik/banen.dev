@@ -22,18 +22,19 @@ export async function generateMetadata({
   const { locale } = await params;
   const loc: Locale = isLocale(locale) ? locale : "nl";
   const dict = await getDictionary(loc);
+  const alts = alternates(loc, "/");
   return {
     metadataBase: new URL(SITE.url),
     title: { default: `${SITE.name} - ${dict.meta.tagline}`, template: `%s · ${SITE.name}` },
     description: dict.meta.description,
-    alternates: alternates(loc, "/"),
+    alternates: alts,
     openGraph: {
       type: "website",
       locale: ogLocale(loc),
       siteName: SITE.name,
       title: `${SITE.name} - ${dict.meta.tagline}`,
       description: dict.meta.description,
-      url: `${SITE.url}/${loc}`,
+      url: alts.canonical,
     },
     twitter: { card: "summary_large_image", title: SITE.name, description: dict.meta.description },
   };

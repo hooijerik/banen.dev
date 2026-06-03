@@ -1,43 +1,47 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Card } from "@/components/ui";
-import { GUIDES, GTMAI_POSTS, GTMAI_BLOG_URL } from "@/lib/guides";
+import { guidesFor, GTMAI_POSTS, GTMAI_BLOG_URL } from "@/lib/guides";
+import { withLocale } from "@/lib/urls";
+import { getDictionary, type Locale } from "@/lib/i18n";
+import { alternates } from "@/lib/i18n/meta";
 
-export const metadata: Metadata = {
-  title: "Inzichten & gidsen voor GTM-professionals",
-  description:
-    "Salarisdata, carrièregidsen en trends voor go-to-market professionals in Nederland: sales, marketing, customer success en RevOps.",
-  alternates: { canonical: "/inzichten" },
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dict = await getDictionary(locale);
+  return { title: dict.insights.title, description: dict.insights.subtitle, alternates: alternates(locale, "/inzichten") };
+}
 
-export default function InsightsPage() {
+export default async function InsightsPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const dict = await getDictionary(locale);
+  const t = dict.insights;
+  const L = (p: string) => withLocale(locale, p);
+  const guides = guidesFor(locale);
+  const posts = GTMAI_POSTS[locale];
+
   return (
     <Container className="py-12">
-      <h1 className="text-3xl font-bold tracking-tight text-slate-900">Inzichten &amp; gidsen</h1>
-      <p className="mt-1 max-w-2xl text-slate-600">
-        Data en achtergrond om je go-to-market carrière vooruit te helpen.
-      </p>
+      <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t.title}</h1>
+      <p className="mt-1 max-w-2xl text-slate-600">{t.subtitle}</p>
 
       <Link
-        href="/inzichten/salarissen"
+        href={L("/inzichten/salarissen")}
         className="mt-8 block rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-600 to-brand-700 p-8 text-white transition hover:shadow-lg"
       >
-        <span className="text-sm font-medium text-brand-200">Uitgelicht</span>
-        <h2 className="mt-1 text-2xl font-bold">GTM Salarisrapport 2026</h2>
-        <p className="mt-1 max-w-xl text-brand-100">
-          Wat verdienen GTM-professionals in Nederland? Uitgesplitst naar functie, niveau, werkvorm
-          en regio - gebaseerd op echte vacatures.
-        </p>
-        <span className="mt-4 inline-block font-semibold">Bekijk het rapport →</span>
+        <span className="text-sm font-medium text-brand-200">{t.featured}</span>
+        <h2 className="mt-1 text-2xl font-bold">{t.reportTitle}</h2>
+        <p className="mt-1 max-w-xl text-brand-100">{t.reportDek}</p>
+        <span className="mt-4 inline-block font-semibold">{t.viewReport}</span>
       </Link>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {GUIDES.map((g) => (
+        {guides.map((g) => (
           <Card key={g.slug} className="p-6 transition hover:border-brand-300 hover:shadow-sm">
-            <Link href={`/inzichten/${g.slug}`}>
+            <Link href={L(`/inzichten/${g.slug}`)}>
               <h3 className="text-lg font-bold text-slate-900">{g.title}</h3>
               <p className="mt-1 text-sm text-slate-600">{g.dek}</p>
-              <span className="mt-3 inline-block text-sm font-semibold text-brand-700">Lees verder →</span>
+              <span className="mt-3 inline-block text-sm font-semibold text-brand-700">{t.readMore}</span>
             </Link>
           </Card>
         ))}
@@ -46,10 +50,8 @@ export default function InsightsPage() {
       <section className="mt-14">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900">Van het GTM AI-blog</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Diepgang over GTM-rollen, RevOps en de Nederlandse markt.
-            </p>
+            <h2 className="text-xl font-bold tracking-tight text-slate-900">{t.fromBlog}</h2>
+            <p className="mt-1 text-sm text-slate-500">{t.fromBlogSub}</p>
           </div>
           <a
             href={GTMAI_BLOG_URL}
@@ -57,11 +59,11 @@ export default function InsightsPage() {
             rel="noopener noreferrer"
             className="shrink-0 text-sm font-medium text-brand-700 hover:text-brand-800"
           >
-            Alle artikelen ↗
+            {t.allArticles}
           </a>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          {GTMAI_POSTS.map((p) => (
+          {posts.map((p) => (
             <a
               key={p.href}
               href={p.href}
@@ -71,9 +73,7 @@ export default function InsightsPage() {
             >
               <h3 className="font-semibold text-slate-900 group-hover:text-brand-700">{p.title}</h3>
               <p className="mt-1 text-sm text-slate-600">{p.dek}</p>
-              <span className="mt-3 inline-block text-sm font-semibold text-brand-700">
-                Lees op gtmai.nl ↗
-              </span>
+              <span className="mt-3 inline-block text-sm font-semibold text-brand-700">{t.readOn}</span>
             </a>
           ))}
         </div>
