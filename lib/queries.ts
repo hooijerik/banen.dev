@@ -114,6 +114,18 @@ export function countJobs(f: JobFilters): number {
   return row?.n ?? 0;
 }
 
+/** Active vacancies open longer than `days` (by posted_at, else first_seen_at). */
+export function countLongOpenJobs(days = 30): number {
+  return (
+    getDb()
+      .prepare(
+        `SELECT COUNT(*) AS n FROM jobs
+         WHERE status='active' AND COALESCE(posted_at, first_seen_at) < datetime('now', ?)`,
+      )
+      .get(`-${Math.floor(days)} days`) as { n: number }
+  ).n;
+}
+
 /** Median annual-EUR salary range for a filtered set (uses disclosed jobs only). */
 export function salaryBand(f: JobFilters): { min: number; max: number; count: number } | null {
   const db = getDb();
