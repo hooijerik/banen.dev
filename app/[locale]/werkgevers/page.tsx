@@ -60,7 +60,7 @@ export default async function EmployersPage({ params }: { params: Promise<{ loca
         </p>
         <p className="mt-3 max-w-2xl text-brand-100">{e.interimPitch}</p>
         <a
-          href="https://gtmai.nl/interim/"
+          href={locale === "en" ? "https://gtmai.nl/en/interim" : "https://gtmai.nl/interim/"}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-6 inline-block rounded-lg bg-white px-6 py-3 font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50"
