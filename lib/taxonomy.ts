@@ -4,12 +4,15 @@
 // broad commercial roles last) - the first category whose keywords match wins.
 
 import type { CategorySlug, SenioritySlug, WorkMode } from "./types";
+import type { Locale } from "./i18n/config";
 
 export interface CategoryDef {
   slug: CategorySlug;
   label: string; // Dutch UI label
+  labelEn?: string; // English label (falls back to `label`)
   group: "Commercieel" | "Operations" | "Strategie & Enablement" | "Overig";
   description: string; // Dutch, used on category landing pages
+  descriptionEn?: string; // English description (falls back to `description`)
   keywords: string[];
 }
 
@@ -310,6 +313,7 @@ export const GTM_SIGNAL_KEYWORDS = [
 export interface SeniorityDef {
   slug: SenioritySlug;
   label: string;
+  labelEn?: string;
   order: number;
   keywords: string[];
 }
@@ -349,6 +353,7 @@ export const SENIORITY: SeniorityDef[] = [
   {
     slug: "medior",
     label: "Medior",
+    labelEn: "Mid-level",
     order: 3,
     keywords: ["medior", "mid-level", "mid level"],
   },
@@ -376,6 +381,7 @@ export const SENIORITY: SeniorityDef[] = [
 export interface WorkModeDef {
   slug: WorkMode;
   label: string;
+  labelEn?: string;
   keywords: string[];
 }
 
@@ -397,11 +403,13 @@ export const WORK_MODES: WorkModeDef[] = [
   {
     slug: "hybrid",
     label: "Hybride",
+    labelEn: "Hybrid",
     keywords: ["hybrid", "hybride", "flexible working", "flexibel werken"],
   },
   {
     slug: "onsite",
     label: "Op kantoor",
+    labelEn: "On-site",
     keywords: ["on-site", "on site", "onsite", "op kantoor", "office-based", "kantoor"],
   },
 ];
@@ -565,16 +573,31 @@ export const SENIORITY_BY_SLUG = new Map(SENIORITY.map((s) => [s.slug, s]));
 export const WORKMODE_BY_SLUG = new Map(WORK_MODES.map((w) => [w.slug, w]));
 export const TOOL_BY_SLUG = new Map(TOOLS.map((t) => [t.slug, t]));
 
-export function categoryLabel(slug: string): string {
-  return CATEGORY_BY_SLUG.get(slug as CategorySlug)?.label ?? "Overig GTM";
+function pickLabel(
+  def: { label: string; labelEn?: string } | undefined,
+  locale: Locale,
+): string | undefined {
+  if (!def) return undefined;
+  return locale === "en" ? (def.labelEn ?? def.label) : def.label;
 }
-export function seniorityLabel(slug: string | null): string {
-  if (!slug) return "-";
-  return SENIORITY_BY_SLUG.get(slug as SenioritySlug)?.label ?? "-";
+export function categoryLabel(slug: string, locale: Locale = "nl"): string {
+  return (
+    pickLabel(CATEGORY_BY_SLUG.get(slug as CategorySlug), locale) ??
+    (locale === "en" ? "Other GTM" : "Overig GTM")
+  );
 }
-export function workModeLabel(slug: string | null): string {
+export function categoryDescription(slug: string, locale: Locale = "nl"): string {
+  const def = CATEGORY_BY_SLUG.get(slug as CategorySlug);
+  if (!def) return "";
+  return locale === "en" ? (def.descriptionEn ?? def.description) : def.description;
+}
+export function seniorityLabel(slug: string | null, locale: Locale = "nl"): string {
   if (!slug) return "-";
-  return WORKMODE_BY_SLUG.get(slug as WorkMode)?.label ?? "-";
+  return pickLabel(SENIORITY_BY_SLUG.get(slug as SenioritySlug), locale) ?? "-";
+}
+export function workModeLabel(slug: string | null, locale: Locale = "nl"): string {
+  if (!slug) return "-";
+  return pickLabel(WORKMODE_BY_SLUG.get(slug as WorkMode), locale) ?? "-";
 }
 export function toolLabel(slug: string): string {
   return TOOL_BY_SLUG.get(slug)?.label ?? slug;

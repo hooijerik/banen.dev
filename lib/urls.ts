@@ -1,4 +1,9 @@
 // URL helpers shared across the app. Dutch query-param names.
+import type { Locale } from "./i18n/config";
+
+/** Prefix an app path with the locale segment. "/" -> "/nl". */
+export const withLocale = (locale: Locale, path: string) =>
+  path === "/" || path === "" ? `/${locale}` : `/${locale}${path}`;
 
 export const PARAMS = {
   category: "categorie",
@@ -10,6 +15,7 @@ export const PARAMS = {
   salary: "salaris",
   ai: "ai",
   datePosted: "geplaatst",
+  lang: "taal",
   q: "q",
   sort: "sort",
   page: "pagina",

@@ -1,6 +1,7 @@
 // Pure formatting/slug helpers - safe in both server and client components.
 
 import type { SalaryInterval } from "./types";
+import type { Locale } from "./i18n/config";
 
 export function slugify(input: string): string {
   const s = (input || "")
@@ -15,6 +16,12 @@ export function slugify(input: string): string {
 }
 
 const nlNumber = new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 0 });
+const enNumber = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+
+/** Locale-aware integer formatting. */
+export function formatNumber(n: number, locale: Locale = "nl"): string {
+  return (locale === "en" ? enNumber : nlNumber).format(n);
+}
 
 function currencySymbol(currency: string | null): string {
   if (currency === "USD") return "$";
@@ -28,11 +35,22 @@ export function formatSalaryRange(
   max: number | null,
   currency: string | null,
   interval: SalaryInterval | null,
+  locale: Locale = "nl",
 ): string | null {
   if (min == null && max == null) return null;
   const sym = currencySymbol(currency);
-  const fmt = (n: number) => `${sym} ${nlNumber.format(Math.round(n))}`;
-  const suffix = interval === "month" ? " p/mnd" : interval === "hour" ? " p/uur" : "";
+  const num = locale === "en" ? enNumber : nlNumber;
+  const fmt = (n: number) => `${sym} ${num.format(Math.round(n))}`;
+  const suffix =
+    interval === "month"
+      ? locale === "en"
+        ? " /mo"
+        : " p/mnd"
+      : interval === "hour"
+        ? locale === "en"
+          ? " /hr"
+          : " p/uur"
+        : "";
   if (min != null && max != null && Math.round(min) !== Math.round(max)) {
     return `${fmt(min)} – ${fmt(max)}${suffix}`;
   }
@@ -65,26 +83,26 @@ export function pluralNL(n: number, singular: string, plural: string): string {
   return `${nlNumber.format(n)} ${n === 1 ? singular : plural}`;
 }
 
-/** Dutch relative time, e.g. "3 uur geleden", "2 dagen geleden". */
-export function timeAgo(iso: string | null): string {
+/** Relative time, locale-aware ("3 uur geleden" / "3h ago"). */
+export function timeAgo(iso: string | null, locale: Locale = "nl"): string {
   if (!iso) return "";
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "";
-  const diffMs = Date.now() - then;
-  const min = Math.floor(diffMs / 60000);
-  if (min < 1) return "zojuist";
-  if (min < 60) return `${min} min geleden`;
+  const min = Math.floor((Date.now() - then) / 60000);
+  const en = locale === "en";
+  if (min < 1) return en ? "just now" : "zojuist";
+  if (min < 60) return en ? `${min} min ago` : `${min} min geleden`;
   const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr} uur geleden`;
+  if (hr < 24) return en ? `${hr}h ago` : `${hr} uur geleden`;
   const days = Math.floor(hr / 24);
-  if (days === 1) return "gisteren";
-  if (days < 7) return `${days} dagen geleden`;
+  if (days === 1) return en ? "yesterday" : "gisteren";
+  if (days < 7) return en ? `${days} days ago` : `${days} dagen geleden`;
   const weeks = Math.floor(days / 7);
-  if (weeks < 5) return `${weeks} ${weeks === 1 ? "week" : "weken"} geleden`;
+  if (weeks < 5) return en ? `${weeks}w ago` : `${weeks} ${weeks === 1 ? "week" : "weken"} geleden`;
   const months = Math.floor(days / 30);
-  if (months < 12) return `${months} ${months === 1 ? "maand" : "maanden"} geleden`;
+  if (months < 12) return en ? `${months}mo ago` : `${months} ${months === 1 ? "maand" : "maanden"} geleden`;
   const years = Math.floor(days / 365);
-  return `${years} jaar geleden`;
+  return en ? `${years}y ago` : `${years} jaar geleden`;
 }
 
 const nlDate = new Intl.DateTimeFormat("nl-NL", {
@@ -98,6 +116,16 @@ export function formatDateNL(iso: string | null): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
   return nlDate.format(d);
+}
+
+const enDate = new Intl.DateTimeFormat("en-US", { day: "numeric", month: "short", year: "numeric" });
+
+/** Locale-aware short date. */
+export function formatDate(iso: string | null, locale: Locale = "nl"): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return (locale === "en" ? enDate : nlDate).format(d);
 }
 
 export function titleCase(input: string): string {
