@@ -26,7 +26,6 @@ const PER_PAGE = 20;
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "newest", label: "Nieuwste" },
   { key: "salary", label: "Salaris" },
-  { key: "company", label: "Bedrijf" },
 ];
 
 function str(v: string | string[] | undefined): string | undefined {

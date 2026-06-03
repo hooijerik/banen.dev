@@ -24,7 +24,7 @@ export interface JobFilters {
   q?: string;
 }
 
-export type SortKey = "newest" | "salary" | "company";
+export type SortKey = "newest" | "salary";
 
 export const PROVINCE_BY_SLUG = new Map(PROVINCES.map((p) => [slugify(p), p]));
 export function provinceFromSlug(slug: string): string | undefined {
@@ -69,8 +69,6 @@ function sortClause(sort: SortKey | undefined): string {
   switch (sort) {
     case "salary":
       return "ORDER BY (j.salary_max_eur IS NULL), j.salary_max_eur DESC, COALESCE(j.posted_at, j.first_seen_at) DESC";
-    case "company":
-      return "ORDER BY c.name COLLATE NOCASE ASC, COALESCE(j.posted_at, j.first_seen_at) DESC";
     case "newest":
     default:
       return "ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC, j.id DESC";
