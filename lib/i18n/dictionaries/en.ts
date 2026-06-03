@@ -18,7 +18,13 @@ export const en: Dict = {
     insights: "Insights",
     employers: "For employers",
   },
-  header: { postJob: "Post a job", jobAlert: "Job alert", switchTo: "In Dutch" },
+  header: {
+    postJob: "Post a job",
+    jobAlert: "Job alert",
+    switchTo: "In Dutch",
+    menuOpen: "Open menu",
+    menuClose: "Close menu",
+  },
   footer: {
     discover: "Discover",
     forEmployers: "For employers",
@@ -32,6 +38,10 @@ export const en: Dict = {
     jobAlert: "Job alert",
     initiativeBy: "An initiative by",
     collected: "Jobs collected from public sources.",
+    categories: "Categories",
+    locations: "Locations",
+    cityLink: (label: string) => `GTM jobs ${label}`,
+    remoteJobs: "Remote GTM jobs",
   },
   home: {
     badge: (n: number) => `${n} new ${n === 1 ? "job" : "jobs"} this week`,

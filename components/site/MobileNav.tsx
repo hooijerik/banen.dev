@@ -2,8 +2,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import { NAV } from "@/lib/site";
+import { withLocale } from "@/lib/urls";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dict } from "@/lib/i18n/types";
 
-export function MobileNav() {
+// Receives only the plain-string slices it needs (functions in `dict` can't cross the
+// server -> client boundary).
+export function MobileNav({
+  locale,
+  nav,
+  header,
+}: {
+  locale: Locale;
+  nav: Dict["nav"];
+  header: Dict["header"];
+}) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -12,7 +25,7 @@ export function MobileNav() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Menu sluiten" : "Menu openen"}
+        aria-label={open ? header.menuClose : header.menuOpen}
         aria-expanded={open}
         className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-700 transition hover:bg-slate-100"
       >
@@ -29,27 +42,27 @@ export function MobileNav() {
               {NAV.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={withLocale(locale, item.href)}
                   onClick={close}
                   className="block rounded-lg px-3 py-2.5 text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-700"
                 >
-                  {item.label}
+                  {nav[item.key]}
                 </Link>
               ))}
               <div className="mt-2 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
                 <Link
-                  href="/vacature-alert"
+                  href={withLocale(locale, "/vacature-alert")}
                   onClick={close}
                   className="rounded-lg bg-brand-600 px-3 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-700"
                 >
-                  Job alert
+                  {header.jobAlert}
                 </Link>
                 <Link
-                  href="/plaats-vacature"
+                  href={withLocale(locale, "/plaats-vacature")}
                   onClick={close}
                   className="rounded-lg border border-slate-200 px-3 py-2.5 text-center text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
-                  Plaats vacature
+                  {header.postJob}
                 </Link>
               </div>
             </div>

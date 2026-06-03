@@ -16,7 +16,13 @@ export const nl = {
     insights: "Inzichten",
     employers: "Voor werkgevers",
   },
-  header: { postJob: "Plaats vacature", jobAlert: "Job alert", switchTo: "In het Engels" },
+  header: {
+    postJob: "Plaats vacature",
+    jobAlert: "Job alert",
+    switchTo: "In het Engels",
+    menuOpen: "Menu openen",
+    menuClose: "Menu sluiten",
+  },
   footer: {
     discover: "Ontdek",
     forEmployers: "Voor werkgevers",
@@ -30,6 +36,10 @@ export const nl = {
     jobAlert: "Vacature-alert",
     initiativeBy: "Een initiatief van",
     collected: "Vacatures verzameld van publieke bronnen.",
+    categories: "Categorieën",
+    locations: "Locaties",
+    cityLink: (label: string) => `GTM-vacatures ${label}`,
+    remoteJobs: "Remote GTM-vacatures",
   },
   home: {
     badge: (n: number) => `${n} nieuwe ${n === 1 ? "vacature" : "vacatures"} deze week`,

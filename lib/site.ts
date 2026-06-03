@@ -7,9 +7,9 @@ export const SITE = {
 };
 
 export const NAV = [
-  { label: "Vacatures", href: "/vacatures" },
-  { label: "Bedrijven", href: "/bedrijven" },
-  { label: "Salarissen", href: "/inzichten/salarissen" },
-  { label: "Inzichten", href: "/inzichten" },
-  { label: "Voor werkgevers", href: "/werkgevers" },
-];
+  { key: "jobs", href: "/vacatures" },
+  { key: "companies", href: "/bedrijven" },
+  { key: "salaries", href: "/inzichten/salarissen" },
+  { key: "insights", href: "/inzichten" },
+  { key: "employers", href: "/werkgevers" },
+] as const;
