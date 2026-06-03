@@ -40,14 +40,14 @@ export function MobileNav() {
                 <Link
                   href="/vacature-alert"
                   onClick={close}
-                  className="rounded-lg border border-slate-200 px-3 py-2.5 text-center text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg bg-brand-600 px-3 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-700"
                 >
-                  Vacature-alert
+                  Job alert
                 </Link>
                 <Link
                   href="/plaats-vacature"
                   onClick={close}
-                  className="rounded-lg bg-brand-600 px-3 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-700"
+                  className="rounded-lg border border-slate-200 px-3 py-2.5 text-center text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
                   Plaats vacature
                 </Link>

@@ -76,7 +76,7 @@ export function SiteFooter() {
             <span>
               Een initiatief van{" "}
               <a
-                href="https://gtmai.nl/contact"
+                href="https://gtmai.nl"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-brand-700 hover:text-brand-800 hover:underline"

@@ -24,16 +24,16 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/vacature-alert"
+            href="/plaats-vacature"
             className="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:text-brand-700 sm:inline-block"
           >
-            Vacature-alert
+            Plaats vacature
           </Link>
           <Link
-            href="/plaats-vacature"
+            href="/vacature-alert"
             className="rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700"
           >
-            Plaats vacature
+            Job alert
           </Link>
           <MobileNav />
         </div>
