@@ -16,6 +16,13 @@ const WORKMODES: [string, string][] = [
   ["hybrid", "Hybride"],
   ["onsite", "Op kantoor"],
 ];
+const DATE_PRESETS: [string, string][] = [
+  ["1", "Afgelopen 24 uur"],
+  ["3", "Afgelopen 3 dagen"],
+  ["7", "Afgelopen 7 dagen"],
+  ["14", "Afgelopen 14 dagen"],
+  ["30", "Afgelopen 30 dagen"],
+];
 
 function toggleUrl(active: ActiveParams, dim: keyof typeof PARAMS, value: string): string {
   const next: ActiveParams = { ...active };
@@ -92,6 +99,12 @@ export function FilterSidebar({ facets, active }: { facets: Facets; active: Acti
             label={l}
             count={facets.workMode.find((x) => x.key === v)?.count}
           />
+        ))}
+      </Group>
+
+      <Group title="Geplaatst">
+        {DATE_PRESETS.map(([v, l]) => (
+          <Opt key={v} dim="datePosted" value={v} label={l} />
         ))}
       </Group>
 

@@ -20,6 +20,7 @@ export interface JobFilters {
   salaryMin?: number; // annual EUR
   ai?: boolean;
   remote?: boolean;
+  datePosted?: number; // posted within the last N days
   q?: string;
 }
 
@@ -43,6 +44,11 @@ function buildWhere(f: JobFilters): { sql: string; params: (string | number)[] }
   if (f.company) (cond.push("c.slug = ?"), params.push(f.company));
   if (f.tool) (cond.push("j.tools_json LIKE ?"), params.push(`%"${f.tool}"%`));
   if (f.ai) cond.push("j.ai_required = 1");
+  if (f.datePosted && f.datePosted > 0) {
+    // age of the posting: prefer the source's posted date, fall back to when we first saw it
+    cond.push("COALESCE(j.posted_at, j.first_seen_at) >= datetime('now', ?)");
+    params.push(`-${Math.floor(f.datePosted)} days`);
+  }
   if (f.salaryMin) {
     cond.push("j.salary_disclosed = 1 AND j.salary_max_eur >= ?");
     params.push(f.salaryMin);

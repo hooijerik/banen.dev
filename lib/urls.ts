@@ -9,6 +9,7 @@ export const PARAMS = {
   tool: "tool",
   salary: "salaris",
   ai: "ai",
+  datePosted: "geplaatst",
   q: "q",
   sort: "sort",
   page: "pagina",

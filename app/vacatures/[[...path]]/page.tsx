@@ -123,6 +123,8 @@ function filtersFromQuery(sp: Record<string, string | string[] | undefined>): Jo
   if (sal > 0) f.salaryMin = sal;
   const ai = str(sp[PARAMS.ai]);
   if (ai === "1" || ai === "true") f.ai = true;
+  const days = Number(str(sp[PARAMS.datePosted]));
+  if ([1, 3, 7, 14, 30].includes(days)) f.datePosted = days;
   const q = str(sp[PARAMS.q]);
   if (q) f.q = q;
   return f;
@@ -170,6 +172,7 @@ export default async function BrowsePage({
     tool: filters.tool,
     salary: filters.salaryMin ? String(filters.salaryMin) : undefined,
     ai: filters.ai ? "1" : undefined,
+    datePosted: filters.datePosted ? String(filters.datePosted) : undefined,
     q: filters.q,
   };
 
