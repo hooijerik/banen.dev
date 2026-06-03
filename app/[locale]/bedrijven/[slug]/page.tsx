@@ -5,29 +5,33 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { JobCard } from "@/components/JobCard";
 import { getCompanyBySlug, listJobs } from "@/lib/queries";
-import { pluralNL } from "@/lib/format";
+import { getDictionary, type Locale } from "@/lib/i18n";
+import { alternates } from "@/lib/i18n/meta";
+import { withLocale } from "@/lib/urls";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const dict = await getDictionary(locale);
   const c = getCompanyBySlug(slug);
-  if (!c) return { title: "Bedrijf niet gevonden" };
+  if (!c) return { title: dict.companies.notFound };
   return {
-    title: `GTM-vacatures bij ${c.name}`,
-    description: `Bekijk ${c.open_count} openstaande go-to-market vacatures bij ${c.name}.`,
-    alternates: { canonical: `/bedrijven/${c.slug}` },
+    title: dict.companies.jobsAt(c.name),
+    description: dict.companies.jobsAt(c.name),
+    alternates: alternates(locale, `/bedrijven/${c.slug}`),
   };
 }
 
-export default async function CompanyPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function CompanyPage({ params }: { params: Promise<{ locale: Locale; slug: string }> }) {
+  const { locale, slug } = await params;
   const company = getCompanyBySlug(slug);
   if (!company) notFound();
+  const dict = await getDictionary(locale);
 
   const jobs = listJobs({ company: slug }, { sort: "newest", perPage: 100 });
   const website = company.website
@@ -39,9 +43,10 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
   return (
     <Container className="py-8">
       <Breadcrumbs
+        ariaLabel={dict.breadcrumbs.aria}
         items={[
-          { label: "Home", href: "/" },
-          { label: "Bedrijven", href: "/bedrijven" },
+          { label: dict.breadcrumbs.home, href: withLocale(locale, "/") },
+          { label: dict.nav.companies, href: withLocale(locale, "/bedrijven") },
           { label: company.name },
         ]}
       />
@@ -51,7 +56,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">{company.name}</h1>
           <p className="mt-0.5 text-slate-500">
-            {pluralNL(jobs.length, "openstaande GTM-vacature", "openstaande GTM-vacatures")}
+            {dict.companies.openRoles(jobs.length)}
             {website && (
               <>
                 {" · "}
@@ -61,7 +66,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
                   rel="noopener noreferrer"
                   className="text-brand-700 hover:underline"
                 >
-                  Website
+                  {dict.companies.website}
                 </a>
               </>
             )}
@@ -71,7 +76,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
 
       <div className="mt-8 space-y-3">
         {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
+          <JobCard key={job.id} job={job} locale={locale} />
         ))}
       </div>
     </Container>

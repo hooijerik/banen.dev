@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { buildVacaturesUrl, PARAMS } from "@/lib/urls";
+import { buildVacaturesUrl, withLocale } from "@/lib/urls";
 import type { ActiveParams } from "./FilterSidebar";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dict } from "@/lib/i18n/types";
 
 export function Pagination({
   total,
@@ -8,22 +10,29 @@ export function Pagination({
   page,
   active,
   sort,
+  locale,
+  dict,
 }: {
   total: number;
   perPage: number;
   page: number;
   active: ActiveParams;
   sort?: string;
+  locale: Locale;
+  dict: Dict["pagination"];
 }) {
   const pages = Math.ceil(total / perPage);
   if (pages <= 1) return null;
 
   const url = (n: number) =>
-    buildVacaturesUrl({
-      ...active,
-      sort: sort && sort !== "newest" ? sort : undefined,
-      page: n > 1 ? String(n) : undefined,
-    });
+    withLocale(
+      locale,
+      buildVacaturesUrl({
+        ...active,
+        sort: sort && sort !== "newest" ? sort : undefined,
+        page: n > 1 ? String(n) : undefined,
+      }),
+    );
 
   const items: (number | "…")[] = [];
   for (let n = 1; n <= pages; n++) {
@@ -34,10 +43,10 @@ export function Pagination({
   const base = "inline-flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm";
 
   return (
-    <nav className="mt-8 flex items-center justify-center gap-1.5" aria-label="Paginering">
+    <nav className="mt-8 flex items-center justify-center gap-1.5" aria-label={dict.aria}>
       {page > 1 && (
         <Link href={url(page - 1)} className={`${base} border border-slate-200 bg-white hover:bg-slate-50`}>
-          ← Vorige
+          {dict.prev}
         </Link>
       )}
       {items.map((it, i) =>
@@ -61,7 +70,7 @@ export function Pagination({
       )}
       {page < pages && (
         <Link href={url(page + 1)} className={`${base} border border-slate-200 bg-white hover:bg-slate-50`}>
-          Volgende →
+          {dict.next}
         </Link>
       )}
     </nav>

@@ -10,6 +10,7 @@ import { getJobBySlug, getRelatedJobs } from "@/lib/queries";
 import { categoryLabel, seniorityLabel, workModeLabel, toolLabel } from "@/lib/taxonomy";
 import { formatSalaryRange, formatDateNL, timeAgo, sanitizeHtml } from "@/lib/format";
 import { categoryUrl, companyUrl, locationUrl, seniorityUrl, toolUrl } from "@/lib/urls";
+import type { Locale } from "@/lib/i18n/config";
 import { SITE } from "@/lib/site";
 import type { JobRow } from "@/lib/types";
 
@@ -63,8 +64,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function JobPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function JobPage({ params }: { params: Promise<{ locale: Locale; slug: string }> }) {
+  const { slug, locale } = await params;
   const job = getJobBySlug(slug);
   if (!job) notFound();
 
@@ -256,7 +257,7 @@ export default async function JobPage({ params }: { params: Promise<{ slug: stri
           <h2 className="mb-4 text-xl font-bold text-slate-900">Vergelijkbare vacatures</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {related.map((j) => (
-              <JobCard key={j.id} job={j} />
+              <JobCard key={j.id} job={j} locale={locale} />
             ))}
           </div>
         </section>

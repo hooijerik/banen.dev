@@ -18,7 +18,8 @@ import {
 } from "@/lib/queries";
 import { CATEGORY_BY_SLUG, SENIORITY_BY_SLUG } from "@/lib/taxonomy";
 import { formatSalaryRange, titleCase, pluralNL } from "@/lib/format";
-import { buildVacaturesUrl, PARAMS } from "@/lib/urls";
+import { buildVacaturesUrl, PARAMS, withLocale } from "@/lib/urls";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -132,7 +133,7 @@ function filtersFromQuery(sp: Record<string, string | string[] | undefined>): Jo
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ path?: string[] }>;
+  params: Promise<{ locale: Locale; path?: string[] }>;
 }): Promise<Metadata> {
   const { path } = await params;
   const r = resolvePath(path, { categories: [], seniority: [], workMode: [], country: [], cities: [], tools: [] });
@@ -147,11 +148,12 @@ export default async function BrowsePage({
   params,
   searchParams,
 }: {
-  params: Promise<{ path?: string[] }>;
+  params: Promise<{ locale: Locale; path?: string[] }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { path } = await params;
+  const { path, locale } = await params;
   const sp = await searchParams;
+  const dict = await getDictionary(locale);
   const facets = getFacets();
   const r = resolvePath(path, facets);
 
@@ -242,12 +244,12 @@ export default async function BrowsePage({
           ) : (
             <div className="space-y-3">
               {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
+                <JobCard key={job.id} job={job} locale={locale} />
               ))}
             </div>
           )}
 
-          <Pagination total={total} perPage={PER_PAGE} page={page} active={active} sort={sort} />
+          <Pagination total={total} perPage={PER_PAGE} page={page} active={active} sort={sort} locale={locale} dict={dict.pagination} />
         </div>
       </div>
     </Container>

@@ -3,23 +3,37 @@ import { CompanyLogo } from "./CompanyLogo";
 import { Chip } from "./ui";
 import { formatSalaryRange, timeAgo } from "@/lib/format";
 import { categoryLabel, seniorityLabel, toolLabel, workModeLabel } from "@/lib/taxonomy";
-import { categoryUrl, companyUrl, jobUrl, seniorityUrl, toolUrl } from "@/lib/urls";
+import { categoryUrl, companyUrl, jobUrl, seniorityUrl, toolUrl, withLocale } from "@/lib/urls";
 import type { JobRow } from "@/lib/types";
+import type { Locale } from "@/lib/i18n/config";
 
-function locationText(job: JobRow): string {
-  const base =
-    job.city || job.province || (job.country === "NL" ? "Nederland" : null) || job.location_raw || null;
-  if (job.work_mode === "remote") return base ? `Remote · ${base}` : "Remote";
-  if (job.work_mode === "hybrid") return base ? `Hybride · ${base}` : "Hybride";
+function locationText(job: JobRow, locale: Locale): string {
+  const country =
+    job.country === "NL"
+      ? locale === "en"
+        ? "Netherlands"
+        : "Nederland"
+      : job.country === "BE"
+        ? locale === "en"
+          ? "Belgium"
+          : "België"
+        : null;
+  const base = job.city || job.province || country || job.location_raw || null;
+  if (job.work_mode === "remote")
+    return base ? `${workModeLabel("remote", locale)} · ${base}` : workModeLabel("remote", locale);
+  if (job.work_mode === "hybrid")
+    return base ? `${workModeLabel("hybrid", locale)} · ${base}` : workModeLabel("hybrid", locale);
   return base || "-";
 }
 
-export function JobCard({ job }: { job: JobRow }) {
+export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
+  const L = (p: string) => withLocale(locale, p);
   const salary = formatSalaryRange(
     job.salary_min,
     job.salary_max,
     job.salary_currency,
     job.salary_interval,
+    locale,
   );
   let tools: string[] = [];
   try {
@@ -36,36 +50,38 @@ export function JobCard({ job }: { job: JobRow }) {
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <h3 className="text-base font-semibold leading-snug text-slate-900">
-                <Link href={jobUrl(job.slug)} className="hover:text-brand-700">
+                <Link href={L(jobUrl(job.slug))} className="hover:text-brand-700">
                   {job.title}
                 </Link>
               </h3>
               <div className="mt-0.5 truncate text-sm text-slate-500">
                 <Link
-                  href={companyUrl(job.company_slug)}
+                  href={L(companyUrl(job.company_slug))}
                   className="font-medium text-slate-700 hover:text-brand-700"
                 >
                   {job.company_name}
                 </Link>
                 <span className="mx-1.5 text-slate-300">·</span>
-                {locationText(job)}
+                {locationText(job, locale)}
               </div>
             </div>
             <time className="shrink-0 whitespace-nowrap text-xs text-slate-400">
-              {timeAgo(job.posted_at || job.first_seen_at)}
+              {timeAgo(job.posted_at || job.first_seen_at, locale)}
             </time>
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
-            <Chip tone="brand" href={categoryUrl(job.category)}>
-              {categoryLabel(job.category)}
+            <Chip tone="brand" href={L(categoryUrl(job.category))}>
+              {categoryLabel(job.category, locale)}
             </Chip>
-            {job.seniority && <Chip href={seniorityUrl(job.seniority)}>{seniorityLabel(job.seniority)}</Chip>}
-            {job.work_mode && <Chip>{workModeLabel(job.work_mode)}</Chip>}
+            {job.seniority && (
+              <Chip href={L(seniorityUrl(job.seniority))}>{seniorityLabel(job.seniority, locale)}</Chip>
+            )}
+            {job.work_mode && <Chip>{workModeLabel(job.work_mode, locale)}</Chip>}
             {salary && <Chip tone="green">{salary}</Chip>}
             {job.ai_required ? <Chip tone="amber">AI</Chip> : null}
             {tools.slice(0, 3).map((t) => (
-              <Chip key={t} href={toolUrl(t)}>
+              <Chip key={t} href={L(toolUrl(t))}>
                 {toolLabel(t)}
               </Chip>
             ))}
