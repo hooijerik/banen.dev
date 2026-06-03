@@ -8,9 +8,10 @@ import { JobCard } from "@/components/JobCard";
 import { JsonLd } from "@/components/JsonLd";
 import { getJobBySlug, getRelatedJobs } from "@/lib/queries";
 import { categoryLabel, seniorityLabel, workModeLabel, toolLabel } from "@/lib/taxonomy";
-import { formatSalaryRange, formatDateNL, timeAgo, sanitizeHtml } from "@/lib/format";
-import { categoryUrl, companyUrl, locationUrl, seniorityUrl, toolUrl } from "@/lib/urls";
-import type { Locale } from "@/lib/i18n/config";
+import { formatSalaryRange, formatDate, timeAgo, sanitizeHtml } from "@/lib/format";
+import { categoryUrl, companyUrl, locationUrl, seniorityUrl, toolUrl, withLocale } from "@/lib/urls";
+import { getDictionary, type Locale } from "@/lib/i18n";
+import { alternates } from "@/lib/i18n/meta";
 import { SITE } from "@/lib/site";
 import type { JobRow } from "@/lib/types";
 
@@ -40,27 +41,40 @@ function employmentType(raw: string | null): string | undefined {
   return undefined;
 }
 
-function locationLine(job: JobRow): string {
-  const base = job.city || job.province || (job.country === "NL" ? "Nederland" : null) || job.location_raw;
-  if (job.work_mode === "remote") return base ? `Remote · ${base}` : "Remote";
-  if (job.work_mode === "hybrid") return base ? `Hybride · ${base}` : "Hybride";
+function locationLine(job: JobRow, locale: Locale): string {
+  const country =
+    job.country === "NL"
+      ? locale === "en"
+        ? "Netherlands"
+        : "Nederland"
+      : job.country === "BE"
+        ? locale === "en"
+          ? "Belgium"
+          : "België"
+        : null;
+  const base = job.city || job.province || country || job.location_raw;
+  if (job.work_mode === "remote")
+    return base ? `${workModeLabel("remote", locale)} · ${base}` : workModeLabel("remote", locale);
+  if (job.work_mode === "hybrid")
+    return base ? `${workModeLabel("hybrid", locale)} · ${base}` : workModeLabel("hybrid", locale);
   return base || "-";
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const dict = await getDictionary(locale);
   const job = getJobBySlug(slug);
-  if (!job) return { title: "Vacature niet gevonden" };
-  const loc = job.city || (job.country === "NL" ? "Nederland" : "Remote");
+  if (!job) return { title: dict.job.notFound };
+  const loc = job.city || (job.country === "NL" ? (locale === "en" ? "Netherlands" : "Nederland") : "Remote");
   const desc = (job.description_text || "").replace(/\s+/g, " ").slice(0, 155);
   return {
-    title: `${job.title} bij ${job.company_name} - ${loc}`,
-    description: desc || `${job.title} bij ${job.company_name}. Bekijk deze GTM-vacature op ${SITE.name}.`,
-    alternates: { canonical: `/vacature/${job.slug}` },
+    title: dict.job.metaTitle(job.title, job.company_name, loc),
+    description: desc || dict.job.metaTitle(job.title, job.company_name, loc),
+    alternates: alternates(locale, `/vacature/${job.slug}`),
   };
 }
 
@@ -68,9 +82,11 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
   const { slug, locale } = await params;
   const job = getJobBySlug(slug);
   if (!job) notFound();
+  const dict = await getDictionary(locale);
+  const L = (p: string) => withLocale(locale, p);
 
   const related = getRelatedJobs(job, 4);
-  const salary = formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_interval);
+  const salary = formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_interval, locale);
   let tools: string[] = [];
   try {
     tools = job.tools_json ? (JSON.parse(job.tools_json) as string[]) : [];
@@ -127,10 +143,11 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
     <Container className="py-8">
       <JsonLd data={jsonLd} />
       <Breadcrumbs
+        ariaLabel={dict.breadcrumbs.aria}
         items={[
-          { label: "Home", href: "/" },
-          { label: "Vacatures", href: "/vacatures" },
-          { label: categoryLabel(job.category), href: categoryUrl(job.category) },
+          { label: dict.breadcrumbs.home, href: L("/") },
+          { label: dict.nav.jobs, href: L("/vacatures") },
+          { label: categoryLabel(job.category, locale), href: L(categoryUrl(job.category)) },
           { label: job.title },
         ]}
       />
@@ -143,23 +160,23 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
               <div className="min-w-0">
                 <h1 className="text-2xl font-bold tracking-tight text-slate-900">{job.title}</h1>
                 <div className="mt-1 text-slate-600">
-                  <Link href={companyUrl(job.company_slug)} className="font-medium hover:text-brand-700">
+                  <Link href={L(companyUrl(job.company_slug))} className="font-medium hover:text-brand-700">
                     {job.company_name}
                   </Link>
                   <span className="mx-1.5 text-slate-300">·</span>
-                  {locationLine(job)}
+                  {locationLine(job, locale)}
                 </div>
               </div>
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-1.5">
-              <Chip tone="brand" href={categoryUrl(job.category)}>
-                {categoryLabel(job.category)}
+              <Chip tone="brand" href={L(categoryUrl(job.category))}>
+                {categoryLabel(job.category, locale)}
               </Chip>
-              {job.seniority && <Chip href={seniorityUrl(job.seniority)}>{seniorityLabel(job.seniority)}</Chip>}
-              {job.work_mode && <Chip>{workModeLabel(job.work_mode)}</Chip>}
+              {job.seniority && <Chip href={L(seniorityUrl(job.seniority))}>{seniorityLabel(job.seniority, locale)}</Chip>}
+              {job.work_mode && <Chip>{workModeLabel(job.work_mode, locale)}</Chip>}
               {salary && <Chip tone="green">{salary}</Chip>}
-              {job.ai_required ? <Chip tone="amber">AI-rol</Chip> : null}
+              {job.ai_required ? <Chip tone="amber">AI</Chip> : null}
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -169,16 +186,16 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
                 rel="nofollow noopener noreferrer"
                 className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:bg-brand-700"
               >
-                Solliciteer bij {job.company_name} →
+                {dict.job.applyAt(job.company_name)}
               </a>
               <span className="text-sm text-slate-400">
-                Geplaatst {timeAgo(job.posted_at || job.first_seen_at)}
+                {dict.job.posted} {timeAgo(job.posted_at || job.first_seen_at, locale)}
               </span>
             </div>
           </Card>
 
           <Card className="mt-6 p-6">
-            <h2 className="text-lg font-bold text-slate-900">Functieomschrijving</h2>
+            <h2 className="text-lg font-bold text-slate-900">{dict.job.description}</h2>
             {descHtml ? (
               <div
                 className="prose-job mt-3 text-[15px] text-slate-700"
@@ -189,17 +206,15 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
                 {job.description_text}
               </p>
             ) : (
-              <p className="mt-3 text-slate-500">
-                Geen omschrijving beschikbaar. Bekijk de volledige vacature bij de werkgever.
-              </p>
+              <p className="mt-3 text-slate-500">{dict.job.noDescription}</p>
             )}
 
             {tools.length > 0 && (
               <div className="mt-6 border-t border-slate-100 pt-4">
-                <h3 className="text-sm font-semibold text-slate-900">Tools &amp; stack</h3>
+                <h3 className="text-sm font-semibold text-slate-900">{dict.job.toolsStack}</h3>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {tools.map((t) => (
-                    <Chip key={t} href={toolUrl(t)}>
+                    <Chip key={t} href={L(toolUrl(t))}>
                       {toolLabel(t)}
                     </Chip>
                   ))}
@@ -208,8 +223,7 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
             )}
 
             <div className="mt-6 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
-              Deze vacature is verzameld via {SOURCE_LABELS[job.source] || job.source}. Solliciteren
-              gebeurt rechtstreeks bij de werkgever.
+              {dict.job.collectedVia(SOURCE_LABELS[job.source] || job.source)}
             </div>
           </Card>
         </div>
@@ -217,28 +231,28 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
         {/* Sidebar */}
         <aside className="space-y-6">
           <Card className="p-5">
-            <h2 className="text-sm font-semibold text-slate-900">Over deze functie</h2>
+            <h2 className="text-sm font-semibold text-slate-900">{dict.job.aboutRole}</h2>
             <dl className="mt-3 space-y-2.5 text-sm">
-              <Fact label="Bedrijf">
-                <Link href={companyUrl(job.company_slug)} className="text-brand-700 hover:underline">
+              <Fact label={dict.job.company}>
+                <Link href={L(companyUrl(job.company_slug))} className="text-brand-700 hover:underline">
                   {job.company_name}
                 </Link>
               </Fact>
-              <Fact label="Locatie">
+              <Fact label={dict.job.location}>
                 {job.city_slug ? (
-                  <Link href={locationUrl(job.city_slug)} className="text-brand-700 hover:underline">
-                    {locationLine(job)}
+                  <Link href={L(locationUrl(job.city_slug))} className="text-brand-700 hover:underline">
+                    {locationLine(job, locale)}
                   </Link>
                 ) : (
-                  locationLine(job)
+                  locationLine(job, locale)
                 )}
               </Fact>
-              <Fact label="Categorie">{categoryLabel(job.category)}</Fact>
-              {job.seniority && <Fact label="Niveau">{seniorityLabel(job.seniority)}</Fact>}
-              {job.work_mode && <Fact label="Werkvorm">{workModeLabel(job.work_mode)}</Fact>}
-              {salary && <Fact label="Salaris">{salary}</Fact>}
-              {job.reports_to && <Fact label="Rapporteert aan">{job.reports_to}</Fact>}
-              <Fact label="Geplaatst">{formatDateNL(job.posted_at || job.first_seen_at)}</Fact>
+              <Fact label={dict.job.category}>{categoryLabel(job.category, locale)}</Fact>
+              {job.seniority && <Fact label={dict.job.level}>{seniorityLabel(job.seniority, locale)}</Fact>}
+              {job.work_mode && <Fact label={dict.job.workMode}>{workModeLabel(job.work_mode, locale)}</Fact>}
+              {salary && <Fact label={dict.job.salary}>{salary}</Fact>}
+              {job.reports_to && <Fact label={dict.job.reportsTo}>{job.reports_to}</Fact>}
+              <Fact label={dict.job.posted}>{formatDate(job.posted_at || job.first_seen_at, locale)}</Fact>
             </dl>
             <a
               href={applyHref}
@@ -246,7 +260,7 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
               rel="nofollow noopener noreferrer"
               className="mt-4 block rounded-lg bg-brand-600 px-4 py-2.5 text-center font-semibold text-white transition hover:bg-brand-700"
             >
-              Bekijk &amp; solliciteer
+              {dict.job.apply}
             </a>
           </Card>
         </aside>
@@ -254,7 +268,7 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
 
       {related.length > 0 && (
         <section className="mt-12">
-          <h2 className="mb-4 text-xl font-bold text-slate-900">Vergelijkbare vacatures</h2>
+          <h2 className="mb-4 text-xl font-bold text-slate-900">{dict.job.related}</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {related.map((j) => (
               <JobCard key={j.id} job={j} locale={locale} />

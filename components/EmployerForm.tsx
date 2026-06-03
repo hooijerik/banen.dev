@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
+import type { Dict } from "@/lib/i18n/types";
 
-export function EmployerForm() {
+export function EmployerForm({ t }: { t: Dict["forms"]["employer"] }) {
   const [form, setForm] = useState({
     companyName: "",
     contactEmail: "",
@@ -10,7 +11,6 @@ export function EmployerForm() {
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
-  const [msg, setMsg] = useState("");
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [k]: e.target.value });
@@ -25,14 +25,9 @@ export function EmployerForm() {
         body: JSON.stringify(form),
       });
       const d = await r.json();
-      if (d.ok) setStatus("ok");
-      else {
-        setStatus("error");
-        setMsg(d.error || "Er ging iets mis");
-      }
+      setStatus(d.ok ? "ok" : "error");
     } catch {
       setStatus("error");
-      setMsg("Er ging iets mis. Probeer het later opnieuw.");
     }
   }
 
@@ -40,10 +35,8 @@ export function EmployerForm() {
     return (
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
         <div className="text-2xl">✅</div>
-        <h3 className="mt-2 font-bold text-emerald-900">Bedankt!</h3>
-        <p className="mt-1 text-sm text-emerald-700">
-          We nemen je vacature in behandeling en plaatsen hem na controle op GTM Banen.
-        </p>
+        <h3 className="mt-2 font-bold text-emerald-900">{t.success}</h3>
+        <p className="mt-1 text-sm text-emerald-700">{t.successBody}</p>
       </div>
     );
   }
@@ -54,38 +47,38 @@ export function EmployerForm() {
   return (
     <form onSubmit={submit} className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
-        <input value={form.companyName} onChange={set("companyName")} placeholder="Bedrijfsnaam" className={input} />
+        <input value={form.companyName} onChange={set("companyName")} placeholder={t.companyName} className={input} />
         <input
           type="email"
           required
           value={form.contactEmail}
           onChange={set("contactEmail")}
-          placeholder="Contact e-mail *"
+          placeholder={t.contactEmail}
           className={input}
         />
       </div>
-      <input value={form.jobTitle} onChange={set("jobTitle")} placeholder="Functietitel" className={input} />
+      <input value={form.jobTitle} onChange={set("jobTitle")} placeholder={t.jobTitle} className={input} />
       <input
         type="url"
         value={form.jobUrl}
         onChange={set("jobUrl")}
-        placeholder="Link naar de vacature (https://…)"
+        placeholder={t.jobUrl}
         className={input}
       />
       <textarea
         value={form.message}
         onChange={set("message")}
-        placeholder="Bericht (optioneel)"
+        placeholder={t.message}
         rows={3}
         className={input}
       />
-      {status === "error" && <p className="text-sm text-red-600">{msg}</p>}
+      {status === "error" && <p className="text-sm text-red-600">{t.error}</p>}
       <button
         type="submit"
         disabled={status === "loading"}
         className="rounded-lg bg-brand-600 px-5 py-2.5 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
       >
-        {status === "loading" ? "Bezig…" : "Vacature insturen"}
+        {status === "loading" ? t.submitting : t.submit}
       </button>
     </form>
   );

@@ -120,6 +120,7 @@ export const nl = {
     salary: "Salaris",
     reportsTo: "Rapporteert aan",
     category: "Categorie",
+    company: "Bedrijf",
     employmentType: "Dienstverband",
     toolsStack: "Tools & stack",
     aboutRole: "Over deze functie",
@@ -128,6 +129,8 @@ export const nl = {
     viewCompany: "Bekijk bedrijf →",
     collectedVia: (s: string) =>
       `Deze vacature is verzameld via ${s}. Solliciteer op de website van het bedrijf.`,
+    noDescription: "Geen omschrijving beschikbaar. Bekijk de volledige vacature bij de werkgever.",
+    metaTitle: (title: string, company: string, loc: string) => `${title} bij ${company} - ${loc}`,
   },
   companies: {
     title: "Bedrijven die nu aannemen",
@@ -197,6 +200,7 @@ export const nl = {
     jobsWith: (t: string) => `Vacatures die ${t} vragen`,
     jobCount: (n: number) => `${n} ${n === 1 ? "vacature" : "vacatures"}`,
     notFound: "Tool niet gevonden",
+    empty: "Nog geen tools gevonden.",
   },
   locations: {
     title: "GTM-vacatures per locatie",

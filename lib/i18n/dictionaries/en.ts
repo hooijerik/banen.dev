@@ -121,6 +121,7 @@ export const en: Dict = {
     salary: "Salary",
     reportsTo: "Reports to",
     category: "Category",
+    company: "Company",
     employmentType: "Employment type",
     toolsStack: "Tools & stack",
     aboutRole: "About this role",
@@ -129,6 +130,8 @@ export const en: Dict = {
     viewCompany: "View company →",
     collectedVia: (s: string) =>
       `This job was collected via ${s}. Apply on the company's website.`,
+    noDescription: "No description available. View the full job on the employer's website.",
+    metaTitle: (title: string, company: string, loc: string) => `${title} at ${company} - ${loc}`,
   },
   companies: {
     title: "Companies hiring now",
@@ -196,6 +199,7 @@ export const en: Dict = {
     jobsWith: (t: string) => `Jobs that require ${t}`,
     jobCount: (n: number) => `${n} ${n === 1 ? "job" : "jobs"}`,
     notFound: "Tool not found",
+    empty: "No tools found yet.",
   },
   locations: {
     title: "GTM jobs by location",
