@@ -24,7 +24,8 @@ const rows = db
 
 const tokenRe = /(?:€|eur|\$|usd|£|gbp)\s?\d[\d.,]*\s?k?|\d{1,3}(?:[.,]\d{3})+|\d{2,3}\s?k\b/gi;
 
-console.log(`\n💶 Salaris-audit — top ${rows.length} (gesorteerd op jaarbedrag in EUR)`);
+const stamp = new Date().toISOString().replace("T", " ").slice(0, 16);
+console.log(`\n💶 Salaris-audit — ${stamp} UTC — top ${rows.length} (gesorteerd op jaarbedrag in EUR)`);
 console.log(`   ⚠ = boven €${HIGH_EUR / 1000}k/jr; controleer de bron-tekst hieronder.\n`);
 let flagged = 0;
 for (const r of rows) {

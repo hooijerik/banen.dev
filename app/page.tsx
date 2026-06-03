@@ -55,8 +55,8 @@ export default async function HomePage() {
 
           </div>
 
-          {/* Alle categorieën op 1 regel, boven de vouw */}
-          <div className="mt-7 flex items-center justify-start gap-2 overflow-x-auto pb-1 lg:justify-center">
+          {/* Categorieën: gewrapt op mobiel (geen horizontaal scrollen), op 1 regel op desktop */}
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-2 lg:flex-nowrap">
             {sortedCats.map((c) => (
               <Link
                 key={c.slug}
