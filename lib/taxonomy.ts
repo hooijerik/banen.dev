@@ -23,6 +23,8 @@ export const CATEGORIES: CategoryDef[] = [
     group: "Operations",
     description:
       "Revenue Operations en het hele GTM-operations spectrum: RevOps, Sales/Marketing/CS Ops, GTM Engineering, CRM-beheer, Deal Desk, Enablement en commerciële strategie - de data, systemen en processen achter voorspelbare omzet.",
+    descriptionEn:
+      "Revenue Operations and the full GTM-operations spectrum: RevOps, Sales/Marketing/CS Ops, GTM Engineering, CRM administration, Deal Desk, Enablement and commercial strategy - the data, systems and processes behind predictable revenue.",
     keywords: [
       "revenue operations",
       "revops",
@@ -104,6 +106,8 @@ export const CATEGORIES: CategoryDef[] = [
     group: "Commercieel",
     description:
       "Partnerships & Alliances: het bouwen van channel-, technologie- en strategische partnerships die nieuwe omzet ontsluiten.",
+    descriptionEn:
+      "Partnerships & Alliances: building channel, technology and strategic partnerships that unlock new revenue.",
     keywords: [
       "partnerships",
       "partnership manager",
@@ -124,6 +128,8 @@ export const CATEGORIES: CategoryDef[] = [
     group: "Commercieel",
     description:
       "Customer Success: onboarding, adoptie, retentie en renewals - het laten slagen en groeien van klanten.",
+    descriptionEn:
+      "Customer Success: onboarding, adoption, retention and renewals - making customers succeed and grow.",
     keywords: [
       "customer success",
       "customer success manager",
@@ -150,6 +156,8 @@ export const CATEGORIES: CategoryDef[] = [
     group: "Commercieel",
     description:
       "Marketing: demand generation, growth, content, product marketing en brand - de motor achter pipeline en bekendheid.",
+    descriptionEn:
+      "Marketing: demand generation, growth, content, product marketing and brand - the engine behind pipeline and awareness.",
     keywords: [
       "marketing",
       "marketing manager",
@@ -194,6 +202,8 @@ export const CATEGORIES: CategoryDef[] = [
     group: "Commercieel",
     description:
       "Sales: van SDR/BDR tot Account Executive en Sales Engineer - alle rollen die nieuwe en bestaande omzet binnenhalen.",
+    descriptionEn:
+      "Sales: from SDR/BDR to Account Executive and Sales Engineer - every role that wins new and existing revenue.",
     keywords: [
       "sales",
       "account executive",
