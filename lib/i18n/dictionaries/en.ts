@@ -48,7 +48,7 @@ export const en: Dict = {
     heroPre: "Find your next job in",
     heroHighlight: "go-to-market",
     heroSubtitle:
-      "Sales, Marketing, Customer Success, RevOps and every other GTM role at the best companies. Refreshed daily.",
+      "Sales, Marketing, Customer Success, RevOps and every other GTM role at the best companies in the Netherlands and Belgium. Refreshed daily.",
     searchPlaceholder: "Search by role, company or tool…",
     search: "Search",
     statActive: "Active jobs",

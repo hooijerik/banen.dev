@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 export default async function ToolsPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
-  const tools = getFacets().tools;
+  const tools = getFacets(locale === "en" ? "en" : undefined).tools;
   return (
     <Container className="py-10">
       <h1 className="text-3xl font-bold tracking-tight text-slate-900">{dict.tools.title}</h1>

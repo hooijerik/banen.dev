@@ -16,10 +16,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const t = dict.home;
   const L = (p: string) => withLocale(locale, p);
 
-  const stats = getStats();
-  const facets = getFacets();
-  const latest = listRecentShuffled(8, 50);
-  const companies = listCompanies(14);
+  const lang = locale === "en" ? "en" : undefined; // English site: only English-text jobs/stats
+  const stats = getStats(lang);
+  const facets = getFacets(lang);
+  const latest = listRecentShuffled(8, 50, lang);
+  const companies = listCompanies(14, lang);
   const catCount = new Map(facets.categories.map((f) => [f.key, f.count]));
   const sortedCats = [...CATEGORIES].sort(
     (a, b) => (catCount.get(b.slug) ?? 0) - (catCount.get(a.slug) ?? 0),

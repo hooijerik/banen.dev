@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 export default async function CompaniesPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
-  const companies = listCompanies();
+  const companies = listCompanies(undefined, locale === "en" ? "en" : undefined);
   return (
     <Container className="py-10">
       <h1 className="text-3xl font-bold tracking-tight text-slate-900">{dict.companies.title}</h1>

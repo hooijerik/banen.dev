@@ -33,7 +33,10 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
   if (!company) notFound();
   const dict = await getDictionary(locale);
 
-  const jobs = listJobs({ company: slug }, { sort: "newest", perPage: 100 });
+  const jobs = listJobs(
+    { company: slug, lang: locale === "en" ? "en" : undefined },
+    { sort: "newest", perPage: 100 },
+  );
   const website = company.website
     ? company.website.startsWith("http")
       ? company.website

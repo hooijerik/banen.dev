@@ -33,8 +33,9 @@ export default async function ToolPage({ params }: { params: Promise<{ locale: L
   if (!tool) notFound();
   const dict = await getDictionary(locale);
 
-  const jobs = listJobs({ tool: slug }, { sort: "newest", perPage: 100 });
-  const total = countJobs({ tool: slug });
+  const lang = locale === "en" ? "en" : undefined;
+  const jobs = listJobs({ tool: slug, lang }, { sort: "newest", perPage: 100 });
+  const total = countJobs({ tool: slug, lang });
 
   return (
     <Container className="py-8">

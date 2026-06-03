@@ -185,6 +185,31 @@ eq(
   detectTextLanguage("Een functie met veel verantwoordelijkheid en ervaring in sales."),
   "nl",
 );
+// classify(): no description -> Dutch, even with an English-looking title
+eq(
+  "classify lang: no description defaults to nl",
+  classify(job("Senior Account Executive for the Benelux team")).lang,
+  "nl",
+);
+eq(
+  "classify lang: english description -> en",
+  classify(
+    job("Account Executive", {
+      descriptionText:
+        "We are looking for an experienced AE to join our team. You will work with our customers in a full-time role.",
+    }),
+  ).lang,
+  "en",
+);
+eq(
+  "classify lang: dutch description -> nl",
+  classify(
+    job("Account Executive", {
+      descriptionText: "Wij zoeken een ervaren accountmanager voor ons team. Je werkt met onze klanten.",
+    }),
+  ).lang,
+  "nl",
+);
 
 // ---- summary ----
 console.log(`\n${pass} passed, ${fails.length} failed`);

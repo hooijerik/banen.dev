@@ -93,16 +93,18 @@ export function listJobs(
 }
 
 /** Recent jobs in randomized order, so the homepage doesn't always show the same ones first. */
-export function listRecentShuffled(limit = 8, pool = 50): JobRow[] {
+export function listRecentShuffled(limit = 8, pool = 50, lang?: "nl" | "en"): JobRow[] {
   const db = getDb();
+  const langCond = lang ? " AND j.lang = ?" : "";
+  const params = lang ? [lang, pool, limit] : [pool, limit];
   return db
     .prepare(
       `SELECT * FROM (
-         SELECT ${JOB_COLS} ${JOB_FROM} WHERE j.status='active'
+         SELECT ${JOB_COLS} ${JOB_FROM} WHERE j.status='active'${langCond}
          ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC LIMIT ?
        ) ORDER BY RANDOM() LIMIT ?`,
     )
-    .all(pool, limit) as unknown as JobRow[];
+    .all(...params) as unknown as JobRow[];
 }
 
 export function countJobs(f: JobFilters): number {
@@ -156,16 +158,20 @@ export function getJobBySlug(slug: string): JobRow | null {
   return (row as unknown as JobRow) ?? null;
 }
 
-export function getRelatedJobs(job: JobRow, limit = 6): JobRow[] {
+export function getRelatedJobs(job: JobRow, limit = 6, lang?: "nl" | "en"): JobRow[] {
   const db = getDb();
+  const langCond = lang ? " AND j.lang = ?" : "";
+  const params = lang
+    ? [lang, job.id, job.category, job.company_id, job.company_id, limit]
+    : [job.id, job.category, job.company_id, job.company_id, limit];
   return db
     .prepare(
       `SELECT ${JOB_COLS} ${JOB_FROM}
-       WHERE j.status='active' AND j.id != ? AND (j.category = ? OR j.company_id = ?)
+       WHERE j.status='active'${langCond} AND j.id != ? AND (j.category = ? OR j.company_id = ?)
        ORDER BY (j.company_id = ?) DESC, COALESCE(j.posted_at, j.first_seen_at) DESC
        LIMIT ?`,
     )
-    .all(job.id, job.category, job.company_id, job.company_id, limit) as unknown as JobRow[];
+    .all(...params) as unknown as JobRow[];
 }
 
 export interface Stats {
@@ -173,17 +179,21 @@ export interface Stats {
   newThisWeek: number;
   companies: number;
 }
-export function getStats(): Stats {
+export function getStats(lang?: "nl" | "en"): Stats {
   const db = getDb();
-  const a = db.prepare("SELECT COUNT(*) AS n FROM jobs WHERE status='active'").get() as { n: number };
+  const langCond = lang ? " AND lang = ?" : "";
+  const p = lang ? [lang] : [];
+  const a = db
+    .prepare(`SELECT COUNT(*) AS n FROM jobs WHERE status='active'${langCond}`)
+    .get(...p) as { n: number };
   const w = db
     .prepare(
-      "SELECT COUNT(*) AS n FROM jobs WHERE status='active' AND first_seen_at >= datetime('now','-7 days')",
+      `SELECT COUNT(*) AS n FROM jobs WHERE status='active' AND first_seen_at >= datetime('now','-7 days')${langCond}`,
     )
-    .get() as { n: number };
+    .get(...p) as { n: number };
   const c = db
-    .prepare("SELECT COUNT(DISTINCT company_id) AS n FROM jobs WHERE status='active'")
-    .get() as { n: number };
+    .prepare(`SELECT COUNT(DISTINCT company_id) AS n FROM jobs WHERE status='active'${langCond}`)
+    .get(...p) as { n: number };
   return { activeJobs: a.n, newThisWeek: w.n, companies: c.n };
 }
 
@@ -202,26 +212,30 @@ export interface Facets {
   lang: Facet[];
 }
 
-export function getFacets(): Facets {
+export function getFacets(lang?: "nl" | "en"): Facets {
   const db = getDb();
+  const langCond = lang ? " AND lang = ?" : "";
+  const lp = lang ? [lang] : [];
   const groupBy = (col: string): Facet[] =>
     db
       .prepare(
-        `SELECT ${col} AS key, COUNT(*) AS count FROM jobs WHERE status='active' AND ${col} IS NOT NULL AND ${col} != '' GROUP BY ${col} ORDER BY count DESC`,
+        `SELECT ${col} AS key, COUNT(*) AS count FROM jobs WHERE status='active' AND ${col} IS NOT NULL AND ${col} != ''${langCond} GROUP BY ${col} ORDER BY count DESC`,
       )
-      .all() as unknown as Facet[];
+      .all(...lp) as unknown as Facet[];
 
   const cities = db
     .prepare(
       `SELECT city_slug AS key, city AS label, COUNT(*) AS count FROM jobs
-       WHERE status='active' AND city_slug IS NOT NULL GROUP BY city_slug ORDER BY count DESC LIMIT 40`,
+       WHERE status='active' AND city_slug IS NOT NULL${langCond} GROUP BY city_slug ORDER BY count DESC LIMIT 40`,
     )
-    .all() as unknown as Facet[];
+    .all(...lp) as unknown as Facet[];
 
   // tools live in a JSON array column -> count in JS
   const toolRows = db
-    .prepare("SELECT tools_json FROM jobs WHERE status='active' AND tools_json IS NOT NULL AND tools_json != '[]'")
-    .all() as { tools_json: string }[];
+    .prepare(
+      `SELECT tools_json FROM jobs WHERE status='active' AND tools_json IS NOT NULL AND tools_json != '[]'${langCond}`,
+    )
+    .all(...lp) as { tools_json: string }[];
   const toolCounts = new Map<string, number>();
   for (const r of toolRows) {
     try {
@@ -251,14 +265,17 @@ export interface CompanyWithCount extends CompanyRow {
   open_count: number;
 }
 
-export function listCompanies(limit?: number): CompanyWithCount[] {
+export function listCompanies(limit?: number, lang?: "nl" | "en"): CompanyWithCount[] {
   const db = getDb();
+  const langCond = lang ? " AND j.lang = ?" : "";
   const sql = `SELECT * FROM (
-      SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active') AS open_count
+      SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active'${langCond}) AS open_count
       FROM companies c
     ) WHERE open_count > 0 ORDER BY open_count DESC, name COLLATE NOCASE ${limit ? "LIMIT ?" : ""}`;
-  const stmt = db.prepare(sql);
-  return (limit ? stmt.all(limit) : stmt.all()) as unknown as CompanyWithCount[];
+  const params: (string | number)[] = [];
+  if (lang) params.push(lang);
+  if (limit) params.push(limit);
+  return db.prepare(sql).all(...params) as unknown as CompanyWithCount[];
 }
 
 export function getCompanyBySlug(slug: string): CompanyWithCount | null {
@@ -283,11 +300,13 @@ export function getActiveCompanySlugs(): string[] {
   return listCompanies().map((c) => c.slug);
 }
 
-export function getProvinceFacets(): { province: string; count: number }[] {
+export function getProvinceFacets(lang?: "nl" | "en"): { province: string; count: number }[] {
+  const langCond = lang ? " AND lang = ?" : "";
+  const p = lang ? [lang] : [];
   return getDb()
     .prepare(
       `SELECT province, COUNT(*) AS count FROM jobs
-       WHERE status='active' AND province IS NOT NULL GROUP BY province ORDER BY count DESC`,
+       WHERE status='active' AND province IS NOT NULL${langCond} GROUP BY province ORDER BY count DESC`,
     )
-    .all() as unknown as { province: string; count: number }[];
+    .all(...p) as unknown as { province: string; count: number }[];
 }

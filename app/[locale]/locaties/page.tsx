@@ -19,8 +19,9 @@ export default async function LocationsPage({ params }: { params: Promise<{ loca
   const { locale } = await params;
   const dict = await getDictionary(locale);
   const L = (p: string) => withLocale(locale, p);
-  const facets = getFacets();
-  const provinces = getProvinceFacets();
+  const lang = locale === "en" ? "en" : undefined;
+  const facets = getFacets(lang);
+  const provinces = getProvinceFacets(lang);
   const remoteCount = facets.workMode.find((w) => w.key === "remote")?.count ?? 0;
 
   return (

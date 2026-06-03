@@ -443,7 +443,8 @@ export function classify(raw: RawJob): Classification {
     reportsTo: detectReportsTo(descText),
     compStructure: detectComp(text, salary.disclosed),
     equityType: detectEquity(text),
-    lang: detectTextLanguage(text),
+    // No description text -> assume a Dutch role (a title alone isn't enough signal to call it English).
+    lang: descText.trim() ? detectTextLanguage(text) : "nl",
   };
 }
 

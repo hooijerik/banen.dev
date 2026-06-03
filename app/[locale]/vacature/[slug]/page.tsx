@@ -85,7 +85,7 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
   const dict = await getDictionary(locale);
   const L = (p: string) => withLocale(locale, p);
 
-  const related = getRelatedJobs(job, 4);
+  const related = getRelatedJobs(job, 4, locale === "en" ? "en" : undefined);
   const salary = formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_interval, locale);
   let tools: string[] = [];
   try {
