@@ -21,6 +21,7 @@ export interface JobFilters {
   ai?: boolean;
   remote?: boolean;
   datePosted?: number; // posted within the last N days
+  lang?: "nl" | "en"; // language of the posting text
   q?: string;
 }
 
@@ -44,6 +45,7 @@ function buildWhere(f: JobFilters): { sql: string; params: (string | number)[] }
   if (f.company) (cond.push("c.slug = ?"), params.push(f.company));
   if (f.tool) (cond.push("j.tools_json LIKE ?"), params.push(`%"${f.tool}"%`));
   if (f.ai) cond.push("j.ai_required = 1");
+  if (f.lang) (cond.push("j.lang = ?"), params.push(f.lang));
   if (f.datePosted && f.datePosted > 0) {
     // age of the posting: prefer the source's posted date, fall back to when we first saw it
     cond.push("COALESCE(j.posted_at, j.first_seen_at) >= datetime('now', ?)");
@@ -197,6 +199,7 @@ export interface Facets {
   country: Facet[];
   cities: Facet[]; // key = city_slug, label = city
   tools: Facet[];
+  lang: Facet[];
 }
 
 export function getFacets(): Facets {
@@ -240,6 +243,7 @@ export function getFacets(): Facets {
     country: groupBy("country"),
     cities,
     tools,
+    lang: groupBy("lang"),
   };
 }
 

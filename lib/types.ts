@@ -92,6 +92,7 @@ export interface Classification {
   reportsTo: string | null;
   compStructure: string | null; // "base+bonus" | "base+commission" | "base" | "ote" | null
   equityType: string | null; // "options" | "rsu" | "equity" | null
+  lang: "nl" | "en"; // detected language of the posting text
   /** false => not a GTM role, should be dropped */
   gtmRelevant: boolean;
 }
@@ -133,6 +134,7 @@ export interface JobRow {
   tools_json: string | null;
   reports_to: string | null;
   ai_required: number; // 0/1
+  lang: string; // "nl" | "en"
   posted_at: string | null;
   first_seen_at: string;
   last_seen_at: string;

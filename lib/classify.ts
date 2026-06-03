@@ -377,6 +377,20 @@ function detectEquity(text: string): string | null {
   return null;
 }
 
+// --- text language (Dutch vs English) ---
+const NL_MARKERS =
+  /(?<![a-z])(de|het|een|en|je|wij|voor|met|van|jij|jou|onze|ervaring|gezocht|functie|werkzaamheden|vereisten|salaris|fulltime|parttime|werken|baan|over ons|ben jij)(?![a-z])/gi;
+const EN_MARKERS =
+  /(?<![a-z])(the|and|you|we|for|with|our|your|role|experience|looking|requirements|responsibilities|join|the team|full-time|part-time)(?![a-z])/gi;
+
+/** Detect the posting language by counting Dutch vs English marker words. Ties/empty -> nl. */
+export function detectTextLanguage(text: string): "nl" | "en" {
+  const t = (text || "").toLowerCase();
+  const nl = (t.match(NL_MARKERS) || []).length;
+  const en = (t.match(EN_MARKERS) || []).length;
+  return en > nl ? "en" : "nl";
+}
+
 /** Full classification of a raw job. */
 export function classify(raw: RawJob): Classification {
   const title = raw.title || "";
@@ -429,6 +443,7 @@ export function classify(raw: RawJob): Classification {
     reportsTo: detectReportsTo(descText),
     compStructure: detectComp(text, salary.disclosed),
     equityType: detectEquity(text),
+    lang: detectTextLanguage(text),
   };
 }
 

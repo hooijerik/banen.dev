@@ -117,6 +117,12 @@ export function getDb(): DatabaseSync {
   db.exec("PRAGMA busy_timeout = 5000;");
   db.exec("PRAGMA foreign_keys = ON;");
   db.exec(SCHEMA);
+  // Migration: add `lang` to existing DBs (schema uses CREATE TABLE IF NOT EXISTS).
+  const cols = db.prepare("PRAGMA table_info(jobs)").all() as { name: string }[];
+  if (!cols.some((c) => c.name === "lang")) {
+    db.exec("ALTER TABLE jobs ADD COLUMN lang TEXT NOT NULL DEFAULT 'nl'");
+  }
+  db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_lang ON jobs(lang)");
   _db = db;
   return db;
 }

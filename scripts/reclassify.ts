@@ -30,7 +30,7 @@ const expireStmt = db.prepare("UPDATE jobs SET status='expired' WHERE id = ?");
 const updateStmt = db.prepare(
   `UPDATE jobs SET category=?, seniority=?, work_mode=?, city=?, city_slug=?, province=?, country=?,
      salary_min=?, salary_max=?, salary_currency=?, salary_interval=?, salary_min_eur=?, salary_max_eur=?,
-     salary_disclosed=?, comp_structure=?, equity_type=?, tools_json=?, ai_required=?, reports_to=?
+     salary_disclosed=?, comp_structure=?, equity_type=?, tools_json=?, ai_required=?, reports_to=?, lang=?
    WHERE id=?`,
 );
 
@@ -83,6 +83,7 @@ for (const r of rows) {
     JSON.stringify(cls.tools),
     cls.aiRequired ? 1 : 0,
     cls.reportsTo,
+    cls.lang,
     r.id,
   );
 }

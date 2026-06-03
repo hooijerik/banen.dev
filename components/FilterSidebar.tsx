@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { buildVacaturesUrl, PARAMS } from "@/lib/urls";
-import { categoryLabel, seniorityLabel, toolLabel } from "@/lib/taxonomy";
+import { buildVacaturesUrl, PARAMS, withLocale } from "@/lib/urls";
+import { categoryLabel, seniorityLabel, toolLabel, workModeLabel } from "@/lib/taxonomy";
 import type { Facets } from "@/lib/queries";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dict } from "@/lib/i18n/types";
 
 export type ActiveParams = Partial<Record<keyof typeof PARAMS, string>>;
 
@@ -11,18 +13,8 @@ const SALARY_PRESETS: [string, string][] = [
   ["90000", "€ 90k+"],
   ["120000", "€ 120k+"],
 ];
-const WORKMODES: [string, string][] = [
-  ["remote", "Remote"],
-  ["hybrid", "Hybride"],
-  ["onsite", "Op kantoor"],
-];
-const DATE_PRESETS: [string, string][] = [
-  ["1", "Afgelopen 24 uur"],
-  ["3", "Afgelopen 3 dagen"],
-  ["7", "Afgelopen 7 dagen"],
-  ["14", "Afgelopen 14 dagen"],
-  ["30", "Afgelopen 30 dagen"],
-];
+const WORKMODE_KEYS = ["remote", "hybrid", "onsite"] as const;
+const DATE_KEYS = ["1", "3", "7", "14", "30"] as const;
 
 function toggleUrl(active: ActiveParams, dim: keyof typeof PARAMS, value: string): string {
   const next: ActiveParams = { ...active };
@@ -32,7 +24,26 @@ function toggleUrl(active: ActiveParams, dim: keyof typeof PARAMS, value: string
   return buildVacaturesUrl(next);
 }
 
-export function FilterSidebar({ facets, active }: { facets: Facets; active: ActiveParams }) {
+export function FilterSidebar({
+  facets,
+  active,
+  locale,
+  dict,
+}: {
+  facets: Facets;
+  active: ActiveParams;
+  locale: Locale;
+  dict: Dict;
+}) {
+  const f = dict.filters;
+  const dateLabel: Record<string, string> = {
+    "1": f.dates.d1,
+    "3": f.dates.d3,
+    "7": f.dates.d7,
+    "14": f.dates.d14,
+    "30": f.dates.d30,
+  };
+
   const Opt = ({
     dim,
     value,
@@ -48,7 +59,7 @@ export function FilterSidebar({ facets, active }: { facets: Facets; active: Acti
     return (
       <li>
         <Link
-          href={toggleUrl(active, dim, value)}
+          href={withLocale(locale, toggleUrl(active, dim, value))}
           className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 ${
             selected ? "bg-brand-600 font-medium text-white" : "text-slate-700 hover:bg-slate-100"
           }`}
@@ -72,66 +83,80 @@ export function FilterSidebar({ facets, active }: { facets: Facets; active: Acti
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <span className="font-semibold text-slate-900">Filters</span>
-        <Link href="/vacatures" className="text-xs font-medium text-brand-700 hover:underline">
-          Wissen
+        <span className="font-semibold text-slate-900">{f.title}</span>
+        <Link href={withLocale(locale, "/vacatures")} className="text-xs font-medium text-brand-700 hover:underline">
+          {f.clear}
         </Link>
       </div>
 
-      <Group title="Categorie">
-        {facets.categories.map((f) => (
-          <Opt key={f.key} dim="category" value={f.key} label={categoryLabel(f.key)} count={f.count} />
+      <Group title={f.category}>
+        {facets.categories.map((x) => (
+          <Opt key={x.key} dim="category" value={x.key} label={categoryLabel(x.key, locale)} count={x.count} />
         ))}
       </Group>
 
-      <Group title="Niveau">
-        {facets.seniority.map((f) => (
-          <Opt key={f.key} dim="seniority" value={f.key} label={seniorityLabel(f.key)} count={f.count} />
+      <Group title={f.level}>
+        {facets.seniority.map((x) => (
+          <Opt key={x.key} dim="seniority" value={x.key} label={seniorityLabel(x.key, locale)} count={x.count} />
         ))}
       </Group>
 
-      <Group title="Werkvorm">
-        {WORKMODES.map(([v, l]) => (
+      <Group title={f.workMode}>
+        {WORKMODE_KEYS.map((v) => (
           <Opt
             key={v}
             dim="workMode"
             value={v}
-            label={l}
+            label={workModeLabel(v, locale)}
             count={facets.workMode.find((x) => x.key === v)?.count}
           />
         ))}
       </Group>
 
-      <Group title="Geplaatst">
-        {DATE_PRESETS.map(([v, l]) => (
-          <Opt key={v} dim="datePosted" value={v} label={l} />
+      {locale === "nl" && facets.lang.length > 0 && (
+        <Group title={f.language}>
+          {facets.lang.map((x) => (
+            <Opt
+              key={x.key}
+              dim="lang"
+              value={x.key}
+              label={x.key === "en" ? f.english : f.dutch}
+              count={x.count}
+            />
+          ))}
+        </Group>
+      )}
+
+      <Group title={f.posted}>
+        {DATE_KEYS.map((v) => (
+          <Opt key={v} dim="datePosted" value={v} label={dateLabel[v]} />
         ))}
       </Group>
 
-      <Group title="Salaris (min.)">
+      <Group title={f.salaryMin}>
         {SALARY_PRESETS.map(([v, l]) => (
           <Opt key={v} dim="salary" value={v} label={l} />
         ))}
       </Group>
 
       {facets.cities.length > 0 && (
-        <Group title="Locatie">
-          {facets.cities.slice(0, 10).map((f) => (
-            <Opt key={f.key} dim="city" value={f.key} label={f.label || f.key} count={f.count} />
+        <Group title={f.location}>
+          {facets.cities.slice(0, 10).map((x) => (
+            <Opt key={x.key} dim="city" value={x.key} label={x.label || x.key} count={x.count} />
           ))}
         </Group>
       )}
 
       {facets.tools.length > 0 && (
-        <Group title="Tools">
-          {facets.tools.slice(0, 12).map((f) => (
-            <Opt key={f.key} dim="tool" value={f.key} label={toolLabel(f.key)} count={f.count} />
+        <Group title={f.tools}>
+          {facets.tools.slice(0, 12).map((x) => (
+            <Opt key={x.key} dim="tool" value={x.key} label={toolLabel(x.key)} count={x.count} />
           ))}
         </Group>
       )}
 
-      <Group title="Overig">
-        <Opt dim="ai" value="1" label="AI-rollen" />
+      <Group title={f.other}>
+        <Opt dim="ai" value="1" label={f.aiRoles} />
       </Group>
     </div>
   );

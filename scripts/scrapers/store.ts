@@ -53,16 +53,16 @@ const INSERT_SQL = `INSERT INTO jobs (
   description_html, description_text, location_raw, city, city_slug, province, country,
   work_mode, category, seniority, employment_type,
   salary_min, salary_max, salary_currency, salary_interval, salary_min_eur, salary_max_eur, salary_disclosed,
-  comp_structure, equity_type, tools_json, reports_to, ai_required,
+  comp_structure, equity_type, tools_json, reports_to, ai_required, lang,
   posted_at, last_seen_at, status, hash
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,datetime(?),datetime('now'),'active',?)`;
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,datetime(?),datetime('now'),'active',?)`;
 
 const UPDATE_SQL = `UPDATE jobs SET
   company_id=?, title=?, title_norm=?, slug=?, url=?, apply_url=?,
   description_html=?, description_text=?, location_raw=?, city=?, city_slug=?, province=?, country=?,
   work_mode=?, category=?, seniority=?, employment_type=?,
   salary_min=?, salary_max=?, salary_currency=?, salary_interval=?, salary_min_eur=?, salary_max_eur=?, salary_disclosed=?,
-  comp_structure=?, equity_type=?, tools_json=?, reports_to=?, ai_required=?,
+  comp_structure=?, equity_type=?, tools_json=?, reports_to=?, ai_required=?, lang=?,
   posted_at=datetime(?), last_seen_at=datetime('now'), status='active', hash=?
 WHERE id=?`;
 
@@ -133,6 +133,7 @@ export function upsertJob(raw: RawJob): UpsertResult {
     toolsJson,
     cls.reportsTo,
     cls.aiRequired ? 1 : 0,
+    cls.lang,
     postedAt,
     hashStr,
   ];
