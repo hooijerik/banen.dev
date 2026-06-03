@@ -25,7 +25,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
           <div>
             <h3 className="text-sm font-semibold text-slate-900">{f.categories}</h3>
             <ul className="mt-3 space-y-2 text-sm text-slate-600">
-              {CATEGORIES.slice(0, 7).map((c) => (
+              {CATEGORIES.filter((c) => c.slug !== "overig").slice(0, 7).map((c) => (
                 <li key={c.slug}>
                   <Link href={L(categoryUrl(c.slug))} className="hover:text-brand-700">
                     {categoryLabel(c.slug, locale)}

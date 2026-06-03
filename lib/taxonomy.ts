@@ -249,6 +249,20 @@ export const CATEGORIES: CategoryDef[] = [
       "chief revenue officer",
     ],
   },
+  {
+    // Catch-all for GTM-relevant roles that don't match a specific category.
+    // Empty keywords on purpose: classify() assigns "overig" as a fallback, it is
+    // never matched by detectCategory. Kept out of the featured pill rows (home/footer).
+    slug: "overig",
+    label: "Overig GTM",
+    labelEn: "Other GTM",
+    group: "Overig",
+    description:
+      "Overige go-to-market rollen: GTM-functies die niet in een van de hoofdcategorieën vallen, van commerciële generalisten tot nieuwe en hybride rollen.",
+    descriptionEn:
+      "Other go-to-market roles: GTM jobs that don't fit one of the main categories, from commercial generalists to new and hybrid roles.",
+    keywords: [],
+  },
 ];
 
 /** Hard exclusions: if NO GTM category matched and one of these is in the title, drop the job. */

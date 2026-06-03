@@ -22,9 +22,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const latest = listRecentShuffled(8, 50, lang);
   const companies = listCompanies(14, lang);
   const catCount = new Map(facets.categories.map((f) => [f.key, f.count]));
-  const sortedCats = [...CATEGORIES].sort(
-    (a, b) => (catCount.get(b.slug) ?? 0) - (catCount.get(a.slug) ?? 0),
-  );
+  const sortedCats = [...CATEGORIES]
+    .filter((c) => c.slug !== "overig") // catch-all: not a featured pill
+    .sort((a, b) => (catCount.get(b.slug) ?? 0) - (catCount.get(a.slug) ?? 0));
   const remoteCount = facets.workMode.find((w) => w.key === "remote")?.count ?? 0;
 
   return (
