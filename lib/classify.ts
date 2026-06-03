@@ -258,29 +258,45 @@ export function parseSalary(text: string): ParsedSalary {
     interval = "hour";
   }
 
-  // Gather monetary amounts (currency-adjacent or k-suffixed) and tag each by the word
-  // beside it, so a bonus/OTE figure ("42k basis + 15k bonus") isn't mistaken for the
-  // bottom of the base range.
+  // Gather monetary amounts and tag each by the word beside it, so a bonus/OTE figure
+  // ("42k basis + 15k bonus") isn't mistaken for the bottom of the base range. To stay
+  // sharp, a number only counts as salary when it is currency-prefixed OR sits next to a
+  // salary cue; counts ("30,000 users", "500,000 companies"), retirement plans ("401k")
+  // and revenue/quota figures are rejected.
   const OTE_RE = /^(ote|ontarget)/;
   const VAR_RE = /^(bonus|commissie|commission|variabel|variable|provisie|incentive)/;
   const BASE_RE = /^(basis|base|vast|fixed|bruto|salaris|salary|grondslag)/;
+  const SALARY_CTX =
+    /salar|compensa|vergoeding|\bloon\b|\bwage\b|\bpay\b|package|\bote\b|on[ -]?target|\bbasis\b|\bbase\b|bruto|netto|per\s?(?:jaar|maand|year|month|annum|week|uur|hour)|p\/m\b|\/(?:jaar|maand|year|month|yr|mo)\b|verdien|\bearn|\bbonus|commiss|\bbieden\b|\boffer|\btot\b|vanaf|indicat/i;
+  const NON_SALARY =
+    /^[\s+>~–—-]*(employees?|medewerkers?|fte|users?|gebruikers?|customers?|klanten|clients?|companies|bedrijven|businesses|devices?|apparaten|specialists?|people|persons?|seats?|leads?|accounts?|members?|stores?|shops?|locations?|countries|landen|languages|talen|integrations?|partners?|projects?|downloads?|reviews?|stars?|revenue|omzet|arr|mrr|targets?|quota|funding|valuation|budget|pipeline|deals?)\b/i;
   const [lo, hi] = SAL_RANGES[interval];
+  const titleEnd = text.indexOf("\n") >= 0 ? text.indexOf("\n") : text.length;
   const base: number[] = [];
   const bonus: number[] = [];
   const ote: number[] = [];
-  const tokenRe =
-    /(?:€|eur|\$|usd|£|gbp)\s?(\d[\d.,]*\s?k?)|(\d{1,3}(?:[.,]\d{3})+)|(\d{2,3}\s?k)\b/gi;
+  const tokenRe = /(€|eur|\$|usd|£|gbp)\s?(\d[\d.,]*\s?k?)|(\d{1,3}(?:[.,]\d{3})+)|(\d{2,3}\s?k)\b/gi;
   let m: RegExpExecArray | null;
   let count = 0;
   while ((m = tokenRe.exec(text)) !== null) {
-    const tok = (m[1] || m[2] || m[3] || "").replace(/\s/g, "");
-    const val = parseAmount(tok);
+    if (++count > 60) break;
+    const isCurrency = !!m[1];
+    const numTok = (m[2] || m[3] || m[4] || "").replace(/\s/g, "");
+    const val = parseAmount(numTok);
     if (val == null || val < lo || val > hi) continue;
-    const nextWord = (text.slice(m.index + m[0].length, m.index + m[0].length + 14).toLowerCase().match(/[a-z]{2,}/) || [""])[0];
+    if (/^40[13]\(?[kb]\)?$/i.test(numTok)) continue; // 401k / 403b retirement plans
+    const end = m.index + m[0].length;
+    const after = text.slice(end, end + 18).split("\n")[0]; // same line only
+    if (NON_SALARY.test(after)) continue; // "30,000 users", "120k quota", "2m ARR", ...
+    if (!isCurrency) {
+      // a bare number is salary only in the title (titles advertise pay) or near a salary cue
+      const inTitle = m.index < titleEnd;
+      if (!inTitle && !SALARY_CTX.test(text.slice(Math.max(0, m.index - 45), end + 22))) continue;
+    }
+    const nextWord = (after.toLowerCase().match(/[a-z]{2,}/) || [""])[0];
     const prevWord = (text.slice(Math.max(0, m.index - 14), m.index).toLowerCase().match(/[a-z]{2,}(?=[^a-z]*$)/) || [""])[0];
     const tagOf = (w: string) => (OTE_RE.test(w) ? ote : VAR_RE.test(w) ? bonus : BASE_RE.test(w) ? base : null);
     (tagOf(nextWord) ?? tagOf(prevWord) ?? base).push(val);
-    if (++count > 40) break;
   }
 
   if (!base.length && !bonus.length && !ote.length) {

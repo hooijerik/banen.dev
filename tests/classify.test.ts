@@ -140,6 +140,12 @@ const s4 = parseSalary("Sales Development | 42k basis + 15k bonus");
 eq("base+bonus min is base", s4.min, 42000);
 eq("base+bonus max is OTE", s4.max, 57000);
 check("lone bonus undisclosed", parseSalary("Inclusief 15k bonus").disclosed === false);
+const s7 = parseSalary("US Remote Range $108,000 - $145,000 USD. 401k plan with matching. Team of 2,500 specialists.");
+eq("range min skips 401k/headcount", s7.min, 108000);
+eq("range max skips 401k/headcount", s7.max, 145000);
+check("company count is not salary", parseSalary("More than 500,000 companies use our product.").disclosed === false);
+check("user/device counts are not salary", parseSalary("Supporting 30,000 users and 100,000 devices globally.").disclosed === false);
+check("quota figure is not salary", parseSalary("You will own a €120k quota.").disclosed === false);
 
 // ---- tools / AI ----
 const tools = detectTools("Ervaring met Salesforce, HubSpot en Clay is een pre.");
