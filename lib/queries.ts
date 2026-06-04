@@ -186,9 +186,11 @@ export function getStats(lang?: "nl" | "en"): Stats {
   const a = db
     .prepare(`SELECT COUNT(*) AS n FROM jobs WHERE status='active'${langCond}`)
     .get(...p) as { n: number };
+  // "New this week" = actually published in the last 7 days (posted_at), NOT when we first
+  // scraped it (first_seen_at). Jobs without a known publish date aren't claimed as new.
   const w = db
     .prepare(
-      `SELECT COUNT(*) AS n FROM jobs WHERE status='active' AND first_seen_at >= datetime('now','-7 days')${langCond}`,
+      `SELECT COUNT(*) AS n FROM jobs WHERE status='active' AND posted_at >= datetime('now','-7 days')${langCond}`,
     )
     .get(...p) as { n: number };
   const c = db
