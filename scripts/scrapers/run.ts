@@ -53,16 +53,16 @@ const AGGREGATORS: Record<string, { fetchJobs: (q: string) => Promise<RawJob[]> 
 };
 
 const AGG_QUERIES = [
-  "revenue operations",
-  "sales",
-  "go-to-market",
-  "customer success",
-  "marketing operations",
-  "account executive",
-  "sales development",
-  "partnerships",
-  "demand generation",
-  "sales operations",
+  "software engineer",
+  "frontend developer",
+  "backend developer",
+  "fullstack developer",
+  "devops engineer",
+  "data engineer",
+  "machine learning engineer",
+  "python developer",
+  "java developer",
+  "react developer",
 ];
 
 interface Tally {
