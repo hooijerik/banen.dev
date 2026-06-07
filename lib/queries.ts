@@ -8,6 +8,13 @@ import type { CompanyRow, JobRow } from "./types";
 const JOB_COLS = `j.*, c.name AS company_name, c.slug AS company_slug, c.logo_url AS company_logo`;
 const JOB_FROM = `FROM jobs j JOIN companies c ON c.id = j.company_id`;
 
+/** SQL boolean: this job is a live featured/premium placement right now. */
+const JOB_FEATURED =
+  "(j.featured = 1 AND (j.featured_until IS NULL OR j.featured_until >= datetime('now')))";
+/** SQL boolean for a company being a live spotlight (pass "" for an unprefixed scope). */
+const companyFeatured = (p = "c.") =>
+  `(${p}featured = 1 AND (${p}featured_until IS NULL OR ${p}featured_until >= datetime('now')))`;
+
 export interface JobFilters {
   category?: string;
   seniority?: string;
@@ -68,12 +75,13 @@ function buildWhere(f: JobFilters): { sql: string; params: (string | number)[] }
 }
 
 function sortClause(sort: SortKey | undefined): string {
+  // Live featured/premium jobs always pin to the top, then the requested sort.
   switch (sort) {
     case "salary":
-      return "ORDER BY (j.salary_max_eur IS NULL), j.salary_max_eur DESC, COALESCE(j.posted_at, j.first_seen_at) DESC";
+      return `ORDER BY ${JOB_FEATURED} DESC, (j.salary_max_eur IS NULL), j.salary_max_eur DESC, COALESCE(j.posted_at, j.first_seen_at) DESC`;
     case "newest":
     default:
-      return "ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC, j.id DESC";
+      return `ORDER BY ${JOB_FEATURED} DESC, COALESCE(j.posted_at, j.first_seen_at) DESC, j.id DESC`;
   }
 }
 
@@ -103,6 +111,20 @@ export function listRecentShuffled(limit = 8, pool = 50, lang?: "nl" | "en"): Jo
          SELECT ${JOB_COLS} ${JOB_FROM} WHERE j.status='active'${langCond}
          ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC LIMIT ?
        ) ORDER BY RANDOM() LIMIT ?`,
+    )
+    .all(...params) as unknown as JobRow[];
+}
+
+/** Live featured/premium jobs, newest first - for the homepage 'Uitgelicht' strip. */
+export function getFeaturedJobs(limit = 6, lang?: "nl" | "en"): JobRow[] {
+  const db = getDb();
+  const langCond = lang ? " AND j.lang = ?" : "";
+  const params = lang ? [lang, limit] : [limit];
+  return db
+    .prepare(
+      `SELECT ${JOB_COLS} ${JOB_FROM}
+       WHERE j.status='active' AND ${JOB_FEATURED}${langCond}
+       ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC LIMIT ?`,
     )
     .all(...params) as unknown as JobRow[];
 }
@@ -273,11 +295,23 @@ export function listCompanies(limit?: number, lang?: "nl" | "en"): CompanyWithCo
   const sql = `SELECT * FROM (
       SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active'${langCond}) AS open_count
       FROM companies c
-    ) WHERE open_count > 0 ORDER BY open_count DESC, name COLLATE NOCASE ${limit ? "LIMIT ?" : ""}`;
+    ) WHERE open_count > 0 ORDER BY ${companyFeatured("")} DESC, open_count DESC, name COLLATE NOCASE ${limit ? "LIMIT ?" : ""}`;
   const params: (string | number)[] = [];
   if (lang) params.push(lang);
   if (limit) params.push(limit);
   return db.prepare(sql).all(...params) as unknown as CompanyWithCount[];
+}
+
+/** Live featured/spotlight companies - homepage spotlight + top of /bedrijven. */
+export function getFeaturedCompanies(limit = 8): CompanyWithCount[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active') AS open_count
+       FROM companies c WHERE ${companyFeatured("c.")}
+       ORDER BY open_count DESC, name COLLATE NOCASE LIMIT ?`,
+    )
+    .all(limit) as unknown as CompanyWithCount[];
 }
 
 export function getCompanyBySlug(slug: string): CompanyWithCount | null {

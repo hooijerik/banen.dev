@@ -31,7 +31,10 @@ export type AtsType =
 
 export type AggregatorType = "indeed" | "nationalevacaturebank" | "magnet" | "linkedin";
 
-export type SourceType = AtsType | AggregatorType;
+/** Directly-created paid postings (not from a scraper) use this source. */
+export type ManualType = "manual";
+
+export type SourceType = AtsType | AggregatorType | ManualType;
 
 export type SalaryInterval = "year" | "month" | "hour";
 
@@ -135,6 +138,8 @@ export interface JobRow {
   reports_to: string | null;
   ai_required: number; // 0/1
   lang: string; // "nl" | "en"
+  featured: number; // 0/1 - paid premium placement
+  featured_until: string | null; // ISO; premium-active while >= now
   posted_at: string | null;
   first_seen_at: string;
   last_seen_at: string;
@@ -153,6 +158,29 @@ export interface CompanyRow {
   hq_city: string | null;
   size: string | null;
   industry: string | null;
+  featured: number; // 0/1 - paid spotlight
+  featured_until: string | null; // ISO; spotlight-active while >= now
+  tagline: string | null; // richer profile (shown when featured)
+  description: string | null;
+  banner_url: string | null;
+}
+
+/** A premium-placement sale (ledger; also the future online-payment record). */
+export interface PremiumOrder {
+  id: number;
+  kind: "job" | "company" | "combo";
+  job_id: number | null;
+  company_id: number | null;
+  buyer_email: string | null;
+  company_name: string | null;
+  package: string | null;
+  amount_eur: number | null;
+  status: "lead" | "invoiced" | "paid" | "active" | "expired" | "cancelled";
+  starts_at: string | null;
+  expires_at: string | null;
+  invoice_ref: string | null;
+  notes: string | null;
+  created_at: string;
 }
 
 export interface SeedCompany {

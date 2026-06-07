@@ -66,13 +66,17 @@ const UPDATE_SQL = `UPDATE jobs SET
   posted_at=datetime(?), last_seen_at=datetime('now'), status='active', hash=?
 WHERE id=?`;
 
-export function upsertJob(raw: RawJob): UpsertResult {
+export function upsertJob(raw: RawJob, opts: { force?: boolean } = {}): UpsertResult {
   const cls = classify(raw);
-  if (!cls.gtmRelevant) return "skipped-nongtm";
-  if (!cls.location.nlRelevant) return "skipped-notnl";
+  // `force` is used for directly-created paid postings, which publish regardless of the
+  // GTM/NL gating that filters the free scraped inventory.
+  if (!opts.force) {
+    if (!cls.gtmRelevant) return "skipped-nongtm";
+    if (!cls.location.nlRelevant) return "skipped-notnl";
+  }
 
   const db = getDb();
-  const isAts = !AGGREGATORS.has(raw.source);
+  const isAts = !AGGREGATORS.has(raw.source) && raw.source !== "manual";
   const companyId = upsertCompany(raw.companyName, {
     website: raw.companyWebsite ?? null,
     atsType: isAts ? (raw.source as AtsType) : null,

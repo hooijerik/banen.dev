@@ -100,6 +100,23 @@ CREATE TABLE IF NOT EXISTS scrape_runs (
   updated INTEGER DEFAULT 0,
   errors_json TEXT
 );
+
+CREATE TABLE IF NOT EXISTS premium_orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL,                    -- 'job' | 'company' | 'combo'
+  job_id INTEGER REFERENCES jobs(id),
+  company_id INTEGER REFERENCES companies(id),
+  buyer_email TEXT,
+  company_name TEXT,
+  package TEXT,
+  amount_eur REAL,
+  status TEXT NOT NULL DEFAULT 'lead',   -- lead|invoiced|paid|active|expired|cancelled
+  starts_at TEXT,
+  expires_at TEXT,
+  invoice_ref TEXT,
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 `;
 
 let _db: DatabaseSync | null = null;
@@ -123,6 +140,20 @@ export function getDb(): DatabaseSync {
     db.exec("ALTER TABLE jobs ADD COLUMN lang TEXT NOT NULL DEFAULT 'nl'");
   }
   db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_lang ON jobs(lang)");
+  // Migration: premium placements - featured flags + richer company profile.
+  if (!cols.some((c) => c.name === "featured")) {
+    db.exec("ALTER TABLE jobs ADD COLUMN featured INTEGER NOT NULL DEFAULT 0");
+    db.exec("ALTER TABLE jobs ADD COLUMN featured_until TEXT");
+  }
+  const ccols = db.prepare("PRAGMA table_info(companies)").all() as { name: string }[];
+  if (!ccols.some((c) => c.name === "featured")) {
+    db.exec("ALTER TABLE companies ADD COLUMN featured INTEGER NOT NULL DEFAULT 0");
+    db.exec("ALTER TABLE companies ADD COLUMN featured_until TEXT");
+    db.exec("ALTER TABLE companies ADD COLUMN tagline TEXT");
+    db.exec("ALTER TABLE companies ADD COLUMN description TEXT");
+    db.exec("ALTER TABLE companies ADD COLUMN banner_url TEXT");
+  }
+  db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_featured ON jobs(featured)");
   _db = db;
   return db;
 }
