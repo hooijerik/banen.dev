@@ -1,4 +1,4 @@
-// Shared domain types for gtmbanen.nl
+// Shared domain types for banen.dev
 
 export type CategorySlug =
   | "frontend"

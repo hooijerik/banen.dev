@@ -24,7 +24,7 @@ export async function GET() {
     .join("");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0"><channel><title>${esc(SITE.name)} - Nieuwste GTM-vacatures</title><link>${SITE.url}</link><description>${esc(SITE.description)}</description><language>nl-nl</language>${items}</channel></rss>`;
+<rss version="2.0"><channel><title>${esc(SITE.name)} - Nieuwste developer-vacatures</title><link>${SITE.url}</link><description>${esc(SITE.description)}</description><language>nl-nl</language>${items}</channel></rss>`;
 
   return new Response(xml, {
     headers: { "Content-Type": "application/rss+xml; charset=utf-8" },

@@ -47,6 +47,7 @@ export default async function InsightsPage({ params }: { params: Promise<{ local
         ))}
       </div>
 
+      {posts.length > 0 && (
       <section className="mt-14">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
@@ -78,6 +79,7 @@ export default async function InsightsPage({ params }: { params: Promise<{ local
           ))}
         </div>
       </section>
+      )}
     </Container>
   );
 }

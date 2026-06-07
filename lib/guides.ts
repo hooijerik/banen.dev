@@ -15,104 +15,112 @@ export interface Guide {
 export const GUIDES: Record<Locale, Guide[]> = {
   nl: [
     {
-      slug: "wat-is-een-gtm-engineer",
-      title: "Wat is een GTM Engineer?",
-      dek: "De snelst groeiende rol in go-to-market: wat doet een GTM Engineer, welke skills heb je nodig en wat verdien je?",
+      slug: "frontend-backend-fullstack",
+      title: "Frontend, backend of fullstack — welk pad kies je?",
+      dek: "De drie hoofdrichtingen in development vergeleken: wat doe je, welke stack hoort erbij en wat past bij jou?",
       updated: "juni 2026",
       sections: [
         {
-          p: "Een GTM Engineer (Go-to-Market Engineer) bouwt de geautomatiseerde, data-gedreven infrastructuur achter moderne sales- en marketingteams. Waar een SDR handmatig prospects benadert, bouwt een GTM Engineer systemen die dat op schaal doen - met enrichment, signalen en AI.",
+          p: "Bijna elke developer-carrière begint met dezelfde vraag: ga je voor de kant die gebruikers zien (frontend), de logica en data daarachter (backend), of allebei (fullstack)? Geen enkele keuze is definitief, maar ze sturen wel je eerste jaren en je tech-stack.",
         },
         {
-          h: "Wat doet een GTM Engineer?",
-          p: "Denk aan: enrichment-waterfalls bouwen in Clay, intent- en koopsignalen detecteren, leadscoring automatiseren, data tussen CRM en outbound-tools synchroniseren, en AI inzetten voor personalisatie. Het is een hybride rol tussen RevOps, data engineering en growth.",
+          h: "Frontend",
+          p: "Frontend-developers bouwen de interface: alles wat in de browser draait. Je werkt met HTML, CSS en JavaScript/TypeScript, en een framework als React, Vue, Angular of Svelte. De focus ligt op performance, toegankelijkheid en UX. Ben je visueel en detailgericht ingesteld? Dan voelt frontend snel als thuis.",
         },
         {
-          h: "Welke tools moet je kennen?",
-          p: "De kerntools zijn Clay, n8n of Zapier, een CRM (HubSpot of Salesforce), outbound-platforms zoals Outreach of Smartlead, en enrichmentbronnen zoals Apollo en Cognism. Kennis van SQL, API's en steeds vaker LLM's/prompt-engineering is een groot pluspunt.",
+          h: "Backend",
+          p: "Backend-developers bouwen de API's, services en datalaag: de logica die gebruikers niet zien. Talen als Node.js, Python, Java, Go, C# of PHP, met databases (PostgreSQL, MongoDB, Redis) en steeds vaker cloud en microservices. Houd je van datamodellen, schaalbaarheid en systemen die kloppen? Dan past backend.",
         },
         {
-          h: "Wat verdient een GTM Engineer in Nederland?",
-          p: "Salarissen lopen uiteen op basis van ervaring en bedrijfsgrootte. Bekijk het actuele GTM Salarisrapport voor mediane ranges per niveau, en filter op vacatures die Clay of n8n vragen om een gevoel te krijgen voor de markt.",
+          h: "Fullstack",
+          p: "Fullstack-developers werken over de hele stack — van database tot UI. Populair bij start-ups en scale-ups waar één engineer een feature end-to-end oppakt. Je hoeft geen expert in alles te zijn; de kracht zit in breedte en het kunnen schakelen tussen lagen.",
+        },
+        {
+          h: "Welk pad past bij jou?",
+          p: "Kijk naar wat je energie geeft én naar de vacatures: filter op de categorieën frontend, backend en fullstack en zie welke stacks en bedrijven je aanspreken. Het Developer Salarisrapport toont de mediane salarisranges per richting in Nederland en Vlaanderen.",
         },
       ],
     },
     {
-      slug: "revops-carrierepad",
-      title: "Het RevOps-carrièrepad: van Analist tot CRO",
-      dek: "Hoe ziet een carrière in Revenue Operations eruit, en welke stappen zet je richting leiderschap?",
+      slug: "moderne-dev-stack",
+      title: "De moderne dev-stack in Nederland & Vlaanderen",
+      dek: "Welke talen, frameworks en tools vragen werkgevers in 2026? Een overzicht van de meest gevraagde technologieën.",
       updated: "juni 2026",
       sections: [
         {
-          p: "Revenue Operations (RevOps) verbindt sales, marketing en customer success met data, processen en systemen. Het is een van de meest strategische - en best betaalde - carrièrepaden binnen go-to-market.",
+          p: "De tech-stack die bedrijven vragen verschuift continu. Op basis van duizenden vacatures tekenen zich duidelijke favorieten af per laag van de stack — handig om te bepalen waar je je op richt.",
         },
         {
-          h: "Junior → Medior: Analyst & Specialist",
-          p: "Je start vaak als RevOps Analyst of CRM/Marketing Ops Specialist: rapportages bouwen, data opschonen, workflows in HubSpot of Salesforce beheren en het team ondersteunen met inzichten.",
+          h: "Talen",
+          p: "TypeScript en JavaScript domineren de frontend en veel backends; Python is groot in data, ML en scripting; Java en C# blijven sterk in enterprise; Go en Rust groeien in platform- en infrastructuurrollen. Kotlin en Swift zijn de standaard voor mobile.",
         },
         {
-          h: "Senior → Manager: proces-eigenaarschap",
-          p: "Als Senior of Manager word je eigenaar van het end-to-end revenue-proces: forecasting, leadrouting, territory- en compensatieplanning, en de tech-stack. Je stuurt projecten en soms een klein team aan.",
+          h: "Frameworks",
+          p: "Aan de frontend: React (vaak met Next.js), met Vue, Angular en Svelte als sterke alternatieven. Aan de backend: Node.js, Spring, Django, FastAPI, Laravel en .NET. Filter op /tools/react, /tools/python of een andere technologie om te zien wie ermee werkt.",
         },
         {
-          h: "Director → VP → CRO",
-          p: "Op leiderschapsniveau bepaal je de revenue-strategie en -architectuur voor de hele organisatie. De ultieme stap is Chief Revenue Officer (CRO), eindverantwoordelijk voor alle commerciële omzet.",
+          h: "Platform & data",
+          p: "Containers en cloud zijn de standaard: Docker en Kubernetes, op AWS, GCP of Azure, met Terraform voor infra-as-code. In data: dbt, Airflow, Snowflake, Spark en Kafka. ML-teams draaien op PyTorch en TensorFlow.",
         },
         {
-          h: "Wat verdien je per stap?",
-          p: "Het GTM Salarisrapport toont mediane salarisranges per niveau in Nederland - handig om je volgende stap te benchmarken.",
+          h: "Hoe gebruik je dit?",
+          p: "Gebruik de tech-stackpagina's als kompas: elke technologie heeft een eigen pagina met openstaande vacatures. Zo zie je in één oogopslag welke skills de markt nu vraagt.",
         },
       ],
     },
   ],
   en: [
     {
-      slug: "wat-is-een-gtm-engineer",
-      title: "What is a GTM Engineer?",
-      dek: "The fastest-growing role in go-to-market: what does a GTM Engineer do, what skills do you need and what do you earn?",
+      slug: "frontend-backend-fullstack",
+      title: "Frontend, backend or fullstack — which path?",
+      dek: "The three main directions in development compared: what you do, the stack involved and which fits you.",
       updated: "June 2026",
       sections: [
         {
-          p: "A GTM Engineer (Go-to-Market Engineer) builds the automated, data-driven infrastructure behind modern sales and marketing teams. Where an SDR reaches out to prospects by hand, a GTM Engineer builds systems that do it at scale - with enrichment, signals and AI.",
+          p: "Almost every developer career starts with the same question: do you build the side users see (frontend), the logic and data behind it (backend), or both (fullstack)? No choice is final, but it shapes your first years and your tech stack.",
         },
         {
-          h: "What does a GTM Engineer do?",
-          p: "Think: building enrichment waterfalls in Clay, detecting intent and buying signals, automating lead scoring, syncing data between CRM and outbound tools, and using AI for personalisation. It's a hybrid role between RevOps, data engineering and growth.",
+          h: "Frontend",
+          p: "Frontend developers build the interface: everything that runs in the browser. You work with HTML, CSS and JavaScript/TypeScript, plus a framework like React, Vue, Angular or Svelte. The focus is on performance, accessibility and UX. Visual and detail-oriented? Frontend will feel like home.",
         },
         {
-          h: "Which tools should you know?",
-          p: "The core tools are Clay, n8n or Zapier, a CRM (HubSpot or Salesforce), outbound platforms like Outreach or Smartlead, and enrichment sources like Apollo and Cognism. Knowledge of SQL, APIs and increasingly LLMs/prompt engineering is a big plus.",
+          h: "Backend",
+          p: "Backend developers build the APIs, services and data layer: the logic users don't see. Languages like Node.js, Python, Java, Go, C# or PHP, with databases (PostgreSQL, MongoDB, Redis) and increasingly cloud and microservices. Love data models, scalability and systems that hold together? Backend fits.",
         },
         {
-          h: "What does a GTM Engineer earn?",
-          p: "Salaries vary by experience and company size. Check the latest GTM Salary Report for median ranges per level, and filter on jobs that ask for Clay or n8n to get a feel for the market.",
+          h: "Fullstack",
+          p: "Fullstack developers work across the whole stack — from database to UI. Popular at start-ups and scale-ups where one engineer ships a feature end to end. You don't need to be an expert in everything; the strength is breadth and switching between layers.",
+        },
+        {
+          h: "Which path fits you?",
+          p: "Look at what energises you and at the jobs: filter by the frontend, backend and fullstack categories and see which stacks and companies appeal. The Developer Salary Report shows median ranges per direction in the Netherlands and Flanders.",
         },
       ],
     },
     {
-      slug: "revops-carrierepad",
-      title: "The RevOps career path: from Analyst to CRO",
-      dek: "What does a career in Revenue Operations look like, and what steps lead toward leadership?",
+      slug: "moderne-dev-stack",
+      title: "The modern dev stack in the Netherlands & Flanders",
+      dek: "Which languages, frameworks and tools are employers asking for in 2026? An overview of the most-requested technologies.",
       updated: "June 2026",
       sections: [
         {
-          p: "Revenue Operations (RevOps) connects sales, marketing and customer success through data, processes and systems. It's one of the most strategic - and best-paid - career paths in go-to-market.",
+          p: "The stack companies ask for shifts constantly. Across thousands of jobs, clear favourites emerge per layer of the stack — useful for deciding where to focus.",
         },
         {
-          h: "Junior → Mid-level: Analyst & Specialist",
-          p: "You often start as a RevOps Analyst or CRM/Marketing Ops Specialist: building reports, cleaning data, managing workflows in HubSpot or Salesforce and supporting the team with insights.",
+          h: "Languages",
+          p: "TypeScript and JavaScript dominate the frontend and many backends; Python is big in data, ML and scripting; Java and C# stay strong in enterprise; Go and Rust are growing in platform and infrastructure roles. Kotlin and Swift are the standard for mobile.",
         },
         {
-          h: "Senior → Manager: process ownership",
-          p: "As a Senior or Manager you own the end-to-end revenue process: forecasting, lead routing, territory and compensation planning, and the tech stack. You drive projects and sometimes a small team.",
+          h: "Frameworks",
+          p: "On the frontend: React (often with Next.js), with Vue, Angular and Svelte as strong alternatives. On the backend: Node.js, Spring, Django, FastAPI, Laravel and .NET. Filter on /tools/react, /tools/python or any other technology to see who works with it.",
         },
         {
-          h: "Director → VP → CRO",
-          p: "At leadership level you define the revenue strategy and architecture for the whole organisation. The ultimate step is Chief Revenue Officer (CRO), accountable for all commercial revenue.",
+          h: "Platform & data",
+          p: "Containers and cloud are standard: Docker and Kubernetes, on AWS, GCP or Azure, with Terraform for infrastructure as code. In data: dbt, Airflow, Snowflake, Spark and Kafka. ML teams run on PyTorch and TensorFlow.",
         },
         {
-          h: "What do you earn per step?",
-          p: "The GTM Salary Report shows median salary ranges per level - handy for benchmarking your next move.",
+          h: "How to use this",
+          p: "Use the tech-stack pages as a compass: every technology has its own page with open jobs. You can see at a glance which skills the market wants right now.",
         },
       ],
     },
@@ -129,9 +137,11 @@ export function guideSlugs(): string[] {
   return GUIDES.nl.map((g) => g.slug);
 }
 
+/** External blog feed (optional). Empty for now — the "from our blog" section on the
+ *  insights page hides itself when there are no posts. Populate when banen.dev has a blog. */
 export const GTMAI_BLOG_URL: Record<Locale, string> = {
-  nl: "https://gtmai.nl/blog",
-  en: "https://gtmai.nl/en/blog",
+  nl: "/inzichten",
+  en: "/inzichten",
 };
 
 export interface ExternalPost {
@@ -140,26 +150,7 @@ export interface ExternalPost {
   dek: string;
 }
 
-/** Curated, role/discipline-focused articles from the GTM AI blog (gtmai.nl). */
 export const GTMAI_POSTS: Record<Locale, ExternalPost[]> = {
-  nl: [
-    { title: "Wat is GTM Engineering?", href: "https://gtmai.nl/blog/wat-is-gtm-engineering", dek: "De rol die B2B-groei opnieuw definieert." },
-    { title: "De stand van GTM Engineering in de Benelux (2026)", href: "https://gtmai.nl/blog/stand-van-gtm-engineering-benelux", dek: "Hoe ver is de Nederlandse en Belgische markt?" },
-    { title: "Je eerste GTM Engineer aannemen", href: "https://gtmai.nl/blog/eerste-gtm-engineer-aannemen", dek: "Waar let je op bij de eerste hire." },
-    { title: "GTM Engineering en RevOps: samen meer dan apart", href: "https://gtmai.nl/blog/gtm-engineering-en-revops-samen", dek: "Hoe de twee disciplines elkaar versterken." },
-    { title: "RevOps: marketing, sales en service als één team", href: "https://gtmai.nl/blog/revops-marketing-sales-service", dek: "Waarom RevOps het verschil maakt in groei." },
-    { title: "KPI's voor je GTM Engineering team", href: "https://gtmai.nl/blog/kpis-gtm-engineering-team", dek: "Waarop stuur je een GTM-team echt?" },
-    { title: "De moderne GTM-stack ontleed", href: "https://gtmai.nl/blog/moderne-gtm-stack-ontleed", dek: "De tools achter moderne go-to-market." },
-    { title: "GTM Engineering voor scale-ups in Nederland", href: "https://gtmai.nl/blog/gtm-engineering-scaleups-nederland", dek: "Wat werkt voor Nederlandse scale-ups." },
-  ],
-  en: [
-    { title: "What is GTM Engineering?", href: "https://gtmai.nl/en/blog/what-is-gtm-engineering", dek: "The role redefining B2B growth." },
-    { title: "The state of GTM Engineering in the Benelux (2026)", href: "https://gtmai.nl/en/blog/state-of-gtm-engineering-benelux", dek: "How far along are the Dutch and Belgian markets?" },
-    { title: "Hiring your first GTM Engineer", href: "https://gtmai.nl/en/blog/hiring-your-first-gtm-engineer", dek: "What to look for in the first hire." },
-    { title: "GTM Engineering and RevOps: better together", href: "https://gtmai.nl/en/blog/gtm-engineering-and-revops-together", dek: "How the two disciplines reinforce each other." },
-    { title: "RevOps: marketing, sales and service as one team", href: "https://gtmai.nl/en/blog/revenue-operations-gtm-alignment", dek: "Why RevOps makes the difference in growth." },
-    { title: "KPIs for your GTM Engineering team", href: "https://gtmai.nl/en/blog/kpis-for-gtm-engineering-team", dek: "What should you really steer a GTM team on?" },
-    { title: "The modern GTM stack, dissected", href: "https://gtmai.nl/en/blog/modern-gtm-stack-explained", dek: "The tools behind modern go-to-market." },
-    { title: "GTM Engineering for scale-ups", href: "https://gtmai.nl/en/blog/gtm-engineering-scaleups-netherlands", dek: "What works for fast-growing companies." },
-  ],
+  nl: [],
+  en: [],
 };

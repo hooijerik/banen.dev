@@ -2,7 +2,7 @@ import "../globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin · GTM Banen",
+  title: "Admin · banen.dev",
   robots: { index: false, follow: false },
 };
 

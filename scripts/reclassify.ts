@@ -1,6 +1,6 @@
 // Re-evaluate already-stored jobs against the CURRENT classifier rules WITHOUT
 // re-fetching (so intermittent LinkedIn/Indeed data is preserved):
-//   - expires jobs that are no longer GTM-relevant or not doable from the Netherlands
+//   - expires jobs that are no longer dev-relevant or not doable from the Netherlands
 //   - re-normalises kept jobs (category, seniority, work mode, salary, tools, …)
 // Run: npm run reclassify
 import { getDb } from "../lib/db";
@@ -92,5 +92,5 @@ const active = (db.prepare("SELECT COUNT(*) AS n FROM jobs WHERE status='active'
 console.log("Herclassificatie klaar:");
 console.log(`  Behouden/bijgewerkt    : ${kept}`);
 console.log(`  Verlopen (niet NL)     : ${expiredNonNl}`);
-console.log(`  Verlopen (niet GTM)    : ${expiredNonGtm}`);
+console.log(`  Verlopen (niet relevant): ${expiredNonGtm}`);
 console.log(`  Actief nu              : ${active}`);

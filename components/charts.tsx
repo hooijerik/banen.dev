@@ -1,7 +1,7 @@
 import { formatEURShort } from "@/lib/format";
 import type { RangeStat, Slice } from "@/lib/report";
 
-const PALETTE = ["#7c3aed", "#a78bfa", "#10b981", "#f59e0b", "#64748b", "#0ea5e9", "#ec4899"];
+const PALETTE = ["#2563eb", "#60a5fa", "#10b981", "#f59e0b", "#64748b", "#0ea5e9", "#ec4899"];
 
 /** Horizontal range ("dumbbell") chart: each row shows a min–max salary band. */
 export function RangeChart({ data, scaleMax }: { data: RangeStat[]; scaleMax: number }) {

@@ -35,9 +35,9 @@ export async function addSubscriber(
     html: `<div style="font-family:system-ui,sans-serif;max-width:560px;margin:auto">
       <h2 style="color:#0f172a">Je alert staat aan ✅</h2>
       <p style="color:#334155">Je ontvangt voortaan ${freq === "weekly" ? "wekelijks" : "dagelijks"} de nieuwste
-      go-to-market vacatures in Nederland en Vlaanderen die bij je passen.</p>
-      <p><a href="${SITE.url}/vacatures" style="color:#6d28d9;font-weight:600">Bekijk nu alle vacatures →</a></p>
-      <p style="color:#94a3b8;font-size:12px">${SITE.name} — een initiatief van GTM AI.</p>
+      developer-vacatures in Nederland en Vlaanderen die bij je passen.</p>
+      <p><a href="${SITE.url}/vacatures" style="color:#1d4ed8;font-weight:600">Bekijk nu alle vacatures →</a></p>
+      <p style="color:#94a3b8;font-size:12px">${SITE.name}</p>
     </div>`,
   });
   return { ok: true };
@@ -84,7 +84,7 @@ export async function addEmployerSubmission(payload: {
       <h2 style="color:#0f172a">Bedankt voor je inzending 🙌</h2>
       <p style="color:#334155">We hebben je aanmelding${payload.companyName ? ` voor <strong>${esc(payload.companyName)}</strong>` : ""}
       ontvangen en nemen zo snel mogelijk contact met je op via ${esc(payload.contactEmail)}.</p>
-      <p style="color:#94a3b8;font-size:12px">${SITE.name} — een initiatief van GTM AI.</p>
+      <p style="color:#94a3b8;font-size:12px">${SITE.name}</p>
     </div>`,
   });
   return { ok: true };

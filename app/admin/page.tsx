@@ -31,7 +31,7 @@ export default async function AdminPage({
   if (!(await isAdmin())) {
     return (
       <main className="mx-auto max-w-sm px-4 py-24">
-        <h1 className="text-xl font-bold">GTM Banen · Admin</h1>
+        <h1 className="text-xl font-bold">banen.dev · Admin</h1>
         {!adminToken() && (
           <p className="mt-2 rounded-md bg-amber-50 p-2 text-sm text-amber-800">
             ADMIN_TOKEN is niet ingesteld in de omgeving — admin is uitgeschakeld.
@@ -61,7 +61,7 @@ export default async function AdminPage({
   return (
     <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">GTM Banen · Admin</h1>
+        <h1 className="text-2xl font-bold tracking-tight">banen.dev · Admin</h1>
         <form method="post" action="/api/admin/logout">
           <button className="text-sm text-slate-500 hover:text-slate-800">Uitloggen</button>
         </form>

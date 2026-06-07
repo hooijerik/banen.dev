@@ -51,7 +51,7 @@ export default async function EmployersPage({ params }: { params: Promise<{ loca
         ))}
       </div>
 
-      {/* Interim proposition (GTM AI) for long-open roles */}
+      {/* Premium-placement nudge for long-open roles */}
       <Card className="mx-auto mt-14 max-w-4xl border-brand-700 bg-gradient-to-br from-brand-600 to-brand-700 p-8 text-white sm:p-10">
         <span className="text-sm font-medium text-brand-200">{e.interimLabel}</span>
         <h2 className="mt-1 text-2xl font-bold sm:text-3xl">{e.interimTitle}</h2>
@@ -59,14 +59,12 @@ export default async function EmployersPage({ params }: { params: Promise<{ loca
           {longOpen > 0 ? e.interimBody(longOpen) : e.interimBodyZero}
         </p>
         <p className="mt-3 max-w-2xl text-brand-100">{e.interimPitch}</p>
-        <a
-          href={locale === "en" ? "https://gtmai.nl/en/interim" : "https://gtmai.nl/interim/"}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href={withLocale(locale, "/adverteren")}
           className="mt-6 inline-block rounded-lg bg-white px-6 py-3 font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50"
         >
           {e.interimCta}
-        </a>
+        </Link>
       </Card>
     </Container>
   );

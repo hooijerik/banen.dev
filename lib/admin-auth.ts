@@ -1,7 +1,7 @@
 // Minimal token-cookie auth for the /admin area. Set ADMIN_TOKEN (>=8 chars) in the env.
 import { cookies } from "next/headers";
 
-export const ADMIN_COOKIE = "gtmb_admin";
+export const ADMIN_COOKIE = "banendev_admin";
 
 /** The configured admin token, or undefined when admin is effectively disabled. */
 export function adminToken(): string | undefined {

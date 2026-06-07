@@ -23,14 +23,14 @@ function renderDigest(jobs: JobRow[]): string {
       const sal = formatSalaryRange(j.salary_min, j.salary_max, j.salary_currency, j.salary_interval);
       const meta = [j.company_name, j.city, categoryLabel(j.category), sal].filter(Boolean).join(" · ");
       return `<tr><td style="padding:10px 0;border-bottom:1px solid #eee">
-        <a href="${SITE.url}/vacature/${j.slug}" style="color:#6d28d9;font-weight:600;text-decoration:none">${j.title}</a>
+        <a href="${SITE.url}/vacature/${j.slug}" style="color:#1d4ed8;font-weight:600;text-decoration:none">${j.title}</a>
         <br><span style="color:#555;font-size:14px">${meta}</span></td></tr>`;
     })
     .join("");
   return `<div style="font-family:system-ui,sans-serif;max-width:560px;margin:auto">
-    <h2 style="color:#0f172a">Nieuwe GTM-vacatures</h2>
+    <h2 style="color:#0f172a">Nieuwe developer-vacatures</h2>
     <table style="width:100%;border-collapse:collapse">${rows}</table>
-    <p style="margin-top:16px"><a href="${SITE.url}/vacatures" style="color:#6d28d9">Bekijk alle vacatures →</a></p>
+    <p style="margin-top:16px"><a href="${SITE.url}/vacatures" style="color:#1d4ed8">Bekijk alle vacatures →</a></p>
     <p style="color:#94a3b8;font-size:12px">Je ontvangt deze mail omdat je een vacature-alert hebt op ${SITE.name}.</p>
   </div>`;
 }
@@ -74,7 +74,7 @@ async function main() {
     }
     const res = await sendEmail({
       to: s.email,
-      subject: `${fresh.length} nieuwe GTM-vacatures op ${SITE.name}`,
+      subject: `${fresh.length} nieuwe developer-vacatures op ${SITE.name}`,
       html: renderDigest(fresh),
     });
     db.prepare("UPDATE subscribers SET last_sent_at = datetime('now') WHERE id = ?").run(s.id);

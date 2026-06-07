@@ -102,7 +102,7 @@ async function main() {
   const only = args.filter((a) => !a.startsWith("--"));
   const runStart = runStartStamp();
 
-  console.log(`\n🔎 gtmbanen scraper - start ${runStart} UTC\n`);
+  console.log(`\n🔎 banendev scraper - start ${runStart} UTC\n`);
 
   // ---- ATS sources ----
   let seed = loadSeed();

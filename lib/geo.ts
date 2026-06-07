@@ -143,7 +143,7 @@ export async function geocodePostcode(raw: string, preferCountry?: string): Prom
     try {
       const res = await fetch(`https://api.zippopotam.us/${c}/${pc4}`, {
         signal: AbortSignal.timeout(4000),
-        headers: { "User-Agent": "gtmbanen-alerts" },
+        headers: { "User-Agent": "banendev-alerts" },
       });
       if (!res.ok) continue;
       const data = (await res.json()) as {
