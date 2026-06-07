@@ -82,11 +82,6 @@ export const GEO_CITIES: GeoCity[] = RAW.map((c) => ({
   lng: c.lng,
 }));
 
-/** Cities offered in the alert location dropdown, sorted by label. */
-export const ALERT_CITIES: { slug: string; label: string }[] = [...GEO_CITIES]
-  .map((c) => ({ slug: c.slug, label: c.label }))
-  .sort((a, b) => a.label.localeCompare(b.label, "nl"));
-
 /** Radius options (km) for the distance filter. */
 export const ALERT_RADII = [10, 25, 50, 100] as const;
 
@@ -117,4 +112,53 @@ export function haversineKm(aLat: number, aLng: number, bLat: number, bLng: numb
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(s));
+}
+
+export interface GeoPoint {
+  lat: number;
+  lng: number;
+  label: string;
+  postcode: string;
+}
+
+/**
+ * Resolve a Dutch or Belgian postcode to coordinates via the free zippopotam.us API
+ * (no API key). NL postcodes carry two letters (1011 AB); bare 4-digit codes are tried
+ * as NL first, then BE. Returns null for invalid/unresolvable input.
+ */
+export async function geocodePostcode(raw: string, preferCountry?: string): Promise<GeoPoint | null> {
+  const clean = (raw || "").toUpperCase().replace(/\s+/g, "");
+  const m = clean.match(/^(\d{4})([A-Z]{2})?$/);
+  if (!m) return null;
+  const pc4 = m[1];
+  // NL and BE share the 4-digit space, so honour the chosen country first; otherwise
+  // letters imply NL, and a bare code is tried NL-then-BE.
+  const pref = preferCountry === "be" ? "be" : preferCountry === "nl" ? "nl" : null;
+  const countries = pref
+    ? [pref, pref === "nl" ? "be" : "nl"]
+    : m[2]
+      ? ["nl"]
+      : ["nl", "be"];
+  for (const c of countries) {
+    try {
+      const res = await fetch(`https://api.zippopotam.us/${c}/${pc4}`, {
+        signal: AbortSignal.timeout(4000),
+        headers: { "User-Agent": "gtmbanen-alerts" },
+      });
+      if (!res.ok) continue;
+      const data = (await res.json()) as {
+        places?: { latitude: string; longitude: string; "place name"?: string }[];
+      };
+      const p = data.places?.[0];
+      if (!p) continue;
+      const lat = parseFloat(p.latitude);
+      const lng = parseFloat(p.longitude);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return { lat, lng, label: p["place name"] ?? pc4, postcode: m[2] ? clean : pc4 };
+      }
+    } catch {
+      /* timeout / network / parse error - try the next country, then give up */
+    }
+  }
+  return null;
 }

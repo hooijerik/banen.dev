@@ -1,9 +1,8 @@
 import { addSubscriber } from "@/lib/mutations";
 import { SENIORITY } from "@/lib/taxonomy";
-import { geoCity, ALERT_RADII } from "@/lib/geo";
+import { geocodePostcode, ALERT_RADII } from "@/lib/geo";
 
 const SENIORITY_SLUGS = new Set<string>(SENIORITY.map((s) => s.slug));
-
 const SALARY_PRESETS = new Set([50000, 70000, 90000, 120000]);
 const RADII = new Set<number>(ALERT_RADII);
 
@@ -22,12 +21,18 @@ export async function POST(req: Request) {
     const salaryMin = Number(body.salaryMin);
     if (SALARY_PRESETS.has(salaryMin)) filters.salaryMin = salaryMin;
 
-    // Location + distance: matched by coordinates (see scripts/send-alerts.ts).
-    const loc = body.location ? String(body.location) : "";
-    if (loc && geoCity(loc)) {
-      const radiusKm = Number(body.radiusKm);
-      filters.near = loc;
-      filters.radiusKm = RADII.has(radiusKm) ? radiusKm : 25;
+    // Distance: resolve the entered postcode (NL/BE) to coordinates once, here.
+    const postcode = body.postcode ? String(body.postcode) : "";
+    if (postcode) {
+      const country = body.country === "be" ? "be" : body.country === "nl" ? "nl" : undefined;
+      const point = await geocodePostcode(postcode, country);
+      if (point) {
+        const radiusKm = Number(body.radiusKm);
+        filters.near = point.postcode;
+        filters.lat = point.lat;
+        filters.lng = point.lng;
+        filters.radiusKm = RADII.has(radiusKm) ? radiusKm : 25;
+      }
     }
 
     const res = await addSubscriber(String(body.email ?? ""), filters, String(body.frequency ?? "daily"));

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Container, Card } from "@/components/ui";
 import { AlertForm } from "@/components/AlertForm";
 import { CATEGORIES, SENIORITY, categoryLabel, seniorityLabel } from "@/lib/taxonomy";
-import { ALERT_CITIES, ALERT_RADII } from "@/lib/geo";
+import { ALERT_RADII } from "@/lib/geo";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
 
@@ -41,7 +41,10 @@ export default async function AlertPage({ params }: { params: Promise<{ locale: 
           categories={categories}
           seniorities={seniorities}
           salaries={SALARIES}
-          locations={ALERT_CITIES}
+          countries={[
+            { value: "nl", label: dict.common.netherlands },
+            { value: "be", label: dict.common.belgium },
+          ]}
           radii={[...ALERT_RADII]}
         />
         <ul className="mt-5 space-y-2 text-sm text-slate-500">

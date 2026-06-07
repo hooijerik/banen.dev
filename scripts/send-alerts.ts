@@ -48,15 +48,20 @@ async function main() {
 
   for (const s of subs) {
     const filters = s.filters_json ? JSON.parse(s.filters_json) : {};
-    // category/seniority/salaryMin are applied in SQL; location+distance is matched here by coords.
-    const near = filters.near ? geoCity(String(filters.near)) : undefined;
-    let recent = listJobs(filters, { sort: "newest", perPage: near ? 200 : 25 });
-    if (near) {
+    // category/seniority/salaryMin are applied in SQL; distance is matched here by coords.
+    // The centre comes from the subscriber's geocoded postcode (lat/lng).
+    const lat = Number(filters.lat);
+    const lng = Number(filters.lng);
+    const center =
+      Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : geoCity(filters.near);
+    const useDistance = !!center && !!filters.radiusKm;
+    let recent = listJobs(filters, { sort: "newest", perPage: useDistance ? 200 : 25 });
+    if (useDistance && center) {
       const radiusKm = Number(filters.radiusKm) || 25;
       recent = recent.filter((j) => {
         if (j.work_mode === "remote") return true; // remote works near any location
         const g = geoCity(j.city_slug) ?? geoForCityName(j.city);
-        return g ? haversineKm(near.lat, near.lng, g.lat, g.lng) <= radiusKm : false;
+        return g ? haversineKm(center.lat, center.lng, g.lat, g.lng) <= radiusKm : false;
       });
     }
     const fresh = s.last_sent_at

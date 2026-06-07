@@ -7,24 +7,27 @@ export function AlertForm({
   categories,
   seniorities,
   salaries,
-  locations,
+  countries,
   radii,
 }: {
   t: Dict["forms"]["alert"];
   categories: { slug: string; label: string }[];
   seniorities: { slug: string; label: string }[];
   salaries: { value: string; label: string }[];
-  locations: { slug: string; label: string }[];
+  countries: { value: string; label: string }[];
   radii: number[];
 }) {
   const [email, setEmail] = useState("");
   const [category, setCategory] = useState("");
   const [seniority, setSeniority] = useState("");
   const [salaryMin, setSalaryMin] = useState("");
-  const [location, setLocation] = useState("");
+  const [postcode, setPostcode] = useState("");
+  const [country, setCountry] = useState(countries[0]?.value ?? "nl");
   const [radiusKm, setRadiusKm] = useState(String(radii[1] ?? radii[0] ?? 25));
   const [frequency, setFrequency] = useState("daily");
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
+
+  const hasPostcode = postcode.trim().length > 0;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,8 +41,9 @@ export function AlertForm({
           category: category || undefined,
           seniority: seniority || undefined,
           salaryMin: salaryMin || undefined,
-          location: location || undefined,
-          radiusKm: location ? radiusKm : undefined,
+          postcode: hasPostcode ? postcode.trim() : undefined,
+          country: hasPostcode ? country : undefined,
+          radiusKm: hasPostcode ? radiusKm : undefined,
           frequency,
         }),
       });
@@ -62,6 +66,7 @@ export function AlertForm({
 
   const input =
     "w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200";
+  const muted = "disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400";
 
   return (
     <form onSubmit={submit} className="space-y-3">
@@ -115,13 +120,32 @@ export function AlertForm({
             <option value="weekly">{t.weekly}</option>
           </select>
         </label>
+      </div>
+
+      <label className="block">
+        <span className="mb-1 block text-xs font-medium text-slate-500">{t.postcode}</span>
+        <input
+          type="text"
+          inputMode="numeric"
+          autoComplete="postal-code"
+          value={postcode}
+          onChange={(e) => setPostcode(e.target.value)}
+          placeholder={t.postcodePlaceholder}
+          className={input}
+        />
+      </label>
+      <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-slate-500">{t.location}</span>
-          <select value={location} onChange={(e) => setLocation(e.target.value)} className={input}>
-            <option value="">{t.anyLocation}</option>
-            {locations.map((l) => (
-              <option key={l.slug} value={l.slug}>
-                {l.label}
+          <span className="mb-1 block text-xs font-medium text-slate-500">{t.country}</span>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            disabled={!hasPostcode}
+            className={`${input} ${muted}`}
+          >
+            {countries.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
               </option>
             ))}
           </select>
@@ -131,8 +155,8 @@ export function AlertForm({
           <select
             value={radiusKm}
             onChange={(e) => setRadiusKm(e.target.value)}
-            disabled={!location}
-            className={`${input} disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400`}
+            disabled={!hasPostcode}
+            className={`${input} ${muted}`}
           >
             {radii.map((r) => (
               <option key={r} value={r}>
