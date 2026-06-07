@@ -126,7 +126,8 @@ Plak (pas het pad aan als je niet in `/var/www/gtmbanen` zit):
 0 6 * * *  cd /var/www/gtmbanen && /usr/bin/npm run scrape      >> /var/log/gtmbanen.log 2>&1
 30 6 * * * cd /var/www/gtmbanen && /usr/bin/npm run reclassify  >> /var/log/gtmbanen.log 2>&1
 45 6 * * 1 cd /var/www/gtmbanen && /usr/bin/npm run fetch-logos >> /var/log/gtmbanen.log 2>&1
-0 7 * * *  cd /var/www/gtmbanen && /usr/bin/npm run alerts:send >> /var/log/gtmbanen.log 2>&1
+0 7 * * *  cd /var/www/gtmbanen && /usr/bin/npm run alerts:send    >> /var/log/gtmbanen.log 2>&1
+15 6 * * * cd /var/www/gtmbanen && /usr/bin/npm run premium:expire >> /var/log/gtmbanen.log 2>&1
 ```
 
 De site pikt nieuwe data **automatisch** op (geen herstart nodig).
