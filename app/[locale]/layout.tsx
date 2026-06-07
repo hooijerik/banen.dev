@@ -7,15 +7,19 @@ import { SITE } from "@/lib/site";
 import { getDictionary, isLocale, ogLocale, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
 
-const CLARITY =
-  '(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "x13ltajl65");';
-
-// Google Analytics 4 (gtag.js)
-const GA_ID = "G-CD81G41B5Q";
-const GA_INIT = `window.dataLayer = window.dataLayer || [];
+// Analytics are opt-in per deploy via env (no IDs hardcoded). Set NEXT_PUBLIC_GA_ID
+// (G-XXXXXXXXXX) and/or NEXT_PUBLIC_CLARITY_ID to enable GA4 / Microsoft Clarity.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
+const GA_INIT = GA_ID
+  ? `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${GA_ID}');`;
+gtag('config', '${GA_ID}');`
+  : "";
+const CLARITY = CLARITY_ID
+  ? `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "${CLARITY_ID}");`
+  : "";
 
 export function generateStaticParams() {
   return [{ locale: "nl" }, { locale: "en" }];
@@ -60,11 +64,15 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        {/* Google tag (gtag.js) */}
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
-        <script dangerouslySetInnerHTML={{ __html: GA_INIT }} />
+        {GA_ID && (
+          <>
+            {/* Google tag (gtag.js) */}
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+            <script dangerouslySetInnerHTML={{ __html: GA_INIT }} />
+          </>
+        )}
         {/* Microsoft Clarity */}
-        <script type="text/javascript" dangerouslySetInnerHTML={{ __html: CLARITY }} />
+        {CLARITY_ID && <script type="text/javascript" dangerouslySetInnerHTML={{ __html: CLARITY }} />}
       </head>
       <body className="flex min-h-dvh flex-col bg-slate-50 text-slate-900 antialiased">
         <SiteHeader locale={locale} dict={dict} />

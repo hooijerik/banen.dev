@@ -78,18 +78,6 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
             <span>- {dict.meta.tagline}.</span>
           </div>
           <p className="flex flex-wrap items-center gap-1.5">
-            <span>
-              {f.initiativeBy}{" "}
-              <a
-                href="https://gtmai.nl"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-brand-700 hover:text-brand-800 hover:underline"
-              >
-                GTM AI
-              </a>
-            </span>
-            <span className="text-slate-300">·</span>
             <span>© {SITE.name}. {f.collected}</span>
           </p>
         </div>

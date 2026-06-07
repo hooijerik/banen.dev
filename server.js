@@ -12,7 +12,7 @@ app
   .prepare()
   .then(() => {
     createServer((req, res) => handle(req, res)).listen(port, () => {
-      console.log(`> GTM Banen ready on port ${port}`);
+      console.log(`> banen.dev ready on port ${port}`);
     });
   })
   .catch((err) => {

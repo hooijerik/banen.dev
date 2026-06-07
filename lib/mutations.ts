@@ -7,7 +7,7 @@ import { upsertJob } from "../scripts/scrapers/store";
 import type { RawJob } from "./types";
 
 /** Where employer job submissions are forwarded. */
-const SUBMISSIONS_TO = process.env.SUBMISSIONS_TO_EMAIL || "info@gtmai.nl";
+const SUBMISSIONS_TO = process.env.SUBMISSIONS_TO_EMAIL || "info@banen.dev";
 
 export function isValidEmail(email: string): boolean {
   return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);

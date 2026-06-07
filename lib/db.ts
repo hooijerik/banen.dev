@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS premium_orders (
 let _db: DatabaseSync | null = null;
 
 export function dbPath(): string {
-  return process.env.GTMBANEN_DB || path.join(process.cwd(), "data", "gtmbanen.db");
+  return process.env.BANENDEV_DB || path.join(process.cwd(), "data", "banendev.db");
 }
 
 export function getDb(): DatabaseSync {

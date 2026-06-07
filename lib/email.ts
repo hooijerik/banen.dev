@@ -5,11 +5,11 @@ const RESEND_URL = "https://api.resend.com/emails";
 
 /** Verified sending identity. The domain MUST be verified in your Resend account.
  *  Accepts a bare address in ALERTS_FROM_EMAIL (no spaces -> cron/systemd-friendly) and
- *  adds the "GTM Banen" display name; or a full "Name <addr>" value is used as-is. */
+ *  adds the "banen.dev" display name; or a full "Name <addr>" value is used as-is. */
 export function defaultFrom(): string {
   const v = process.env.ALERTS_FROM_EMAIL?.trim();
-  if (!v) return "GTM Banen <vacatures@gtmbanen.nl>";
-  return v.includes("<") ? v : `GTM Banen <${v}>`;
+  if (!v) return "banen.dev <vacatures@banen.dev>";
+  return v.includes("<") ? v : `banen.dev <${v}>`;
 }
 
 export async function sendEmail(opts: {

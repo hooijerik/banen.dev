@@ -6,7 +6,7 @@ import { getDb } from "../lib/db";
 import { sendEmail } from "../lib/email";
 import { SITE } from "../lib/site";
 
-const OWNER = process.env.SUBMISSIONS_TO_EMAIL || "info@gtmai.nl";
+const OWNER = process.env.SUBMISSIONS_TO_EMAIL || "info@banen.dev";
 const PAST = `featured_until IS NOT NULL AND featured_until < datetime('now')`;
 const SOON = `featured_until IS NOT NULL AND featured_until BETWEEN datetime('now') AND datetime('now','+7 days')`;
 

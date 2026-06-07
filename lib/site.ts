@@ -1,9 +1,9 @@
 export const SITE = {
-  name: "GTM Banen",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://gtmbanen.nl",
-  tagline: "Dé vacaturebank voor go-to-market professionals",
+  name: "banen.dev",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://banen.dev",
+  tagline: "Dé vacaturebank voor developers",
   description:
-    "Hét vacatureplatform voor go-to-market professionals: Sales, Marketing, Customer Success, RevOps, GTM Engineering en meer. Dagelijks nieuwe GTM-vacatures.",
+    "Hét vacatureplatform voor developers: frontend, backend, fullstack, mobile, DevOps, data & ML en meer. Dagelijks nieuwe developer-vacatures in Nederland en Vlaanderen.",
 };
 
 export const NAV = [
