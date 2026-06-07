@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Container } from "@/components/ui";
+import { Container, Chip } from "@/components/ui";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { listCompanies } from "@/lib/queries";
 import { companyUrl, withLocale } from "@/lib/urls";
@@ -29,11 +29,18 @@ export default async function CompaniesPage({ params }: { params: Promise<{ loca
           <Link
             key={c.id}
             href={withLocale(locale, companyUrl(c.slug))}
-            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-sm"
+            className={`flex items-center gap-3 rounded-xl border p-4 transition hover:shadow-sm ${
+              c.featured_live
+                ? "border-amber-300 bg-amber-50/40 ring-1 ring-amber-200"
+                : "border-slate-200 bg-white hover:border-brand-300"
+            }`}
           >
             <CompanyLogo src={c.logo_url} name={c.name} size={44} />
             <div className="min-w-0">
-              <div className="truncate font-semibold text-slate-900">{c.name}</div>
+              <div className="flex items-center gap-1.5">
+                <span className="truncate font-semibold text-slate-900">{c.name}</span>
+                {c.featured_live ? <Chip tone="premium">{dict.premium.badge}</Chip> : null}
+              </div>
               <div className="text-sm text-slate-500">{dict.companies.openRoles(c.open_count)}</div>
             </div>
           </Link>

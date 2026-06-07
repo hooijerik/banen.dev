@@ -140,6 +140,8 @@ export interface JobRow {
   lang: string; // "nl" | "en"
   featured: number; // 0/1 - paid premium placement
   featured_until: string | null; // ISO; premium-active while >= now
+  is_featured?: number; // computed 0/1: featured AND not expired (from JOB_COLS)
+  company_featured?: number; // computed 0/1: this job's company is a live spotlight
   posted_at: string | null;
   first_seen_at: string;
   last_seen_at: string;

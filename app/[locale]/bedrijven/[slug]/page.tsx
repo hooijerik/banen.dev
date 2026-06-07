@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Container } from "@/components/ui";
+import { Container, Chip } from "@/components/ui";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { JobCard } from "@/components/JobCard";
@@ -54,10 +54,25 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
         ]}
       />
 
+      {company.featured_live && company.banner_url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={company.banner_url}
+          alt={company.name}
+          className="mt-4 h-40 w-full rounded-2xl border border-amber-200 object-cover"
+        />
+      ) : null}
+
       <div className="mt-4 flex flex-wrap items-center gap-4">
         <CompanyLogo src={company.logo_url} name={company.name} size={64} />
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">{company.name}</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">{company.name}</h1>
+            {company.featured_live ? <Chip tone="premium">{dict.premium.companyTitle}</Chip> : null}
+          </div>
+          {company.featured_live && company.tagline ? (
+            <p className="mt-0.5 text-slate-600">{company.tagline}</p>
+          ) : null}
           <p className="mt-0.5 text-slate-500">
             {dict.companies.openRoles(jobs.length)}
             {website && (
@@ -76,6 +91,12 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
           </p>
         </div>
       </div>
+
+      {company.featured_live && company.description ? (
+        <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50/40 p-5 leading-relaxed text-slate-700">
+          {company.description}
+        </div>
+      ) : null}
 
       <div className="mt-8 space-y-3">
         {jobs.map((job) => (

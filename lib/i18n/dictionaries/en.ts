@@ -289,6 +289,29 @@ export const en: Dict = {
       error: "Something went wrong. Please try again.",
     },
   },
+  premium: {
+    badge: "Featured",
+    featuredJobs: "Featured jobs",
+    featuredCompanies: "Featured companies",
+    title: "Advertise on GTM Banen",
+    subtitle:
+      "Put your job or company in the spotlight in front of go-to-market talent in the Netherlands and Flanders.",
+    jobTitle: "Premium job",
+    jobDesc: "Pinned to the top of the lists with a Featured label, plus a homepage spotlight slot.",
+    companyTitle: "Featured company",
+    companyDesc:
+      "Spotlight on the homepage and top of /bedrijven, with a richer company profile.",
+    comboTitle: "Bundle",
+    comboDesc: "Premium job(s) + featured company, at a bundle discount.",
+    perks: [
+      "Top of the search results with a Featured label",
+      "Spotlight on the homepage",
+      "Logo shown next to your jobs",
+      "Richer company profile with banner and description",
+    ],
+    cta: "Request a placement",
+    contact: "Interested? Fill in the form or email us and we'll get in touch.",
+  },
   meta: {
     tagline: "The job board for go-to-market professionals",
     description:

@@ -42,8 +42,16 @@ export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
     tools = [];
   }
 
+  const featured = !!(job.is_featured || job.company_featured);
+
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-sm sm:p-5">
+    <article
+      className={`rounded-2xl border p-4 transition hover:shadow-sm sm:p-5 ${
+        featured
+          ? "border-amber-300 bg-amber-50/40 ring-1 ring-amber-200"
+          : "border-slate-200 bg-white hover:border-brand-300"
+      }`}
+    >
       <div className="flex gap-4">
         <CompanyLogo src={job.company_logo} name={job.company_name} />
         <div className="min-w-0 flex-1">
@@ -71,6 +79,9 @@ export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {job.is_featured ? (
+              <Chip tone="premium">★ {locale === "en" ? "Featured" : "Uitgelicht"}</Chip>
+            ) : null}
             <Chip tone="brand" href={L(categoryUrl(job.category))}>
               {categoryLabel(job.category, locale)}
             </Chip>

@@ -8,7 +8,7 @@ export function Container({ children, className = "" }: { children: ReactNode; c
 type ChipProps = {
   children: ReactNode;
   href?: string;
-  tone?: "default" | "brand" | "green" | "amber" | "slate";
+  tone?: "default" | "brand" | "green" | "amber" | "slate" | "premium";
   className?: string;
 };
 const chipTones: Record<string, string> = {
@@ -17,6 +17,7 @@ const chipTones: Record<string, string> = {
   green: "bg-emerald-50 text-emerald-700 ring-emerald-100",
   amber: "bg-amber-50 text-amber-700 ring-amber-100",
   slate: "bg-slate-800 text-white ring-slate-700",
+  premium: "bg-amber-100 text-amber-800 ring-amber-300",
 };
 export function Chip({ children, href, tone = "default", className = "" }: ChipProps) {
   const cls = `inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${chipTones[tone]} ${href ? "transition hover:brightness-95" : ""} ${className}`;

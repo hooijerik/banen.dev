@@ -5,15 +5,15 @@ import { slugify } from "./format";
 import { PROVINCES } from "./taxonomy";
 import type { CompanyRow, JobRow } from "./types";
 
-const JOB_COLS = `j.*, c.name AS company_name, c.slug AS company_slug, c.logo_url AS company_logo`;
-const JOB_FROM = `FROM jobs j JOIN companies c ON c.id = j.company_id`;
-
 /** SQL boolean: this job is a live featured/premium placement right now. */
 const JOB_FEATURED =
   "(j.featured = 1 AND (j.featured_until IS NULL OR j.featured_until >= datetime('now')))";
 /** SQL boolean for a company being a live spotlight (pass "" for an unprefixed scope). */
 const companyFeatured = (p = "c.") =>
   `(${p}featured = 1 AND (${p}featured_until IS NULL OR ${p}featured_until >= datetime('now')))`;
+
+const JOB_COLS = `j.*, c.name AS company_name, c.slug AS company_slug, c.logo_url AS company_logo, ${JOB_FEATURED} AS is_featured, ${companyFeatured("c.")} AS company_featured`;
+const JOB_FROM = `FROM jobs j JOIN companies c ON c.id = j.company_id`;
 
 export interface JobFilters {
   category?: string;
@@ -287,12 +287,13 @@ export function getFacets(lang?: "nl" | "en"): Facets {
 
 export interface CompanyWithCount extends CompanyRow {
   open_count: number;
+  featured_live?: number; // computed 0/1: featured AND not expired
 }
 
 export function listCompanies(limit?: number, lang?: "nl" | "en"): CompanyWithCount[] {
   const db = getDb();
   const langCond = lang ? " AND j.lang = ?" : "";
-  const sql = `SELECT * FROM (
+  const sql = `SELECT *, ${companyFeatured("")} AS featured_live FROM (
       SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active'${langCond}) AS open_count
       FROM companies c
     ) WHERE open_count > 0 ORDER BY ${companyFeatured("")} DESC, open_count DESC, name COLLATE NOCASE ${limit ? "LIMIT ?" : ""}`;
@@ -307,7 +308,8 @@ export function getFeaturedCompanies(limit = 8): CompanyWithCount[] {
   const db = getDb();
   return db
     .prepare(
-      `SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active') AS open_count
+      `SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active') AS open_count,
+         ${companyFeatured("c.")} AS featured_live
        FROM companies c WHERE ${companyFeatured("c.")}
        ORDER BY open_count DESC, name COLLATE NOCASE LIMIT ?`,
     )
@@ -318,7 +320,8 @@ export function getCompanyBySlug(slug: string): CompanyWithCount | null {
   const db = getDb();
   const row = db
     .prepare(
-      `SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active') AS open_count
+      `SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active') AS open_count,
+         ${companyFeatured("c.")} AS featured_live
        FROM companies c WHERE c.slug = ? LIMIT 1`,
     )
     .get(slug);

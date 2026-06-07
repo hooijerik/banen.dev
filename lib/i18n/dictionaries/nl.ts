@@ -291,6 +291,30 @@ export const nl = {
       error: "Er ging iets mis. Probeer opnieuw.",
     },
   },
+  premium: {
+    badge: "Uitgelicht",
+    featuredJobs: "Uitgelichte vacatures",
+    featuredCompanies: "Uitgelichte bedrijven",
+    title: "Adverteren op GTM Banen",
+    subtitle:
+      "Zet je vacature of bedrijf in de spotlight bij go-to-market talent in Nederland en Vlaanderen.",
+    jobTitle: "Premium vacature",
+    jobDesc:
+      "Bovenaan de lijsten met een Uitgelicht-label en een plek in de homepage-spotlight.",
+    companyTitle: "Uitgelicht bedrijf",
+    companyDesc:
+      "Spotlight op de homepage en bovenaan /bedrijven, met een rijker bedrijfsprofiel.",
+    comboTitle: "Combinatie",
+    comboDesc: "Premium vacature(s) + uitgelicht bedrijf, met bundelkorting.",
+    perks: [
+      "Bovenaan de zoekresultaten met Uitgelicht-label",
+      "Spotlight op de homepage",
+      "Logo zichtbaar bij je vacatures",
+      "Rijker bedrijfsprofiel met banner en omschrijving",
+    ],
+    cta: "Vraag een plaatsing aan",
+    contact: "Interesse? Vul het formulier in of mail ons, dan nemen we contact op.",
+  },
   meta: {
     tagline: "Dé vacaturebank voor go-to-market professionals",
     description:

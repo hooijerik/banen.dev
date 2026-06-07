@@ -2,7 +2,14 @@ import Link from "next/link";
 import { Container, Chip, Stat, SectionHeading, Card } from "@/components/ui";
 import { JobCard } from "@/components/JobCard";
 import { CompanyLogo } from "@/components/CompanyLogo";
-import { getStats, getFacets, listRecentShuffled, listCompanies } from "@/lib/queries";
+import {
+  getStats,
+  getFacets,
+  listRecentShuffled,
+  listCompanies,
+  getFeaturedJobs,
+  getFeaturedCompanies,
+} from "@/lib/queries";
 import { CATEGORIES, categoryLabel } from "@/lib/taxonomy";
 import { formatNumber } from "@/lib/format";
 import { categoryUrl, companyUrl, locationUrl, remoteUrl, withLocale } from "@/lib/urls";
@@ -21,6 +28,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const facets = getFacets(lang);
   const latest = listRecentShuffled(8, 50, lang);
   const companies = listCompanies(14, lang);
+  const featuredJobs = getFeaturedJobs(4, lang);
+  const featuredCompanies = getFeaturedCompanies(8);
   const catCount = new Map(facets.categories.map((f) => [f.key, f.count]));
   const sortedCats = [...CATEGORIES]
     .filter((c) => c.slug !== "overig") // catch-all: not a featured pill
@@ -85,6 +94,43 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           </div>
         </Container>
       </section>
+
+      {/* Featured / Uitgelicht spotlight */}
+      {(featuredJobs.length > 0 || featuredCompanies.length > 0) && (
+        <section className="border-b border-amber-100 bg-amber-50/40">
+          <Container className="py-8">
+            {featuredJobs.length > 0 && (
+              <>
+                <SectionHeading title={dict.premium.featuredJobs} href={L("/vacatures")} linkLabel={t.viewAll} />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {featuredJobs.map((job) => (
+                    <JobCard key={job.id} job={job} locale={locale} />
+                  ))}
+                </div>
+              </>
+            )}
+            {featuredCompanies.length > 0 && (
+              <div className={featuredJobs.length > 0 ? "mt-8" : ""}>
+                <h2 className="mb-3 text-xl font-bold tracking-tight text-slate-900">
+                  {dict.premium.featuredCompanies}
+                </h2>
+                <div className="flex flex-wrap gap-3">
+                  {featuredCompanies.map((c) => (
+                    <Link
+                      key={c.id}
+                      href={L(companyUrl(c.slug))}
+                      className="flex items-center gap-2.5 rounded-xl border border-amber-200 bg-white px-4 py-2.5 transition hover:border-amber-300 hover:shadow-sm"
+                    >
+                      <CompanyLogo src={c.logo_url} name={c.name} size={32} />
+                      <span className="font-medium text-slate-800">{c.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Container>
+        </section>
+      )}
 
       {/* Latest jobs + sidebar */}
       <Container className="py-4">
