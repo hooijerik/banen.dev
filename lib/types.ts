@@ -1,11 +1,16 @@
 // Shared domain types for gtmbanen.nl
 
 export type CategorySlug =
-  | "sales"
-  | "marketing"
-  | "customer-success"
-  | "partnerships"
-  | "revops"
+  | "frontend"
+  | "backend"
+  | "fullstack"
+  | "mobile"
+  | "devops"
+  | "data-engineering"
+  | "data-ml"
+  | "qa"
+  | "security"
+  | "embedded"
   | "overig";
 
 export type SenioritySlug =
@@ -96,8 +101,8 @@ export interface Classification {
   compStructure: string | null; // "base+bonus" | "base+commission" | "base" | "ote" | null
   equityType: string | null; // "options" | "rsu" | "equity" | null
   lang: "nl" | "en"; // detected language of the posting text
-  /** false => not a GTM role, should be dropped */
-  gtmRelevant: boolean;
+  /** false => not a developer role, should be dropped */
+  relevant: boolean;
 }
 
 /** Row shape as stored in / read from the `jobs` table. */

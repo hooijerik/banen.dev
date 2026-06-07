@@ -1,11 +1,11 @@
 // Classification pipeline: turn a RawJob into a structured Classification.
-// Heuristic, NL + EN aware. Tuned for GTM roles. Covered by tests/classify.test.ts.
+// Heuristic, NL + EN aware. Tuned for developer roles. Covered by tests/classify.test.ts.
 
 import {
   CATEGORIES,
   CITY_PROVINCE,
   BE_CITY_PROVINCE,
-  GTM_SIGNAL_KEYWORDS,
+  DEV_SIGNAL_KEYWORDS,
   HARD_EXCLUDE_KEYWORDS,
   SENIORITY,
   TOOLS,
@@ -402,18 +402,19 @@ export function classify(raw: RawJob): Classification {
   const excluded = hasKeyword(tLower, HARD_EXCLUDE_KEYWORDS);
 
   let category: CategorySlug;
-  let gtmRelevant: boolean;
+  let relevant: boolean;
   if (cat) {
     category = cat;
-    gtmRelevant = true;
-  } else if (!excluded && hasKeyword(tLower, GTM_SIGNAL_KEYWORDS)) {
-    // Gate on the TITLE (not the description): real GTM roles signal it in the
-    // title. Scanning descriptions lets engineering/PM/design roles leak in.
+    relevant = true;
+  } else if (!excluded && hasKeyword(tLower, DEV_SIGNAL_KEYWORDS)) {
+    // Gate on the TITLE (not the description): real developer roles signal it in the
+    // title. Scanning descriptions lets GTM/PM/design roles that merely mention a
+    // stack ("works closely with engineering") leak in.
     category = "overig";
-    gtmRelevant = true;
+    relevant = true;
   } else {
     category = "overig";
-    gtmRelevant = false;
+    relevant = false;
   }
 
   // salary: prefer structured comp from source (Ashby), else parse text
@@ -433,7 +434,7 @@ export function classify(raw: RawJob): Classification {
 
   return {
     category,
-    gtmRelevant,
+    relevant,
     seniority: detectSeniority(title),
     workMode: detectWorkMode(raw.locationRaw, text),
     location: detectLocation(raw.locationRaw, text),

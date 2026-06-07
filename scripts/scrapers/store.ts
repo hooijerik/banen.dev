@@ -46,7 +46,7 @@ export function upsertCompany(
   return row.id;
 }
 
-export type UpsertResult = "inserted" | "updated" | "unchanged" | "skipped-nongtm" | "skipped-notnl";
+export type UpsertResult = "inserted" | "updated" | "unchanged" | "skipped-irrelevant" | "skipped-notnl";
 
 const INSERT_SQL = `INSERT INTO jobs (
   source, source_id, company_id, title, title_norm, slug, url, apply_url,
@@ -69,9 +69,9 @@ WHERE id=?`;
 export function upsertJob(raw: RawJob, opts: { force?: boolean } = {}): UpsertResult {
   const cls = classify(raw);
   // `force` is used for directly-created paid postings, which publish regardless of the
-  // GTM/NL gating that filters the free scraped inventory.
+  // dev-relevance / NL gating that filters the free scraped inventory.
   if (!opts.force) {
-    if (!cls.gtmRelevant) return "skipped-nongtm";
+    if (!cls.relevant) return "skipped-irrelevant";
     if (!cls.location.nlRelevant) return "skipped-notnl";
   }
 

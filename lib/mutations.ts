@@ -129,7 +129,7 @@ export function createManualJob(
     locationRaw: input.location,
   };
   const res = upsertJob(raw, { force: true });
-  if (res === "skipped-nongtm" || res === "skipped-notnl") {
+  if (res === "skipped-irrelevant" || res === "skipped-notnl") {
     return { ok: false, error: `Niet geplaatst (${res})` };
   }
   const row = getDb()

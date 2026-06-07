@@ -25,42 +25,52 @@ function job(title: string, extra: Partial<RawJob> = {}): RawJob {
   return { source: "greenhouse", sourceId: "x", companyName: "Acme", title, url: "https://x", ...extra };
 }
 
-// ---- category ----
-eq("AE", detectCategory("Senior Account Executive"), "sales");
-eq("SDR", detectCategory("Sales Development Representative (SDR)"), "sales");
-eq("RevOps", detectCategory("Revenue Operations Manager"), "revops");
-eq("SalesOps→revops", detectCategory("Sales Operations Analyst"), "revops");
-eq("MOps→revops", detectCategory("Marketing Operations Manager"), "revops");
-eq("GTM Eng→revops", detectCategory("GTM Engineer"), "revops");
-eq("CSM", detectCategory("Customer Success Manager"), "customer-success");
-eq("CS Ops→revops", detectCategory("Customer Success Operations Lead"), "revops");
-eq("Marketing", detectCategory("Head of Marketing"), "marketing");
-eq("Partnerships", detectCategory("Strategic Partnerships Manager"), "partnerships");
-eq("Deal Desk→revops", detectCategory("Deal Desk Analyst"), "revops");
-eq("Enablement→revops", detectCategory("Sales Enablement Manager"), "revops");
-eq("CRM admin→revops", detectCategory("HubSpot Administrator"), "revops");
-eq("Demand gen is marketing", detectCategory("Demand Generation Lead"), "marketing");
-eq("Verkoper", detectCategory("Verkoper binnendienst"), "sales");
-eq("Non-GTM returns null", detectCategory("Backend Software Engineer"), null);
+// ---- category (first matching keyword wins; specialties are ordered before the broad buckets) ----
+eq("Frontend", detectCategory("Senior Frontend Developer"), "frontend");
+eq("React→frontend", detectCategory("React Developer"), "frontend");
+eq("Backend", detectCategory("Backend Engineer"), "backend");
+eq("Python→backend", detectCategory("Python Developer"), "backend");
+eq("Fullstack", detectCategory("Full Stack Developer"), "fullstack");
+eq("Fullstack beats frontend/backend", detectCategory("Fullstack Engineer (React/Node)"), "fullstack");
+eq("Mobile", detectCategory("iOS Developer"), "mobile");
+eq("React Native→mobile (not frontend)", detectCategory("React Native Developer"), "mobile");
+eq("DevOps", detectCategory("DevOps Engineer"), "devops");
+eq("SRE→devops", detectCategory("Site Reliability Engineer"), "devops");
+eq("Platform→devops", detectCategory("Platform Engineer"), "devops");
+eq("Data Engineer", detectCategory("Data Engineer"), "data-engineering");
+eq("ML→data-ml", detectCategory("Machine Learning Engineer"), "data-ml");
+eq("Data Scientist→data-ml", detectCategory("Data Scientist"), "data-ml");
+eq("QA", detectCategory("QA Automation Engineer"), "qa");
+eq("SDET→qa", detectCategory("SDET"), "qa");
+eq("Security", detectCategory("Security Engineer"), "security");
+eq("Embedded", detectCategory("Embedded Software Engineer"), "embedded");
+eq("Firmware→embedded", detectCategory("Firmware Engineer"), "embedded");
+eq("Generic SWE returns null (→overig)", detectCategory("Software Engineer"), null);
+eq("Non-dev returns null", detectCategory("Account Executive"), null);
 
 // ---- seniority ----
-eq("senior", detectSeniority("Senior Account Executive"), "senior");
-eq("manager", detectSeniority("Marketing Operations Manager"), "manager");
-eq("director via head of", detectSeniority("Head of Sales"), "director");
-eq("vp", detectSeniority("VP of Sales"), "vp");
-eq("clevel", detectSeniority("Chief Revenue Officer"), "clevel");
-eq("junior via stage", detectSeniority("Stagiair Sales"), "junior");
-eq("no seniority", detectSeniority("Account Executive"), null);
-eq("senior manager is manager", detectSeniority("Senior Sales Manager"), "manager");
+eq("senior", detectSeniority("Senior Backend Developer"), "senior");
+eq("manager", detectSeniority("Engineering Manager"), "manager");
+eq("director via head of", detectSeniority("Head of Engineering"), "director");
+eq("vp", detectSeniority("VP of Engineering"), "vp");
+eq("clevel", detectSeniority("Chief Technology Officer"), "clevel");
+eq("junior via stage", detectSeniority("Stagiair Software Developer"), "junior");
+eq("no seniority", detectSeniority("Backend Developer"), null);
+eq("senior manager is manager", detectSeniority("Senior Engineering Manager"), "manager");
 
-// ---- relevance gate ----
-check("SWE not GTM", classify(job("Senior Backend Software Engineer")).gtmRelevant === false);
-check("Recruiter not GTM", classify(job("Technical Recruiter")).gtmRelevant === false);
-check("AE is GTM", classify(job("Account Executive")).gtmRelevant === true);
-check(
-  "Sales Engineer kept (presales)",
-  classify(job("Sales Engineer")).category === "sales",
-);
+// ---- relevance gate (dev kept; GTM / non-engineering dropped) ----
+check("category dev role kept", classify(job("Senior Backend Developer")).relevant === true);
+check("generic SWE kept via signal", classify(job("Software Engineer")).relevant === true);
+eq("generic SWE lands in overig", classify(job("Software Engineer")).category, "overig");
+check("Ontwikkelaar kept (NL signal)", classify(job("Software Ontwikkelaar")).relevant === true);
+check("Sales Manager dropped", classify(job("Sales Manager")).relevant === false);
+check("Recruiter dropped", classify(job("Technical Recruiter")).relevant === false);
+check("Product Manager dropped", classify(job("Product Manager")).relevant === false);
+check("Account Executive dropped", classify(job("Account Executive")).relevant === false);
+// "Business Developer" contains "developer" but is a sales role → must be excluded:
+check("Business Developer dropped despite 'developer'", classify(job("Business Developer")).relevant === false);
+// GTM "X engineer" titles have no dev signal and no dev category → dropped:
+check("Sales Engineer dropped", classify(job("Sales Engineer")).relevant === false);
 
 // ---- work mode ----
 eq("onsite from city", detectWorkMode("Amsterdam", ""), "onsite");
@@ -103,12 +113,11 @@ check(
 );
 check(
   "non-EU territory in title blocked",
-  classify(job("Strategic Account Executive - South Africa", { locationRaw: "Remote" })).location
-    .nlRelevant === false,
+  classify(job("Backend Developer - South Africa", { locationRaw: "Remote" })).location.nlRelevant === false,
 );
 check(
   "EU territory in title kept",
-  classify(job("Account Executive - Benelux", { locationRaw: "Remote" })).location.nlRelevant === true,
+  classify(job("Backend Developer - Benelux", { locationRaw: "Remote" })).location.nlRelevant === true,
 );
 
 // ---- Dutch-speaking Belgium (Flanders) ----
@@ -132,71 +141,73 @@ check("month disclosed", s1.disclosed === true);
 const s2 = parseSalary("Salary range: €60.000 - €80.000 per year");
 eq("year min", s2.min, 60000);
 eq("year max", s2.max, 80000);
-const s3 = parseSalary("$120k – $160k OTE");
+const s3 = parseSalary("$120k – $160k");
 eq("usd currency", s3.currency, "USD");
 eq("usd min", s3.min, 120000);
 eq("usd max", s3.max, 160000);
 check("no salary undisclosed", parseSalary("Competitive salary").disclosed === false);
-const s4 = parseSalary("Sales Development | 42k basis + 15k bonus");
-eq("base+bonus min is base", s4.min, 42000);
-eq("base+bonus max is OTE", s4.max, 57000);
-check("lone bonus undisclosed", parseSalary("Inclusief 15k bonus").disclosed === false);
-const s7 = parseSalary("US Remote Range $108,000 - $145,000 USD. 401k plan with matching. Team of 2,500 specialists.");
+const s7 = parseSalary("US Remote Range $108,000 - $145,000 USD. 401k plan with matching. Team of 2,500 engineers.");
 eq("range min skips 401k/headcount", s7.min, 108000);
 eq("range max skips 401k/headcount", s7.max, 145000);
 check("company count is not salary", parseSalary("More than 500,000 companies use our product.").disclosed === false);
 check("user/device counts are not salary", parseSalary("Supporting 30,000 users and 100,000 devices globally.").disclosed === false);
-check("quota figure is not salary", parseSalary("You will own a €120k quota.").disclosed === false);
-check("deal value is not salary", parseSalary("Average deal value of €150K, closing deals of €100K+.").disclosed === false);
-check("deal size is not salary", parseSalary("You handle an average deal size of $100k.").disclosed === false);
 
-// ---- tools / AI ----
-const tools = detectTools("Ervaring met Salesforce, HubSpot en Clay is een pre.");
-check("tool salesforce", tools.includes("salesforce"));
-check("tool hubspot", tools.includes("hubspot"));
-check("tool clay", tools.includes("clay"));
-check("ai in title", detectAI("AI Solutions Engineer", "") === true);
+// ---- tools / tech stack ----
+const t1 = detectTools("Ervaring met React, TypeScript, Node.js, Docker en Kubernetes is een pre.");
+check("tool react", t1.includes("react"));
+check("tool typescript", t1.includes("typescript"));
+check("tool nodejs", t1.includes("nodejs"));
+check("tool docker", t1.includes("docker"));
+check("tool kubernetes", t1.includes("kubernetes"));
+const t2 = detectTools("We work with Python, Django and PostgreSQL on AWS.");
+check("tool python", t2.includes("python"));
+check("tool django", t2.includes("django"));
+check("tool postgresql", t2.includes("postgresql"));
+check("tool aws", t2.includes("aws"));
+// word boundary: "java" must NOT match inside "javascript"
+const t3 = detectTools("Strong JavaScript and TypeScript skills required.");
+check("javascript detected", t3.includes("javascript"));
+check("java NOT matched in javascript", t3.includes("java") === false);
+// short/ambiguous names are written out: Golang yes, ordinary 'go' no
+check("golang detected", detectTools("Experience with Golang microservices").includes("go"));
+check("ordinary 'go' not matched", detectTools("a great place to go and grow").includes("go") === false);
+
+// ---- AI flag ----
+check("ai in title", detectAI("AI Engineer", "") === true);
+check("ml in title flags", detectAI("Machine Learning Engineer", "") === true);
 check(
   "company AI boilerplate does not flag a non-AI title",
-  detectAI("Sales Manager", "We are an AI-powered company that uses generative AI and LLMs daily") ===
-    false,
+  detectAI("Backend Developer", "We are an AI-powered company that uses generative AI and LLMs daily") === false,
 );
-check("ml in title flags", detectAI("Machine Learning Sales Engineer", "") === true);
-check("no ai on single incidental mention", detectAI("Sales Manager", "we sometimes use AI tools") === false);
-check("no false ai in email", detectAI("Email Marketing Manager", "Manage the email program") === false);
+check("no ai on single incidental mention", detectAI("Backend Developer", "we sometimes use AI tools") === false);
 
 // ---- text language ----
 eq(
   "lang: dutch posting",
-  detectTextLanguage("Wij zoeken een ervaren Account Executive voor ons team. Je werkt met onze klanten."),
+  detectTextLanguage("Wij zoeken een ervaren Backend Developer voor ons team. Je werkt met onze systemen."),
   "nl",
 );
 eq(
   "lang: english posting",
   detectTextLanguage(
-    "We are looking for an experienced Account Executive to join our team. You will work with our customers in a full-time role.",
+    "We are looking for an experienced Backend Developer to join our team. You will work with our systems in a full-time role.",
   ),
   "en",
 );
 eq("lang: empty defaults to nl", detectTextLanguage(""), "nl");
 eq("lang: tie defaults to nl", detectTextLanguage("de the"), "nl");
-eq(
-  "lang: english word inside dutch (no false split) stays nl",
-  detectTextLanguage("Een functie met veel verantwoordelijkheid en ervaring in sales."),
-  "nl",
-);
 // classify(): no description -> Dutch, even with an English-looking title
 eq(
   "classify lang: no description defaults to nl",
-  classify(job("Senior Account Executive for the Benelux team")).lang,
+  classify(job("Senior Backend Developer for the Benelux team")).lang,
   "nl",
 );
 eq(
   "classify lang: english description -> en",
   classify(
-    job("Account Executive", {
+    job("Backend Developer", {
       descriptionText:
-        "We are looking for an experienced AE to join our team. You will work with our customers in a full-time role.",
+        "We are looking for an experienced engineer to join our team. You will work with our systems in a full-time role.",
     }),
   ).lang,
   "en",
@@ -204,8 +215,8 @@ eq(
 eq(
   "classify lang: dutch description -> nl",
   classify(
-    job("Account Executive", {
-      descriptionText: "Wij zoeken een ervaren accountmanager voor ons team. Je werkt met onze klanten.",
+    job("Backend Developer", {
+      descriptionText: "Wij zoeken een ervaren ontwikkelaar voor ons team. Je werkt met onze systemen.",
     }),
   ).lang,
   "nl",

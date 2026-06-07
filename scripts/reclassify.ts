@@ -49,7 +49,7 @@ for (const r of rows) {
     descriptionText: r.description_text ?? undefined,
   };
   const cls = classify(raw);
-  if (!cls.gtmRelevant) {
+  if (!cls.relevant) {
     expireStmt.run(r.id);
     expiredNonGtm++;
     continue;
