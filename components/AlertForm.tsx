@@ -5,12 +5,24 @@ import type { Dict } from "@/lib/i18n/types";
 export function AlertForm({
   t,
   categories,
+  seniorities,
+  salaries,
+  locations,
+  radii,
 }: {
   t: Dict["forms"]["alert"];
   categories: { slug: string; label: string }[];
+  seniorities: { slug: string; label: string }[];
+  salaries: { value: string; label: string }[];
+  locations: { slug: string; label: string }[];
+  radii: number[];
 }) {
   const [email, setEmail] = useState("");
   const [category, setCategory] = useState("");
+  const [seniority, setSeniority] = useState("");
+  const [salaryMin, setSalaryMin] = useState("");
+  const [location, setLocation] = useState("");
+  const [radiusKm, setRadiusKm] = useState(String(radii[1] ?? radii[0] ?? 25));
   const [frequency, setFrequency] = useState("daily");
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
 
@@ -21,7 +33,15 @@ export function AlertForm({
       const r = await fetch("/api/alerts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, category: category || undefined, frequency }),
+        body: JSON.stringify({
+          email,
+          category: category || undefined,
+          seniority: seniority || undefined,
+          salaryMin: salaryMin || undefined,
+          location: location || undefined,
+          radiusKm: location ? radiusKm : undefined,
+          frequency,
+        }),
       });
       const d = await r.json();
       setStatus(d.ok ? "ok" : "error");
@@ -53,20 +73,77 @@ export function AlertForm({
         placeholder={t.emailPlaceholder}
         className={input}
       />
-      <div className="grid grid-cols-2 gap-3">
-        <select value={category} onChange={(e) => setCategory(e.target.value)} className={input}>
-          <option value="">{t.allCategories}</option>
-          {categories.map((c) => (
-            <option key={c.slug} value={c.slug}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-        <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className={input}>
-          <option value="daily">{t.daily}</option>
-          <option value="weekly">{t.weekly}</option>
-        </select>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">{t.category}</span>
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className={input}>
+            <option value="">{t.allCategories}</option>
+            {categories.map((c) => (
+              <option key={c.slug} value={c.slug}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">{t.level}</span>
+          <select value={seniority} onChange={(e) => setSeniority(e.target.value)} className={input}>
+            <option value="">{t.anyLevel}</option>
+            {seniorities.map((s) => (
+              <option key={s.slug} value={s.slug}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">{t.salaryMin}</span>
+          <select value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} className={input}>
+            <option value="">{t.anySalary}</option>
+            {salaries.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">{t.frequency}</span>
+          <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className={input}>
+            <option value="daily">{t.daily}</option>
+            <option value="weekly">{t.weekly}</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">{t.location}</span>
+          <select value={location} onChange={(e) => setLocation(e.target.value)} className={input}>
+            <option value="">{t.anyLocation}</option>
+            {locations.map((l) => (
+              <option key={l.slug} value={l.slug}>
+                {l.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">{t.distance}</span>
+          <select
+            value={radiusKm}
+            onChange={(e) => setRadiusKm(e.target.value)}
+            disabled={!location}
+            className={`${input} disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400`}
+          >
+            {radii.map((r) => (
+              <option key={r} value={r}>
+                +{r} km
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
+
+      <p className="text-xs text-slate-400">{t.optionalNote}</p>
       {status === "error" && <p className="text-sm text-red-600">{t.error}</p>}
       <button
         type="submit"

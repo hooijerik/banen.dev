@@ -2,6 +2,7 @@
 // Sends via Resend if RESEND_API_KEY is set, otherwise prints a dry-run to the console.
 import { getDb } from "../lib/db";
 import { listJobs } from "../lib/queries";
+import { geoCity, geoForCityName, haversineKm } from "../lib/geo";
 import { SITE } from "../lib/site";
 import { formatSalaryRange } from "../lib/format";
 import { categoryLabel } from "../lib/taxonomy";
@@ -47,7 +48,17 @@ async function main() {
 
   for (const s of subs) {
     const filters = s.filters_json ? JSON.parse(s.filters_json) : {};
-    const recent = listJobs(filters, { sort: "newest", perPage: 25 });
+    // category/seniority/salaryMin are applied in SQL; location+distance is matched here by coords.
+    const near = filters.near ? geoCity(String(filters.near)) : undefined;
+    let recent = listJobs(filters, { sort: "newest", perPage: near ? 200 : 25 });
+    if (near) {
+      const radiusKm = Number(filters.radiusKm) || 25;
+      recent = recent.filter((j) => {
+        if (j.work_mode === "remote") return true; // remote works near any location
+        const g = geoCity(j.city_slug) ?? geoForCityName(j.city);
+        return g ? haversineKm(near.lat, near.lng, g.lat, g.lng) <= radiusKm : false;
+      });
+    }
     const fresh = s.last_sent_at
       ? recent.filter((j) => (j.first_seen_at || "") > s.last_sent_at!)
       : recent.slice(0, 10);
