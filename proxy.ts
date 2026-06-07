@@ -6,6 +6,11 @@ import type { NextRequest } from "next/server";
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Admin is not localized - serve as-is (also excluded in the matcher).
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return NextResponse.next();
+  }
+
   // English: served from the /en prefix as-is (params.locale = "en").
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     return NextResponse.next();
@@ -27,6 +32,6 @@ export function proxy(req: NextRequest) {
 export const config = {
   // Skip API, Next internals, metadata/feed routes, and any file with an extension.
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|sitemap.xml|robots.txt|feed.xml|.*\\..*).*)",
+    "/((?!api|admin|_next/static|_next/image|favicon.ico|icon.svg|sitemap.xml|robots.txt|feed.xml|.*\\..*).*)",
   ],
 };
