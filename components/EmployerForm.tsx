@@ -2,8 +2,17 @@
 import { useState } from "react";
 import type { Dict } from "@/lib/i18n/types";
 
-export function EmployerForm({ t }: { t: Dict["forms"]["employer"] }) {
+export function EmployerForm({
+  t,
+  packages,
+  packageLabel,
+}: {
+  t: Dict["forms"]["employer"];
+  packages?: { value: string; label: string }[];
+  packageLabel?: string;
+}) {
   const [form, setForm] = useState({
+    package: "",
     companyName: "",
     contactEmail: "",
     jobUrl: "",
@@ -46,6 +55,22 @@ export function EmployerForm({ t }: { t: Dict["forms"]["employer"] }) {
 
   return (
     <form onSubmit={submit} className="space-y-3">
+      {packages && packages.length > 0 && (
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">{packageLabel}</span>
+          <select
+            value={form.package}
+            onChange={(e) => setForm({ ...form, package: e.target.value })}
+            className={input}
+          >
+            {packages.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <div className="grid gap-3 sm:grid-cols-2">
         <input value={form.companyName} onChange={set("companyName")} placeholder={t.companyName} className={input} />
         <input

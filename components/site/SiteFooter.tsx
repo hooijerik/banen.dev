@@ -65,6 +65,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
             <h3 className="text-sm font-semibold text-slate-900">{f.forEmployers}</h3>
             <ul className="mt-3 space-y-2 text-sm text-slate-600">
               <li><Link href={L("/werkgevers")} className="hover:text-brand-700">{f.employers}</Link></li>
+              <li><Link href={L("/adverteren")} className="hover:text-brand-700">{f.advertise}</Link></li>
               <li><Link href={L("/plaats-vacature")} className="hover:text-brand-700">{f.postJob}</Link></li>
               <li><Link href={L("/vacature-alert")} className="hover:text-brand-700">{f.jobAlert}</Link></li>
             </ul>

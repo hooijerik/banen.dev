@@ -37,6 +37,7 @@ export const en: Dict = {
     employers: "Employers",
     postJob: "Post a job",
     jobAlert: "Job alert",
+    advertise: "Advertise",
     initiativeBy: "An initiative by",
     collected: "Jobs collected from public sources.",
     categories: "Categories",
@@ -277,6 +278,8 @@ export const en: Dict = {
       error: "Something went wrong. Please try again.",
     },
     employer: {
+      package: "Package",
+      freeListing: "Free listing",
       success: "Thank you!",
       successBody: "We'll review your job and publish it on GTM Banen after a quick check.",
       companyName: "Company name",

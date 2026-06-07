@@ -35,6 +35,7 @@ export const nl = {
     employers: "Werkgevers",
     postJob: "Plaats een vacature",
     jobAlert: "Vacature-alert",
+    advertise: "Adverteren",
     initiativeBy: "Een initiatief van",
     collected: "Vacatures verzameld van publieke bronnen.",
     categories: "Categorieën",
@@ -278,6 +279,8 @@ export const nl = {
       error: "Er ging iets mis. Probeer opnieuw.",
     },
     employer: {
+      package: "Pakket",
+      freeListing: "Gratis vermelding",
       success: "Bedankt!",
       successBody:
         "We nemen je vacature in behandeling en plaatsen hem na controle op GTM Banen.",
