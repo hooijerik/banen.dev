@@ -239,6 +239,10 @@ export const nl = {
     interimPitch:
       "Zet je vacature in de spotlight bij developers in Nederland en Vlaanderen met een premium plaatsing - bovenaan de lijsten en op de homepage.",
     interimCta: "Bekijk adverteren ↗",
+    packagesTitle: "Plaatsingsopties",
+    packagesSubtitle:
+      "Plaats je vacature gratis. Wil je meer zichtbaarheid? Kies een premium-plaatsing — we nemen contact op met een offerte.",
+    popularBadge: "Populair",
   },
   postJob: {
     title: "Plaats een vacature",

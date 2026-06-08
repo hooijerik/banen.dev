@@ -238,6 +238,10 @@ export const en: Dict = {
     interimPitch:
       "Put your job in the spotlight in front of developers in the Netherlands and Flanders with a premium placement - top of the lists and on the homepage.",
     interimCta: "See advertising ↗",
+    packagesTitle: "Placement options",
+    packagesSubtitle:
+      "Post your job for free. Want more visibility? Pick a premium placement — we'll reach out with a quote.",
+    popularBadge: "Popular",
   },
   postJob: {
     title: "Post a job",

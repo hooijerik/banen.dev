@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Container, Card } from "@/components/ui";
 import { EmployerForm } from "@/components/EmployerForm";
+import { PackagesGrid } from "@/components/PackagesGrid";
+import { getPackages } from "@/lib/packages";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
 
@@ -19,6 +21,7 @@ export default async function PostJobPage({ params }: { params: Promise<{ locale
     { value: "company", label: dict.premium.companyTitle },
     { value: "combo", label: dict.premium.comboTitle },
   ];
+  const tiers = getPackages(locale);
   return (
     <Container className="py-12">
       <div className="mx-auto max-w-2xl">
@@ -28,6 +31,14 @@ export default async function PostJobPage({ params }: { params: Promise<{ locale
           <EmployerForm t={dict.forms.employer} packages={packages} packageLabel={dict.forms.employer.package} />
         </Card>
         <p className="mt-4 text-sm text-slate-500">{dict.postJob.atsNote}</p>
+      </div>
+      <div className="mt-16">
+        <PackagesGrid
+          packages={tiers}
+          title={dict.employers.packagesTitle}
+          subtitle={dict.employers.packagesSubtitle}
+          popularLabel={dict.employers.popularBadge}
+        />
       </div>
     </Container>
   );

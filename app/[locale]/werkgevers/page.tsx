@@ -60,7 +60,7 @@ export default async function EmployersPage({ params }: { params: Promise<{ loca
         </p>
         <p className="mt-3 max-w-2xl text-brand-100">{e.interimPitch}</p>
         <Link
-          href={withLocale(locale, "/adverteren")}
+          href={withLocale(locale, "/plaats-vacature")}
           className="mt-6 inline-block rounded-lg bg-white px-6 py-3 font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50"
         >
           {e.interimCta}
