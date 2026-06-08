@@ -108,7 +108,7 @@ sudo nano /etc/systemd/system/banendev.service   # zet User= en paden goed
 sudo systemctl daemon-reload
 sudo systemctl enable --now banendev
 sudo systemctl status banendev                    # moet "active (running)" zijn
-curl -I http://127.0.0.1:3000                     # moet 200 geven
+curl -I http://127.0.0.1:3001                     # moet 200 geven (banen.dev draait op :3001 - gedeelde VPS, gtmbanen op :3000)
 ```
 
 ## 6. Nginx reverse proxy + HTTPS

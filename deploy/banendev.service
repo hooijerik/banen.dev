@@ -8,13 +8,15 @@ Type=simple
 User=www-data
 WorkingDirectory=/var/www/banendev
 Environment=NODE_ENV=production
-Environment=PORT=3000
+# Shared VPS with gtmbanen (which uses :3000): banen.dev runs on its OWN port.
+# Verify it is free first:  sudo ss -ltnp | grep ':3001'   (pick another if taken)
+Environment=PORT=3001
 Environment=NEXT_PUBLIC_SITE_URL=https://banen.dev
 # Secrets (RESEND_API_KEY, ALERTS_FROM_EMAIL, SUBMISSIONS_TO_EMAIL, ADMIN_TOKEN,
 # NEXT_PUBLIC_GA_ID, NEXT_PUBLIC_CLARITY_ID) - optional file, see .env.example:
 EnvironmentFile=-/var/www/banendev/.env
 # Roept de Next.js-server direct aan (robuuster dan via npm in systemd):
-ExecStart=/usr/bin/node /var/www/banendev/node_modules/next/dist/bin/next start --port 3000
+ExecStart=/usr/bin/node /var/www/banendev/node_modules/next/dist/bin/next start --port 3001
 Restart=always
 RestartSec=5
 
