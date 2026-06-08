@@ -2,7 +2,7 @@
 
 import zlib from "node:zlib";
 
-const UA = "gtmbanen.nl/1.0 (+https://gtmbanen.nl; GTM job index; contact: team@gtmbanen.nl)";
+const UA = "banen.dev/1.0 (+https://banen.dev; developer job index; contact: team@banen.dev)";
 
 /** Some CDNs return compressed bodies that fetch doesn't auto-decompress. Handle it. */
 function maybeDecompress(buf: Buffer, encoding: string | null): Buffer {
