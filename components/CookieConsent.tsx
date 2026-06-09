@@ -60,16 +60,6 @@ export function CookieConsent({
     }
   }, [gaId, clarityId]);
 
-  // Lock background scroll while the takeover is up.
-  useEffect(() => {
-    if (!show) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [show]);
-
   if (!show) return null;
 
   const choose = (all: boolean) => {
@@ -83,7 +73,7 @@ export function CookieConsent({
       role="dialog"
       aria-modal="true"
       aria-labelledby="cookie-consent-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/70 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-900/70 p-4 backdrop-blur-sm"
     >
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-8">
         <h2 id="cookie-consent-title" className="text-xl font-bold tracking-tight text-slate-900">
