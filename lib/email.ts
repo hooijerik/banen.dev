@@ -1,6 +1,8 @@
 // Transactional email via Resend (https://resend.com). Reads config from the environment
 // at runtime. With no RESEND_API_KEY set it logs a dry-run instead of sending, so local
 // development never needs a key. Never throws - returns a status the caller can ignore.
+import { SITE } from "./site";
+
 const RESEND_URL = "https://api.resend.com/emails";
 
 /** Verified sending identity. The domain MUST be verified in your Resend account.
@@ -18,6 +20,7 @@ export async function sendEmail(opts: {
   html: string;
   from?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
 }): Promise<"sent" | "dry" | "error"> {
   const key = process.env.RESEND_API_KEY;
   const to = Array.isArray(opts.to) ? opts.to : [opts.to];
@@ -37,6 +40,7 @@ export async function sendEmail(opts: {
         subject: opts.subject,
         html: opts.html,
         ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+        ...(opts.headers ? { headers: opts.headers } : {}),
       }),
       signal: ctrl.signal,
     });
@@ -60,4 +64,24 @@ export function esc(s: unknown): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+/** Footer for subscriber emails: "manage preferences" + "unsubscribe" links (token-based). */
+export function alertEmailFooter(token: string): string {
+  const t = encodeURIComponent(token);
+  return `<p style="color:#94a3b8;font-size:12px;line-height:1.6;margin-top:20px;border-top:1px solid #eee;padding-top:14px">
+    Je ontvangt deze mail omdat je een vacature-alert hebt op ${SITE.name}.<br>
+    <a href="${SITE.url}/vacature-alert?token=${t}" style="color:#64748b;text-decoration:underline">Voorkeuren aanpassen</a>
+    &nbsp;·&nbsp;
+    <a href="${SITE.url}/uitschrijven?token=${t}" style="color:#64748b;text-decoration:underline">Uitschrijven</a>
+  </p>`;
+}
+
+/** RFC 8058 List-Unsubscribe headers: native one-click unsubscribe + better deliverability. */
+export function listUnsubscribeHeaders(token: string): Record<string, string> {
+  const url = `${SITE.url}/api/unsubscribe?token=${encodeURIComponent(token)}`;
+  return {
+    "List-Unsubscribe": `<${url}>`,
+    "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+  };
 }

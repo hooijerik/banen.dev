@@ -252,6 +252,8 @@ export const en: Dict = {
   alertPage: {
     title: "Job alert",
     subtitle: "Never miss a developer job again.",
+    manageTitle: "Update your job alert",
+    manageSubtitle: "Adjust your preferences and save - we use the same email address.",
     bullets: [
       "Filter by category and frequency",
       "Only relevant developer roles",
@@ -329,5 +331,13 @@ export const en: Dict = {
     body: "We use analytics cookies (Google Analytics and Microsoft Clarity) to see how the site is used and improve it. Your choice - we don't set them without consent.",
     accept: "Accept",
     reject: "Decline",
+  },
+  unsubscribe: {
+    title: "Unsubscribe from the job alert?",
+    body: "You'll stop receiving developer jobs by email. You can resubscribe any time.",
+    confirm: "Yes, unsubscribe me",
+    doneTitle: "You're unsubscribed",
+    doneBody: "You won't receive job alerts anymore. Sorry to see you go - you're always welcome back.",
+    invalid: "This unsubscribe link is invalid or has expired.",
   },
 };

@@ -9,6 +9,7 @@ export function AlertForm({
   salaries,
   countries,
   radii,
+  initial,
 }: {
   t: Dict["forms"]["alert"];
   categories: { slug: string; label: string }[];
@@ -16,15 +17,25 @@ export function AlertForm({
   salaries: { value: string; label: string }[];
   countries: { value: string; label: string }[];
   radii: number[];
+  initial?: {
+    email?: string;
+    category?: string;
+    seniority?: string;
+    salaryMin?: string;
+    postcode?: string;
+    country?: string;
+    radiusKm?: string;
+    frequency?: string;
+  };
 }) {
-  const [email, setEmail] = useState("");
-  const [category, setCategory] = useState("");
-  const [seniority, setSeniority] = useState("");
-  const [salaryMin, setSalaryMin] = useState("");
-  const [postcode, setPostcode] = useState("");
-  const [country, setCountry] = useState(countries[0]?.value ?? "nl");
-  const [radiusKm, setRadiusKm] = useState(String(radii[1] ?? radii[0] ?? 25));
-  const [frequency, setFrequency] = useState("daily");
+  const [email, setEmail] = useState(initial?.email ?? "");
+  const [category, setCategory] = useState(initial?.category ?? "");
+  const [seniority, setSeniority] = useState(initial?.seniority ?? "");
+  const [salaryMin, setSalaryMin] = useState(initial?.salaryMin ?? "");
+  const [postcode, setPostcode] = useState(initial?.postcode ?? "");
+  const [country, setCountry] = useState(initial?.country ?? countries[0]?.value ?? "nl");
+  const [radiusKm, setRadiusKm] = useState(initial?.radiusKm ?? String(radii[1] ?? radii[0] ?? 25));
+  const [frequency, setFrequency] = useState(initial?.frequency ?? "daily");
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
 
   const hasPostcode = postcode.trim().length > 0;

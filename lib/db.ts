@@ -78,7 +78,8 @@ CREATE TABLE IF NOT EXISTS subscribers (
   frequency TEXT NOT NULL DEFAULT 'daily',
   confirmed INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  last_sent_at TEXT
+  last_sent_at TEXT,
+  unsubscribe_token TEXT
 );
 
 CREATE TABLE IF NOT EXISTS employer_submissions (
@@ -154,6 +155,14 @@ export function getDb(): DatabaseSync {
     db.exec("ALTER TABLE companies ADD COLUMN banner_url TEXT");
   }
   db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_featured ON jobs(featured)");
+  // Migration: per-subscriber token for unsubscribe + preferences email links.
+  const scols = db.prepare("PRAGMA table_info(subscribers)").all() as { name: string }[];
+  if (!scols.some((c) => c.name === "unsubscribe_token")) {
+    db.exec("ALTER TABLE subscribers ADD COLUMN unsubscribe_token TEXT");
+    db.exec(
+      "UPDATE subscribers SET unsubscribe_token = lower(hex(randomblob(16))) WHERE unsubscribe_token IS NULL",
+    );
+  }
   _db = db;
   return db;
 }

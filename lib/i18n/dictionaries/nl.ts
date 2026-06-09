@@ -253,6 +253,8 @@ export const nl = {
   alertPage: {
     title: "Vacature-alert",
     subtitle: "Mis nooit meer een developer-vacature.",
+    manageTitle: "Pas je vacature-alert aan",
+    manageSubtitle: "Werk je voorkeuren bij en sla op - we gebruiken hetzelfde e-mailadres.",
     bullets: [
       "Filter op categorie en frequentie",
       "Alleen relevante developer-rollen",
@@ -332,5 +334,13 @@ export const nl = {
     body: "We gebruiken analytische cookies (Google Analytics en Microsoft Clarity) om te zien hoe de site gebruikt wordt en hem te verbeteren. Je kiest zelf - zonder toestemming plaatsen we ze niet.",
     accept: "Accepteren",
     reject: "Weigeren",
+  },
+  unsubscribe: {
+    title: "Uitschrijven voor de vacature-alert?",
+    body: "Je ontvangt dan geen developer-vacatures meer per e-mail. Je kunt je altijd opnieuw inschrijven.",
+    confirm: "Ja, schrijf me uit",
+    doneTitle: "Je bent uitgeschreven",
+    doneBody: "Je ontvangt geen vacature-alerts meer. Jammer dat je gaat - je bent altijd welkom terug.",
+    invalid: "Deze uitschrijflink is ongeldig of verlopen.",
   },
 };
