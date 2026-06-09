@@ -89,8 +89,8 @@ SALARY_USD_EUR_RATE=0.92
 # Admin (/admin) voor premium-plaatsingen: openssl rand -hex 24
 # ADMIN_TOKEN=...
 # Analytics (optioneel)
-# NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-# NEXT_PUBLIC_CLARITY_ID=xxxxxxxxxx
+# GA_ID=G-XXXXXXXXXX
+# CLARITY_ID=xxxxxxxxxx
 EOF
 
 npm run scrape              # vul de database met vacatures (eerste keer)

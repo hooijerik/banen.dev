@@ -9,11 +9,10 @@ import { SITE } from "@/lib/site";
 import { getDictionary, isLocale, ogLocale, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
 
-// Analytics are opt-in per deploy via env (no IDs hardcoded) AND consent-gated: nothing
-// loads until the visitor accepts in the CookieConsent takeover (GA first, then Clarity).
-// Set NEXT_PUBLIC_GA_ID (G-XXXXXXXXXX) and/or NEXT_PUBLIC_CLARITY_ID to enable them.
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
+// Analytics are opt-in per deploy via RUNTIME env (read server-side here, passed as props to
+// the client - so plain GA_ID / CLARITY_ID work straight from .env without a build-time inline,
+// unlike NEXT_PUBLIC_*). Consent-gated in CookieConsent: GA is necessary, Clarity loads only
+// after "Accept all". Set GA_ID (G-XXXXXXXXXX) and/or CLARITY_ID to enable them.
 
 export function generateStaticParams() {
   return [{ locale: "nl" }, { locale: "en" }];
@@ -55,6 +54,9 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = await getDictionary(locale);
+  // Read at render time so .env changes apply on restart, no rebuild needed.
+  const gaId = process.env.GA_ID;
+  const clarityId = process.env.CLARITY_ID;
   return (
     <html lang={locale}>
       <body className="flex min-h-dvh flex-col bg-slate-50 text-slate-900 antialiased">
@@ -62,8 +64,8 @@ export default async function LocaleLayout({
         <main className="flex-1">{children}</main>
         <SiteFooter locale={locale} dict={dict} />
         <CookieConsent
-          gaId={GA_ID}
-          clarityId={CLARITY_ID}
+          gaId={gaId}
+          clarityId={clarityId}
           policyHref={withLocale(locale, "/cookiebeleid")}
           dict={dict.cookies}
         />
