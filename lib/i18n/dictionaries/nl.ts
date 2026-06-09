@@ -327,4 +327,10 @@ export const nl = {
     description:
       "Hét vacatureplatform voor developers: frontend, backend, fullstack, mobile, DevOps, data & ML en meer. Dagelijks nieuwe developer-vacatures in Nederland en Vlaanderen.",
   },
+  cookies: {
+    title: "Cookies op banen.dev",
+    body: "We gebruiken analytische cookies (Google Analytics en Microsoft Clarity) om te zien hoe de site gebruikt wordt en hem te verbeteren. Je kiest zelf - zonder toestemming plaatsen we ze niet.",
+    accept: "Accepteren",
+    reject: "Weigeren",
+  },
 };

@@ -324,4 +324,10 @@ export const en: Dict = {
     description:
       "The job platform for developers: frontend, backend, fullstack, mobile, DevOps, data & ML and more. New developer jobs daily in the Netherlands and Belgium.",
   },
+  cookies: {
+    title: "Cookies on banen.dev",
+    body: "We use analytics cookies (Google Analytics and Microsoft Clarity) to see how the site is used and improve it. Your choice - we don't set them without consent.",
+    accept: "Accept",
+    reject: "Decline",
+  },
 };
