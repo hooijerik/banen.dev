@@ -38,6 +38,7 @@ export const nl = {
     advertise: "Adverteren",
     initiativeBy: "Een initiatief van",
     collected: "Vacatures verzameld van publieke bronnen.",
+    adTerms: "Advertentievoorwaarden",
     categories: "Categorieën",
     locations: "Locaties",
     cityLink: (label: string) => `Developer-vacatures ${label}`,

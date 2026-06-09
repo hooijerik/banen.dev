@@ -40,6 +40,7 @@ export const en: Dict = {
     advertise: "Advertise",
     initiativeBy: "An initiative by",
     collected: "Jobs collected from public sources.",
+    adTerms: "Advertising terms",
     categories: "Categories",
     locations: "Locations",
     cityLink: (label: string) => `Developer jobs ${label}`,
