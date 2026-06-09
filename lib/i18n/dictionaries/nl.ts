@@ -39,6 +39,7 @@ export const nl = {
     initiativeBy: "Een initiatief van",
     collected: "Vacatures verzameld van publieke bronnen.",
     adTerms: "Advertentievoorwaarden",
+    cookies: "Cookiebeleid",
     categories: "Categorieën",
     locations: "Locaties",
     cityLink: (label: string) => `Developer-vacatures ${label}`,
@@ -332,9 +333,10 @@ export const nl = {
   },
   cookies: {
     title: "Cookies op banen.dev",
-    body: "We gebruiken analytische cookies (Google Analytics en Microsoft Clarity) om te zien hoe de site gebruikt wordt en hem te verbeteren. Je kiest zelf - zonder toestemming plaatsen we ze niet.",
-    accept: "Accepteren",
-    reject: "Weigeren",
+    body: "Voor anonieme bezoekstatistieken gebruiken we Google Analytics (noodzakelijk, IP ingekort, geen advertentietrackers). Met je toestemming voegen we Microsoft Clarity toe voor geanonimiseerde heatmaps.",
+    acceptAll: "Alles accepteren",
+    necessaryOnly: "Alleen noodzakelijk",
+    more: "Cookiebeleid",
   },
   unsubscribe: {
     title: "Uitschrijven voor de vacature-alert?",

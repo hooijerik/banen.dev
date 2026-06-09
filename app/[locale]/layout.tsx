@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { CookieConsent } from "@/components/CookieConsent";
+import { withLocale } from "@/lib/urls";
 import { SITE } from "@/lib/site";
 import { getDictionary, isLocale, ogLocale, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
@@ -60,7 +61,12 @@ export default async function LocaleLayout({
         <SiteHeader locale={locale} dict={dict} />
         <main className="flex-1">{children}</main>
         <SiteFooter locale={locale} dict={dict} />
-        <CookieConsent gaId={GA_ID} clarityId={CLARITY_ID} dict={dict.cookies} />
+        <CookieConsent
+          gaId={GA_ID}
+          clarityId={CLARITY_ID}
+          policyHref={withLocale(locale, "/cookiebeleid")}
+          dict={dict.cookies}
+        />
       </body>
     </html>
   );

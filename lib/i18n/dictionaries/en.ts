@@ -41,6 +41,7 @@ export const en: Dict = {
     initiativeBy: "An initiative by",
     collected: "Jobs collected from public sources.",
     adTerms: "Advertising terms",
+    cookies: "Cookie policy",
     categories: "Categories",
     locations: "Locations",
     cityLink: (label: string) => `Developer jobs ${label}`,
@@ -329,9 +330,10 @@ export const en: Dict = {
   },
   cookies: {
     title: "Cookies on banen.dev",
-    body: "We use analytics cookies (Google Analytics and Microsoft Clarity) to see how the site is used and improve it. Your choice - we don't set them without consent.",
-    accept: "Accept",
-    reject: "Decline",
+    body: "For anonymous visitor statistics we use Google Analytics (necessary, IP truncated, no ad trackers). With your consent we add Microsoft Clarity for anonymised heatmaps.",
+    acceptAll: "Accept all",
+    necessaryOnly: "Necessary only",
+    more: "Cookie policy",
   },
   unsubscribe: {
     title: "Unsubscribe from the job alert?",
