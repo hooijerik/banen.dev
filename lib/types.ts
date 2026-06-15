@@ -114,6 +114,7 @@ export interface JobRow {
   company_name: string;
   company_slug: string;
   company_logo: string | null;
+  company_website?: string | null;
   title: string;
   title_norm: string;
   slug: string;

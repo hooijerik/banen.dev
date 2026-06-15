@@ -3,6 +3,27 @@
 // scraped jobs). Aliases map alternative spellings/slugs to the same place.
 import { slugify } from "./format";
 
+/** Best-effort street + postcode from a raw location string (e.g. "Herengracht 100, 1015 BS
+ *  Amsterdam"). ATS feeds usually give only a city, so this fills street/postal for the minority
+ *  that include a full source address; elsewhere it returns {} and those fields stay absent. */
+export function parseStreetPostcode(raw: string | null): { streetAddress?: string; postalCode?: string } {
+  const s = (raw || "").trim();
+  if (!s) return {};
+  const out: { streetAddress?: string; postalCode?: string } = {};
+  const nl = s.match(/\b(\d{4})\s?([A-Za-z]{2})\b/); // NL postcode: 1234 AB
+  if (nl) out.postalCode = `${nl[1]} ${nl[2].toUpperCase()}`;
+  else {
+    const be = s.match(/\b(\d{4})\b/); // BE postcode: 4 digits
+    if (be) out.postalCode = be[1];
+  }
+  const street = s.match(/([A-Za-zÀ-ÿ.'\- ]+\s\d+[A-Za-z]?)\s*,/); // "Straat 12," before a comma
+  if (street) {
+    const cand = street[1].trim();
+    if (cand.length >= 4) out.streetAddress = cand;
+  }
+  return out;
+}
+
 export interface GeoCity {
   slug: string;
   label: string;

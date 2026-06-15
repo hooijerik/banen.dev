@@ -12,7 +12,7 @@ const JOB_FEATURED =
 const companyFeatured = (p = "c.") =>
   `(${p}featured = 1 AND (${p}featured_until IS NULL OR ${p}featured_until >= datetime('now')))`;
 
-const JOB_COLS = `j.*, c.name AS company_name, c.slug AS company_slug, c.logo_url AS company_logo, ${JOB_FEATURED} AS is_featured, ${companyFeatured("c.")} AS company_featured`;
+const JOB_COLS = `j.*, c.name AS company_name, c.slug AS company_slug, c.logo_url AS company_logo, c.website AS company_website, ${JOB_FEATURED} AS is_featured, ${companyFeatured("c.")} AS company_featured`;
 const JOB_FROM = `FROM jobs j JOIN companies c ON c.id = j.company_id`;
 
 export interface JobFilters {

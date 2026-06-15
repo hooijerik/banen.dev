@@ -11,7 +11,8 @@ import { categoryLabel, seniorityLabel, workModeLabel, toolLabel } from "@/lib/t
 import { formatSalaryRange, formatDate, timeAgo, sanitizeHtml } from "@/lib/format";
 import { categoryUrl, companyUrl, locationUrl, seniorityUrl, toolUrl, withLocale } from "@/lib/urls";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import { alternates } from "@/lib/i18n/meta";
+import { localePath } from "@/lib/i18n/meta";
+import { buildJobPostingJsonLd } from "@/lib/jsonld";
 import { SITE } from "@/lib/site";
 import type { JobRow } from "@/lib/types";
 
@@ -31,15 +32,6 @@ const SOURCE_LABELS: Record<string, string> = {
   nationalevacaturebank: "Nationale Vacaturebank",
   magnet: "Magnet.me",
 };
-
-function employmentType(raw: string | null): string | undefined {
-  const t = (raw || "").toLowerCase();
-  if (/part|deeltijd/.test(t)) return "PART_TIME";
-  if (/intern|stage/.test(t)) return "INTERN";
-  if (/contract|tijdelijk|freelance/.test(t)) return "CONTRACTOR";
-  if (/full|fulltime|vast|permanent/.test(t)) return "FULL_TIME";
-  return undefined;
-}
 
 function locationLine(job: JobRow, locale: Locale): string {
   const country =
@@ -71,10 +63,15 @@ export async function generateMetadata({
   if (!job) return { title: dict.job.notFound };
   const loc = job.city || (job.country === "NL" ? (locale === "en" ? "Netherlands" : "Nederland") : "Remote");
   const desc = (job.description_text || "").replace(/\s+/g, " ").slice(0, 155);
+  // Job content isn't translated, so each vacancy has ONE canonical in its own language;
+  // the other-language URL is noindex. Prevents GSC "alternate page with canonical tag" on jobs.
+  const primary: Locale = job.lang === "en" ? "en" : "nl";
+  const canonical = `${SITE.url}${localePath(primary, `/vacature/${job.slug}`)}`;
   return {
     title: dict.job.metaTitle(job.title, job.company_name, loc),
     description: desc || dict.job.metaTitle(job.title, job.company_name, loc),
-    alternates: alternates(locale, `/vacature/${job.slug}`),
+    alternates: { canonical },
+    ...(locale === primary ? {} : { robots: { index: false, follow: true } }),
   };
 }
 
@@ -96,52 +93,11 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
   const applyHref = job.apply_url || job.url;
   const descHtml = job.description_html ? sanitizeHtml(job.description_html) : null;
 
-  const jsonLd: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    title: job.title,
-    description: descHtml || job.description_text || job.title,
-    datePosted: job.posted_at || job.first_seen_at,
-    employmentType: employmentType(job.employment_type),
-    hiringOrganization: {
-      "@type": "Organization",
-      name: job.company_name,
-      logo: job.company_logo || undefined,
-    },
-    jobLocation: {
-      "@type": "Place",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: job.city || undefined,
-        addressRegion: job.province || undefined,
-        addressCountry: job.country || "NL",
-      },
-    },
-    jobLocationType: job.work_mode === "remote" ? "TELECOMMUTE" : undefined,
-    applicantLocationRequirements:
-      job.work_mode === "remote" ? { "@type": "Country", name: "Netherlands" } : undefined,
-    directApply: false,
-    url: `${SITE.url}/vacature/${job.slug}`,
-    ...(job.salary_disclosed && job.salary_min
-      ? {
-          baseSalary: {
-            "@type": "MonetaryAmount",
-            currency: job.salary_currency || "EUR",
-            value: {
-              "@type": "QuantitativeValue",
-              minValue: job.salary_min,
-              maxValue: job.salary_max || job.salary_min,
-              unitText:
-                job.salary_interval === "month" ? "MONTH" : job.salary_interval === "hour" ? "HOUR" : "YEAR",
-            },
-          },
-        }
-      : {}),
-  };
+  const jsonLd = buildJobPostingJsonLd(job, { siteUrl: SITE.url });
 
   return (
     <Container className="py-8">
-      <JsonLd data={jsonLd} />
+      {jsonLd && <JsonLd data={jsonLd} />}
       <Breadcrumbs
         ariaLabel={dict.breadcrumbs.aria}
         items={[
